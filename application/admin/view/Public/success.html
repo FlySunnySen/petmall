@@ -1,0 +1,50 @@
+<extend name="Public:layout" />
+<block name="main">
+<div class="col-md-12" style="margin-top:80px;">
+	<div class="col-md-3"></div>
+	<div class="col-md-9">
+		<img src="__PUBLIC__/admin/images/lefeng.png" alt="">
+	</div>
+	<hr>
+	<div class="col-md-8 col-md-offset-3">
+		<?php 
+			if(isset($message)) {
+		?>
+		<h2 class="green lighter smaller">
+		<?php
+				echo($message); 
+			}else{
+		?>
+		<h2 class="text-danger lighter smaller">
+		<?php
+		 		echo($error); 
+		 	}
+		?>
+			<small>
+				<i class="icon-double-angle-right"></i>
+				点击 <a href="<?php echo($jumpUrl); ?>" id="href">跳转</a> 
+				进行跳转，
+				<b id="wait" class="blue"><?php echo($waitSecond); ?></b>
+				秒后自动跳转
+			</small>
+		</h2>
+		<!-- <h4 class="lighter">
+			<i class="icon-hand-right icon-animated-hand-pointer blue"></i>
+			<a href="#modal-wizard" data-toggle="modal" class="pink"> Wizard Inside a Modal Box </a>
+		</h4> -->
+	</div>
+	
+</div>
+
+	<script type="text/javascript">
+(function(){
+var wait = document.getElementById('wait'),href = document.getElementById('href').href;
+var interval = setInterval(function(){
+	var time = --wait.innerHTML;
+	if(time <= 0) {
+		location.href = href;
+		clearInterval(interval);
+	};
+}, 1000);
+})();
+</script></block>

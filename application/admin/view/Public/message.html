@@ -1,0 +1,39 @@
+<a data-toggle="dropdown" class="dropdown-toggle" href="#">
+	<i class="icon-envelope icon-animated-vertical"></i>
+	<span class="badge badge-success">{$count}</span>
+</a>
+
+<ul class="pull-right dropdown-navbar dropdown-menu dropdown-caret dropdown-close">
+	<li class="dropdown-header">
+		<i class="icon-envelope-alt"></i>
+		我的消息
+	</li>
+	<notempty name="msg">
+	<foreach name="msg" item="vmsg">
+	<li>
+		<a href="__MODULE__/Message/index">
+			<img src="__PUBLIC__/{$vmsg.img}" class="msg-photo" alt="Alex's Avatar" />
+			<span class="msg-body">
+				<span class="msg-title">
+					<span class="blue">{$vmsg.name}:</span>
+					{$vmsg.title|mb_substr=0,8,'utf-8'} ...
+				</span>
+
+				<span class="msg-time">
+					<i class="icon-time"></i>
+					<span>{$vmsg.send_time|timeNow}</span>
+				</span>
+			</span>
+		</a>
+	</li>
+	</foreach>
+	<else />
+	<li>暂无消息！</li>
+	</notempty>
+	<li>
+		<a href="__MODULE__/Message/index">
+			查看所有消息
+			<i class="icon-arrow-right"></i>
+		</a>
+	</li>
+</ul>

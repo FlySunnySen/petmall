@@ -1,0 +1,40 @@
+<extend name="Public:layout" />
+<block name="main">
+	<div class="page-content">
+		<div class="page-header">
+			<h1>
+				商品管理
+				<small>
+					<i class="icon-double-angle-right"></i>
+					商品列表
+				</small>
+			</h1>
+		</div>
+		<div class="table-responsive">
+			　本商品拥有赠品：
+			{$go.gift_name}（{$go.gift_price}元）。
+			
+				<div></div>
+				<form method="post" action="__CONTROLLER__/giftinsert">
+					<input type="hidden" name="id" value="{$Think.get.id}">
+					<foreach name="gift" item="vo">
+						<div class="radio col-xs-4">
+							<label>
+								<input name="gift_id" value="{$vo.id}" class="ace" type="radio" <if condition="$go['id'] eq $vo['id']">checked</if>>
+								<span class="lbl" style="font-size:13px">　{$vo.gift_name}（{$vo.gift_price}元）。</span>
+							</label>
+						</div>
+						<div></div>
+					</foreach>
+					<div class="col-md-offset-3 col-md-9" style="margin-top:30px">
+						<button class="btn btn-info" type="submit">
+							<i class="icon-ok bigger-110"></i>
+							提　交 
+						</button>
+						
+					</div>
+				</form>
+			
+		</div>
+		
+</block>

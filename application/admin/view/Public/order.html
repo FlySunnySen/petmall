@@ -1,0 +1,30 @@
+<a data-toggle="dropdown" class="dropdown-toggle" href="#">
+	<i class="icon-bell-alt icon-animated-bell"></i>
+	<span class="badge badge-important">{$count}</span>
+</a>
+
+<ul class="pull-right dropdown-navbar navbar-pink dropdown-menu dropdown-caret dropdown-close">
+	<li class="dropdown-header">
+		<i class="icon-warning-sign"></i>
+		{$count}个待发货订单
+	</li>
+	<foreach name="list" item="vo">
+	<li>
+		<a href="__MODULE__/Order/index">
+			<div class="clearfix">
+				<span class="pull-left">
+					<i class="btn btn-xs no-hover btn-success icon-shopping-cart"></i>
+					{$vo.acti}
+				</span>
+				<span class="pull-right badge badge-success">{$vo.action_count}</span>
+			</div>
+		</a>
+	</li>
+	</foreach>
+	<li>
+		<a href="__MODULE__/Order/index">
+			查看所有订单
+			<i class="icon-arrow-right"></i>
+		</a>
+	</li>
+</ul>

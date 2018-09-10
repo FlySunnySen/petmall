@@ -1,0 +1,322 @@
+<extend name="Public:layout" />
+<block name="main">
+
+	<div class="page-content">
+		<div class="page-header">
+			<h1>
+				商品管理
+				<small> <i class="icon-double-angle-right"></i>
+					修改商品
+				</small>
+			</h1>
+		</div>
+		<!-- /.page-header -->
+
+		<div class="row">
+			<div class="col-xs-12">
+				<!-- PAGE CONTENT BEGINS -->
+
+				<form class="form-horizontal" role="form" action="__CONTROLLER__/save" method="post" enctype="multipart/form-data" id="form">
+					<input type="hidden" name="id" value="{$iddata.id}">
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right">
+							<!-- 选择商品 -->所属分类</label>
+						<div class="col-sm-9">
+
+							<div class="btn-group">
+								<div data-toggle="dropdown" class="drop_down btn btn-white dropdown-toggle" style="border:1px solid #ccc;width:250px;">
+									<span class="dropdown_sp">{$iddata.type_name}</span> <i class="icon-angle-down icon-on-right "></i>
+									<input type="hidden" name="type_id" value="{$iddata.type_id}" sel="select"></div>
+
+								<ul class="dropdown-menu dropdown-success pull-left dropdown_ul" id="typeul">
+									<foreach name="type" item="vo">
+										<li  value="{$vo.id}" num="{$vo.num}" type="type">
+											<a href="javascript:;">{$vo.before}{$vo.type_name}</a>
+										</li>
+									</foreach>
+								</ul>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right">
+							<!-- 选择商品 -->所属品牌</label>
+						<div class="col-sm-9">
+
+							<div class="btn-group">
+								<div data-toggle="dropdown" class="drop_down btn btn-white dropdown-toggle" style="border:1px solid #ccc;width:250px;">
+									<span class="dropdown_sp">{$iddata.brand_name}</span>
+									<i class="icon-angle-down icon-on-right "></i>
+									<input type="hidden" name="brand_id" value="{$iddata.brand_id}" sel="select"></div>
+
+								<ul class="dropdown-menu dropdown-success pull-left dropdown_ul" id="brandul">
+									<foreach name="brand" item="vo">
+										<li  value="{$vo.id}">
+											<a href="javascript:;">{$vo.brand_name}</a>
+										</li>
+									</foreach>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="form-field-1">商品名称</label>
+
+						<div class="col-sm-9">
+							<input type="text" id="form-field-1"  class="col-xs-10 col-sm-5" name="goods_name" value="{$iddata.goods_name}" required/><span></span>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="form-field-2">关 键 字</label>
+
+						<div class="col-sm-9">
+							<input type="text" id="form-field-2"  class="col-xs-10 col-sm-5" name="goods_keywords" value="{$iddata.goods_keywords}"/>
+						</div>
+					</div>
+
+					<div class="space-4"></div>
+
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="form-field-3">商品库存</label>
+
+						<div class="col-sm-9">
+							<input type="number" id="form-field-3"  class="col-xs-10 col-sm-5" name="goods_number" value="{$iddata.goods_number}"/>
+
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="form-field-4">商品重量</label>
+
+						<div class="col-sm-9">
+							<input type="text"  class="col-xs-10 col-sm-5" name="goods_weight" id="form-field-4" value="{$iddata.goods_weight}"/>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="form-field-5" >本店售价</label><span></span>
+
+						<div class="col-sm-9">
+							<input type="text"  class="col-xs-10 col-sm-5 required" name="goods_price" id="form-field-5" value="{$iddata.goods_price}" required />
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="form-field-7">商品折扣</label><span></span>
+
+						<div class="col-sm-9">
+							<input type="text"  class="col-xs-10 col-sm-5" name="goods_sale" id="form-field-7" value="{$iddata.goods_sale}" /><span> </span>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="form-field-10">简单描述</label>
+
+						<div class="col-sm-9">
+							<input type="text" class="col-xs-10 col-sm-5" name="goods_brief" id="form-field-10" value="{$iddata.goods_brief}" />
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="form-field-11">赠送花粉</label>
+
+						<div class="col-sm-9">
+							<input type="text" id="form-field-11" placeholder="商品赠送花粉数 " class="col-xs-10 col-sm-5" name="goods_coin" value="{$iddata.goods_coin}" />
+						</div>
+					</div>
+
+					<div class="space-4"></div>
+
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right">是否开始销售</label>
+
+						<div class="col-sm-9">
+							<div class="col-xs-12 col-sm-6">
+								<div class="control-group">
+
+									<label>
+										<input name="is_on_sale" type="radio" class="ace" value="1"  {$iddata[is_on_sale] ? 'checked' : ''} />
+										<span class="lbl">是</span>
+									</label>
+
+									<label>
+										<input name="is_on_sale" type="radio" class="ace" value="0"  {$iddata[is_on_sale] ? '' : 'checked'} />
+										<span class="lbl">否</span>
+									</label>
+
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group" id="logo">
+						<label class="col-sm-3 control-label no-padding-right" for="form-field-1" >添加图片</label>
+
+						<div class="col-sm-9">
+							<!-- uploadify上传插件 -->
+							<div id="imgs">
+								<img src="__PUBLIC__{$iddata.goods_img}" alt="" width="200"></div>
+							<input id="file_upload" name="goods_img" type="file" value="{$iddata.goods_img}" />
+							<!-- uploadify上传插件 -->
+							<input type="hidden" value="{$iddata.goods_img}" id="uplogo" name="goods_img">
+							<!-- 上传的图片地址放到这里面 -->
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-sm-2 control-label no-padding-left">商品详细描述</label>
+
+						<div class="col-sm-9 col-xs-6"></div>
+						<textarea class="col-sm-9 control-label no-padding-right" id="container" name="goods_desc">{$iddata.goods_desc}</textarea>
+					</div>
+
+					<div class="clearfix form-actions">
+						<div class="col-md-offset-3 col-md-9">
+							<button class="btn btn-info" type="button">
+								<i class="icon-ok bigger-110"></i>
+								提　交
+							</button>
+							&nbsp; &nbsp; &nbsp;
+							<button class="btn" type="reset">
+								<i class="icon-undo bigger-110"></i>
+								重　置
+							</button><span></span>
+							
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<script src="__PUBLIC__/uploadify/jquery.uploadify.min.js"></script>
+	<script>
+	$(function() {
+		var img = '';
+
+		$('#file_upload').uploadify({
+	        'swf' : '__PUBLIC__/uploadify/uploadify.swf',
+	        'uploader' : '__CONTROLLER__/myupload',
+	        'buttonText' : '图片上传',
+	        'onUploadSuccess' : function(file, data, response) {
+	        	img = "<img width='200px' src='__PUBLIC__/"+data+"'>";
+	        	alert(data);
+	        	$('#imgs').html(img);
+	        	$('#uplogo').val(data);
+        	}
+    	});
+	})
+		/**
+	 	 * jQuery下拉框插件
+	     */
+
+
+	    	$('#typeul>li[num="2"]').bind('click',function() {
+	    		$(this).parent().prev().children('span').html($(this).html());
+	    		$(this).parent().prev().children('input[sel]').val($(this).val());	    		
+	    	})
+
+	    	$('#brandul>li').bind('click',function() {
+	    		$(this).parent().prev().children('span').html($(this).html());
+	    		$(this).parent().prev().children('input[sel]').val($(this).val());	    		
+	    	})
+
+
+        var ue = UE.getEditor('container',{
+        	autoHeightEnabled: false,
+    		autoFloatEnabled: false,
+    		initialFrameHeight: 200,
+    		initialFrameWidth: 700
+        });
+
+        $(function() {
+
+        	var type = true;
+        	var brand = true;
+        	var name = true;
+        	var price = true;
+        	var number = true;
+        	var sale = true;
+        	//分类
+        	$('li[type="type"]').bind('click',function() {
+        		if(!$('input[name="type_id"]').val()) {
+        			$('#typeid').css('color','red').html('请选择二级分类（提示：如果没有二级分类，请先添加分类）');
+        			type = false;
+        		}else{
+        			$('#typeid').html('');
+        			type = true;
+        		}
+        	})
+        	//品牌
+        	$('li[brand]').bind('click',function() {
+        		if(!$('input[name="brand_id"]').val()){
+        			$('#brandid').css('color','red').html('请选择品牌（提示：如果没有品牌，请先添加品牌）');
+        			brand = false;
+        		}else{
+        			$('#brandid').html('');
+        			brand = true; 
+        		}
+        	})
+        	//商品名称
+        	$('#form-field-1').blur(function(){
+        		if(!$(this).val()) {
+        			$(this).next().css('color','red').html('请输入商品名称');
+        			name = false;
+        		}else{
+        			$(this).next().css('color','red').html('');
+        			name = true;
+        		}
+        	})
+        	//本店售价
+        	$('#form-field-5').bind('blur',function() {
+        		var reg = /^[0-9\.]+$/;
+        		if(!reg.test($(this).val())) {
+        			$(this).next().css('color','red').html('请输入本店售价');
+        			price = false;
+        		}else{
+        			$(this).next().html('');
+        			price = true;
+        		}
+        	})
+        	//本店库存
+        	$('#form-field-3').bind('blur',function() {
+        		var reg = /^[0-9]+$/;
+        		if(!reg.test($(this).val())) {
+        			$(this).next().css('color','red').html('请输入本店库存');
+        			number = false;
+        		}else{
+        			$(this).next().html('');
+        			number = true;
+        		}
+        	})
+
+        	//折扣
+        	$('#form-field-7').bind('blur',function() {
+        		var reg = /^[0-9\.]+$/;
+        		if(!reg.test($(this).val()) || $(this).val()>1 || $(this).val()<=0) {
+        			$(this).next().css('color','red').html('请输入合法的折扣');
+        			sale =false;
+        		}else{
+        			$(this).next().html('');
+        			sale = true;
+        		}
+        	})
+
+
+        	//提交判断
+        	$('button[type="button"]').bind('click',function() {
+        		console.log($('form'));
+        		if(type && brand && name && price && number && sale) {
+        			$('#form').submit();
+        		}else{
+        			$(this).next().next().css('color','red').html('请填入完整的商品信息');
+        		}
+        	})
+
+        	
+        })
+    </script>
+
+</block>

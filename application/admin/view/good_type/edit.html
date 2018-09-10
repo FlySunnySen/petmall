@@ -1,0 +1,152 @@
+<extend name="Public:layout" />
+<block name="main">
+
+	<div class="page-content">
+		<div class="page-header">
+			<h1>
+				商品分类
+				<small> <i class="icon-double-angle-right"></i>
+					修改分类
+				</small>
+			</h1>
+		</div>
+		<!-- /.page-header -->
+
+		<div class="row">
+			<div class="col-xs-12">
+				<!-- PAGE CONTENT BEGINS -->
+
+				<form class="form-horizontal" role="form" action="__CONTROLLER__/save" method="post" id="form">
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="form-field-1">
+							<!-- 选择商品 -->所属父类</label>
+						<div class="col-sm-9">
+
+							<div class="btn-group">
+								<div data-toggle="dropdown" class="drop_down btn btn-white dropdown-toggle" style="border:1px solid #ccc;width:250px;">
+									<span class="dropdown_sp">
+										<notempty name="iddata.pname">
+											{$iddata.pname}
+											<else />
+											顶级分类
+										</notempty>
+									</span> <i class="icon-angle-down icon-on-right "></i>
+									<input type="hidden" name="pid" value="" sel="select"></div>
+
+								<ul class="dropdown-menu dropdown-success pull-left dropdown_ul" id="">
+									<li value="0">
+										<a href="javascript:;">顶级分类</a>
+									</li>
+									<foreach name="pdata" item="vo">
+										<li  value="{$vo.id}">
+											<a href="javascript:;">{$vo.before}{$vo.type_name}</a>
+										</li>
+									</foreach>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="form-field-1" required>分类名称</label>
+
+						<div class="col-sm-9">
+							<input type="text" id="form-field-1" placeholder="分类名称" class="col-xs-10 col-sm-5" name="type_name" value="{$iddata.type_name}"/>
+							<span></span>
+						</div>
+					</div>
+
+					<div class="space-4"></div>
+
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="form-field-2">分类排序</label>
+
+						<div class="col-sm-9">
+							<input type="text" id="form-field-2" placeholder="分类排序" class="col-xs-10 col-sm-5" name="type_order" value="{$iddata.type_order}"/><span></span>
+
+						</div>
+					</div>
+
+					<div class="space-4"></div>
+
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="form-field-2">是否显示</label>
+
+						<div class="col-sm-9">
+							<div class="col-xs-12 col-sm-6">
+								<div class="control-group">
+
+									<label>
+										<input name="is_show" type="radio" class="ace" value="1" <if condition="$iddata.is_show eq 1">checked</if>
+									/>
+									<span class="lbl">显示</span>
+								</label>
+
+								<label>
+									<input name="is_show" type="radio" class="ace" value="0" />
+									<span class="lbl" <if condition="$iddata.is_show eq 0">checked</if>
+									> 不显示
+								</span>
+							</label>
+							<input type="hidden" name="id" value="{$iddata.id}"></div>
+					</div>
+				</div>
+			</div>
+
+			<div class="clearfix form-actions">
+				<div class="col-md-offset-3 col-md-9">
+					<button class="btn btn-info" type="button">
+						<i class="icon-ok bigger-110"></i>
+						提　交
+					</button>
+					&nbsp; &nbsp; &nbsp;					
+					<button class="btn" type="reset">
+						<i class="icon-undo bigger-110"></i>
+						重　置
+					</button><span></span>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+</div>
+<script>
+	$(function() {
+		$('.dropdown_ul>li').bind('click',function() {
+	    		$(this).parent().prev().children('span').html($(this).html());
+	    		$(this).parent().prev().children('input[sel]').val($(this).val());
+	    	})
+
+		var bool = true;
+		$('#form-field-1').blur(function() {
+			if(!$(this).val()) {
+				$(this).next().css('color','red').html('请填入分类名称');
+				bool = false;
+			}else{
+				$(this).next().html('');	
+				bool = true;			
+			}
+		})
+
+		//排序
+		var boolb =true;
+		$('#form-field-2').blur(function() {
+			var reg = /^[0-9]+$/;
+			if(!reg.test($(this).val())) {
+				$(this).next().css('color','red').html('请填入数字');
+				boolb = false;
+			}else{
+				boolb = true;
+			}
+		})
+
+		$('button[type="button"]').click(function() {
+			if(bool && boolb) {
+				$('#form').submit();
+			}else{
+				$(this).next().next().css('color','red').html('请填入完整合法的分类信息！')
+			}
+		})
+	})
+	</script>
+
+</block>

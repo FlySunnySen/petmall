@@ -1,0 +1,126 @@
+<h2 class="contentTitle">添加商品</h2>
+
+
+<div class="pageContent">
+	
+	<form action="__MODULE__/Goods/insert" method="post" enctype="multipart/form-data" class="pageForm required-validate" onsubmit="return iframeCallback(this, navTabAjaxDone);">
+		<div class="pageFormContent nowrap" layoutH="97">
+
+			<dl>
+				<dt>商品名称：</dt>
+				<dd>
+					<input type="text" name="goods_name" maxlength="20" class="required" />					
+				</dd>
+			</dl>
+			
+			<dl>
+				<dt>所属品牌：</dt>
+				<dd>
+					<input type="text" name="brand_name" maxlength="20" class="required" />
+					
+				</dd>
+			</dl>
+			<dl>
+				<dt>关 键 词：</dt>
+				<dd>
+					<input type="text" name="goods_keywords" maxlength="20" class="required" />
+					
+				</dd>
+			</dl>
+			<dl>
+				<dt>赠送花粉：</dt>
+				<dd>
+					<input type="text" name="goods_coin" class="digits" />
+				
+				</dd>
+			</dl>
+			<dl>
+				<dt>库存数量：</dt>
+				<dd>
+					<input type="text" name="goods_number" class="digits" />
+					
+				</dd>
+			</dl>
+			<dl>
+				<dt>商品折扣：</dt>
+				<dd>
+					<input type="text" name="goods_sale" class="digits" />
+					
+				</dd>
+			</dl>
+			<dl>
+				<dt>商品重量：</dt>
+				<dd>
+					<input type="text" name="goods_weight" class="number" />
+					
+				</dd>
+			</dl>
+			<dl>
+				<dt>本店售价：</dt>
+				<dd>
+					<input type="text" name="goods_price" class="number" />
+					
+				</dd>
+			</dl>
+			<dl>
+				<dt>市场售价：</dt>
+				<dd>
+					<input type="text" name="goods_market_price" class="number" />
+					
+				</dd>
+			</dl>
+			<dl>
+				<dt>促销开始日期：</dt>
+				<dd>
+					<input type="text" name="goods_start_date" class="date" size="30" /><a class="inputDateButton" href="javascript:;">选择</a>
+					
+				</dd>
+			</dl>
+			<dl>
+				<dt>促销截止日期：</dt>
+				<dd>
+					<input type="text" name="goods_end_date" class="date" size="30" /><a class="inputDateButton" href="javascript:;">选择</a>
+					
+				</dd>
+			</dl>
+			
+			<dl>
+				<dt>商品图片：</dt>
+				<dd>
+					<input id="testFileInput" type="file" name="goods_img" script="__CONTROLLER__/add_doit">
+				</dd>
+			</dl>
+			<input type="submit" value="添加">
+			
+			<div class="divider"></div>
+
+		</div>
+		<div class="formBar">
+			<ul>
+				<li><div class="buttonActive"><div class="buttonContent"><button type="submit">提交</button></div></div></li>
+				<li><div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div></li>
+			</ul>
+		</div>
+	</form>
+	
+</div>
+
+
+<script type="text/javascript">
+function customvalidXxx(element){
+	if ($(element).val() == "xxx") return false;
+	return true;
+}
+</script>
+$(function() {
+	$().bind(){
+	$(':input').serialize();$('#id')
+	$.post
+	}
+})
+var id = {}
+$('#{$vo.id}').bind(
+	$.post(,,)
+)
+a del id
+$(a[del=""]).bind         $.each(  )

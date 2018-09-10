@@ -1,0 +1,113 @@
+<extend name="Public:layout" />
+<block name="main">
+	<div class="page-content">
+		<div class="page-header">
+			<h1>
+				商品管理
+				<small>
+					<i class="icon-double-angle-right"></i>
+					商品回收站
+				</small>
+			</h1>
+		</div>
+		<div class="table-responsive">
+			<table id="sample-table-1" class="table table-striped table-bordered table-hover">
+				<thead>
+					<tr>
+						<th class="center">
+							<label>
+								<!-- <input type="checkbox" class="ace" />
+								<span class="lbl"></span> -->
+							</label>
+						</th>
+						<th>品牌</th>
+						<th>所属分类</th>
+						<th>商品名称</th>
+						<th>货号</th>
+						<th>本店售价</th>
+						<th>促销计划</th>
+
+						<th>操作</th>
+					</tr>
+				</thead>
+				<form id="allform">
+					<tbody>
+					<foreach name="type" item="vo">
+						<tr>
+							<td class="center">
+								<label>
+									<input type="checkbox" class="ace" name="id[]" value="{$vo.id}"/>
+									<span class="lbl"></span> 
+								</label>
+							</td>
+
+							<td>
+								<span class="lbl">{$vo.bname}</span>
+								
+							</td>
+							<td><span class="lbl">{$vo.pname}</span></td>
+							<td><span class="lbl">{$vo.goods_name}</span></td>
+							<td class="hidden-480">{$vo.goods_sn}</td>
+							<td class="hidden-480"><span>{$vo.goods_price}</span></td>
+							<td><a href="__CONTROLLER__/giftadd/id/{$vo.id}">添加赠品</a></td>
+						
+							<td>
+								<a href="__CONTROLLER__/edit/id/{$vo.id}">修改</a> | <a href="__MODULE__/GoodsGallery/index/id/{$vo.id}">查看相册</a> | <a href="__MODULE__/Sale/index/id/{$vo.id}">秒杀</a> | <a href="__CONTROLLER__/recycle/id/{$vo.id}">删除</a>
+							</td>
+						</tr>													
+					</foreach>
+					<tr>
+						<td class="center" colspan="9">
+							<div class="col-xs-1 text-left">
+								<input class="btn btn-xs btn-inverse" id="setall"  value=" 全 选 " type="button">
+							</div>
+							<div class="col-xs-1 text-left">
+								<input class="btn btn-xs btn-inverse" id="against"  value=" 反 选 " type="button">
+							</div>
+							<div class="col-xs-1 text-left">
+								<input class="btn btn-xs btn-inverse" id="delall" value="批量删除" type="button">
+							</div>
+							
+							<!-- 显示分页 -->
+							<div class="col-xs-9 text-right">{$page}</div>
+						</td>	
+					</tr>
+					</tbody>
+				</form>
+			</table>
+		</div>
+		<script>
+		$(function() {
+			//全选		
+			var bool = true;	
+			$('#setall').bind('click',function() {				
+				$('input[name="id[]"]').each(function() {
+					$(this).prop('checked',bool);					
+				})
+				bool = !bool;
+			})
+
+			//反选
+			$('#against').bind('click',function() {
+				$('input[name="id[]"]').each(function() {
+					$(this).prop('checked',!$(this).prop('checked'));					
+				})
+			})
+
+			//批量删除
+			$('#delall').bind('click',function() {
+				var data = $('#allform').serialize();
+				$.post('__CONTROLLER__/recycleall',data,function(data) {			
+				console.log(data);	
+					if(data){
+						layer.msg('批量删除成功！',1,function(){
+							// location.reload();
+						});
+					}else{
+						layer.msg('批量删除失败！',2,3);
+					}				
+				})
+			})
+		})
+		</script>
+</block>
