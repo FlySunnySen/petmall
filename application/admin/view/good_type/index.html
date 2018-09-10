@@ -80,9 +80,10 @@
 													<span class="label label-sm {$vo['is_show'] ? 'label-success' : 'label-warning'}">{$vo['is_show'] ? '显示' : '不显示'}</span>
 												</td>
 												<td>
-													<a href="/{:request()->module()}/{:request()->controller()}/addEditCategory/id/{$vo.id}">修改</a>
+													
+													<a href="{:url('good_type/addEditCategory',"hhh")}{$vo.id}">修改</a>
 													|
-													<a href="{:request()->controller()}/addEditCategory/id/{$vo.id}">删除</a>
+													<a href="{:request()->controller()}/addEditCategory/id/{$vo.id}">删除111</a>
 												</td>
 											</tr>
 										{/foreach}
