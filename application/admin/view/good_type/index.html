@@ -1,4 +1,4 @@
-{extend name="Public:layout" /}
+{extend name="public:layout" /}
 {block name="main"}
 	<div class="page-content">
 		<div class="page-header">
@@ -81,9 +81,9 @@
 												</td>
 												<td>
 													
-													<a href="{:url('good_type/addEditCategory',"hhh")}{$vo.id}">修改</a>
+													<a href="{:url('admin/good_type/addEditCategory',array('id'=>$vo.id))}">修改</a>
 													|
-													<a href="{:request()->controller()}/addEditCategory/id/{$vo.id}">删除</a>
+													<a  href="{:url('admin/good_type/deleteCategory',array('id'=>$vo.id))}">删除</a>
 												</td>
 											</tr>
 										{/foreach}
@@ -127,19 +127,21 @@
 					$(this).prop('checked',!$(this).prop('checked'));					
 				})
 			})
+			
+			
 
 			//批量删除
 			$('#delall').bind('click',function() {
 				var data = $('#allform').serialize();
 				if(!confirm('确定要删除么？')) return;
-				$.post('__CONTROLLER__/delall',data,function(data) {		
+				$.post("{:url('admin/good_type/delMore')}",data,function(data) {		
 				console.log(data);		
 					if(data){
-						layer.msg(data,1,function(){
-							location.reload();
-						});
+						alert(data);
+						location.reload();
+						
 					}else{
-						layer.msg('批量删除失败！',2,3);
+						alert('删除失败');
 					}				
 				})
 			})

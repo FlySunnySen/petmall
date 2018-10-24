@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<link rel="stylesheet" href="__STATIC__/css/login.css" />
+		<meta charset="UTF-8">
+		<script type="text/javascript" src="__STATIC__/js/jquery.min.js"></script>
+		<title></title>
+		
+	</head>
+
+	<body>
+		<div class="login-body">
+			<div class="login-top">
+				<a href="{:url('index/index/index')}">
+						<img class="img1" src="__STATIC__/img/logo.gif" />
+				</a>
+			
+				<h1>用户登陆</h1>
+			</div>
+
+			<div class="login-content">
+				
+                <img src="__STATIC__/img/login/log_n.jpg" />
+				<form  method="post" action="__CONTROLLER__/login">
+					<div class="login-window">
+						<div class="login-list">
+							<img src="__STATIC__/img/login/username.jpg">
+							<input type="email" placeholder="请输入邮箱" id="email" name="email" />
+						</div>
+						<div class="login-list">
+							<img src="__STATIC__/img/login/password.jpg" />
+							<input type="password" placeholder="请输入密码" id="password" name="password" />
+						</div>
+						<div class="yzm">
+							<div class="login-yzm">
+								<p>验证码：</p><input type="text" id="code" name="code" />
+
+							</div>
+							<img id="verifyimg" src="__CONTROLLER__/captcha" border="0"  width="105px" height="47px" />
+							<a onclick="javascript:verifyimg.src='__CONTROLLER__/captcha/'+Math.random()" style="width: 88px;height: 50px;line-height: 47px;font-size: 15px;">换一换</a>
+						</div>
+
+						<!--登陆错误-->
+						<div id="login-mistake">
+						</div>
+
+						<div class="login-operate">
+							<a href="#">免费注册</a>
+							<span>丨</span>
+							<a href="#">忘记密码</a>
+						</div>
+						<div>
+							<input type="submit" value="登陆" class="login-btn" id="login" />
+						</div>
+
+					</div>
+					<script type="text/javascript">
+					$(function() {
+						//检查邮箱格式
+							$("#email").bind('blur',function(){
+								var uemail= $(this).val();
+								var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-]+)+$/;
+                                var result = reg.test(uemail);
+                                if(!result){
+                                	$("#login-mistake").addClass("login-mistake");
+									$("#login-mistake").text("邮箱格式不正确！");
+                                }
+							});
+					})
+					</script>
+					<script type="text/javascript">
+						$(function() {
+							//检查各个表单是否为空
+							
+							$("#login").bind('click',function() {
+								if($("#username").val() == "" || $("#password").val() == "") {
+									$("#login-mistake").addClass("login-mistake");
+									$("#login-mistake").text("请输入邮箱或密码！");
+								}
+								else{
+									if($("#code").val()==""){
+										$("#login-mistake").addClass("login-mistake");
+									    $("#login-mistake").text("请输入验证码！");
+									}
+								}
+								
+								
+							});
+								
+						})
+					</script>
+				</form>
+			</div>
+		</div>
+	</body>
+
+</html>

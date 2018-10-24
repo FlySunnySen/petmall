@@ -1,0 +1,152 @@
+{extend name="Public:layout" /}
+{block name="main"}
+	<style>
+	#mask{
+		width:100%;
+		background:#000;
+		position:absolute;
+		top:0px;
+		left:0px;
+		z-index:2001;
+		opacity:0.80;
+		filter:alpha(opacity=0.80);
+		display:none;
+	}
+	#gall{
+		position:fixed;
+		z-index:2002;
+		background:fuchsia;
+		top:100px;
+		display:none;
+		border:5px solid white;
+		box-shadow:0px 0px 2px 3px #111;
+	}
+	.rela{
+		position:relative;
+	}
+	.butt{
+		position:absolute;
+		top:10px;
+		right:10px;
+		height:30px;
+		width:30px;
+		border-radius:50% 50%;
+		background:#fff;
+		border:0px;
+		font-size:20px;
+		line-height:30px;
+		opacity:0.45;
+		filter:alpha(opacity=0.45);
+	}
+	.imgdel{
+		position:absolute;
+		bottom:10px;
+		right:10px;
+		border-radius:2px 2px;
+		background:#fff;
+		border:0px;
+		z-index:100;
+		line-height:30px;
+		opacity:0.45;
+		filter:alpha(opacity=0.45);
+	}
+	</style>
+</div>
+	<div class="main-content">
+		<div class="breadcrumbs" id="breadcrumbs">
+			
+
+			<div class="page-content">
+				<div class="page-header">
+					<h1>
+						商品相册
+						<small> <i class="icon-double-angle-right"></i>
+							相册展示
+						</small>
+					</h1>
+				</div>
+				<!-- /.page-header -->
+				<a href="{:url('admin/good_images/add',array('id'=>$Request.param.id))}">	
+					<button class="btn btn-info">添加图片</button>
+				</a>
+
+				<div class="row">
+					<div class="col-xs-12">
+						<!-- PAGE CONTENT BEGINS -->
+
+						<div class="row-fluid">
+							<ul class="ace-thumbnails">
+
+								{foreach name="goods" item="vo"}
+									<li class="	">
+										<a href="javascript:;" data-rel="colorbox"  class="onimg">
+											<img alt="相册图片" src="{$vo.image_url}" height="200">
+											<button type="button" class="imgdel" del="{$vo.img_id}">删除</button>
+											<div class="text">
+												<div class="inner"></div>
+											</div>
+										</a>
+									</li>
+								{/foreach}
+							</ul>
+						</div>
+						<!-- PAGE CONTENT ENDS -->
+					</div>
+					<!-- /.col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.page-content -->
+		</div>
+		<!-- /.main-content -->
+	</div>
+	<div id="mask"></div>
+	<div id="gall" class="rela"></div>
+
+	<script>
+	$(function() {
+		var sheight = $(document).height();
+		var vwidth = document.documentElement.clientWidth;
+		// console.log(vheight);
+		$('#mask').height(sheight);
+		
+
+		$('.onimg').bind('click',function() {
+			$('#gall').show();
+			$('#mask').show();
+			var imgs = $(this).children('img').attr('src');
+			$('#gall').html('<img alt="相册图片" src="'+imgs+'" style="min-height:400px;max-height:600px;"/><button type="button" class="butt">×</button>');
+			
+			$('#gall').css('left',(vwidth - 700)/2);
+		})
+
+		$('#gall').bind('click',function() {
+			$(this).hide();
+			$('#mask').hide();
+		})
+
+		$('.imgdel').bind('click',function() {
+			
+			if(confirm('确认要删除么？')){
+				$(this).parent().unbind();
+				var th = $(this);
+				$.post('{:url('admin/GoodImages/delete')}',{id:$(this).attr('del')},function(data){
+					if(data) {
+						th.parent().hide();
+					}
+				});
+			}
+		});
+
+		$(window).resize(function() {
+			//获取相框宽度 以计算相片宽度
+			var w = $('.ace-thumbnails').width() /  2;
+			$('.onimg').children('img').width(w-10);
+		})
+		
+
+	})
+	</script>
+
+	
+{/block}

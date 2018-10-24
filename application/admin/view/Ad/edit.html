@@ -1,0 +1,154 @@
+<extend name="Public:layout" />
+<block name="toptitle">
+<li class="active"><a href="__MODULE__/Ad/index">广告列表</a></li>
+<li class="active"><a href="__MODULE__/Ad/add">修改广告</a></li>
+</block>
+<block name="main">
+<!-- 添加文章分类 -->
+<div class="page-content">
+	<div class="page-header">
+		<h1>
+			广告管理
+			<small>
+				<i class="icon-double-angle-right"></i>
+				修改广告
+			</small>
+		</h1>
+	</div><!-- /.page-header -->
+	<div class="row">
+		<div class="col-xs-12">
+			<!-- PAGE CONTENT BEGINS -->
+			<form class="form-horizontal" action="__CONTROLLER__/save" enctype="multipart/form-data" role="form" method="post" id="addform">
+			<input type="hidden" name="id" value="{$ad.id}">
+				<div class="form-group">
+					<label class="col-sm-3 control-label no-padding-right" for="form-field-2" > 选择广告位置 </label>
+
+					<div class="col-sm-9">
+						<select name="ad_position">
+							<option value="1" <eq name="ad[ad_position]" value="1">selected</eq>>顶部广告</option>
+							<option value="2" <eq name="ad[ad_position]" value="2">selected</eq>>中间banner广告</option>
+							<option value="3" <eq name="ad[ad_position]" value="3">selected</eq>>底部广告</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group" id="logo">
+					<label class="col-sm-3 control-label no-padding-right" for="form-field-1" > 广告图片 </label>
+
+					<div class="col-sm-9">
+						<!-- uploadify上传插件 -->
+						<div id="imgs"></div>
+						<input id="file_upload" name="file_upload" type="file" multiple="true" value="" />
+						<!-- uploadify上传插件 -->
+						<input type="hidden" id="uplogo" name="ad_picture" value="{$ad.ad_picture}">
+						<!-- 上传的图片地址放到这里面 -->
+						<img src="__PUBLIC__/{$ad.ad_picture}" height="30" id="change">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label no-padding-right" for="form-field-1" > 广告链接地址 </label>
+
+					<div class="col-sm-9">
+						<input type="url" id="form-field-1" placeholder="请输入广告链接地址。" class="col-xs-10 col-sm-5" name="ad_link" required value="{$ad.ad_link}" /><span class="text-danger" style="display:none">请输入正确广告链接！</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label no-padding-right" for="form-field-1" > 广告简单描述 </label>
+
+					<div class="col-sm-9">
+						<input type="text" id="form-field-1" placeholder="请输入简单描述。" class="col-xs-10 col-sm-5" name="ad_desc" value="{$ad.ad_desc}" />
+					</div>
+				</div>
+				<div class="space-4"></div>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label no-padding-right" for="form-field-2"> 是否显示 </label>
+					<div class="col-xs-3">
+						<div class="radio">
+							<label>
+							<input name="is_show" type="radio" class="ace" value="1" checked <if condition="$ad.is_show eq '1'">checked</if>>
+							<span class="lbl">显示</span>
+							</label>
+							<label>
+							<input name="is_show" type="radio" class="ace" value="0" <if condition="$ad.is_show eq '0'">checked</if>>
+							<span class="lbl">不显示</span>
+							</label>
+						</div>
+					</div>
+				</div>
+
+				<div class="clearfix form-actions">
+					<div class="col-md-offset-3 col-md-9">
+						<button class="btn btn-info" type="button" id="addtype" >
+							<i class="icon-ok bigger-110"></i>
+							修改
+						</button>
+
+						&nbsp; &nbsp; &nbsp;
+						<button class="btn" type="reset">
+							<i class="icon-undo bigger-110"></i>
+							重置
+						</button>
+					</div>
+				</div>
+			</form>
+		</div><!-- /.col -->
+	</div><!-- /.row -->
+	</div><!-- /.page-content -->
+	<script>
+	$(function(){
+		//表单验证
+		var link=false;
+		$('input[name="ad_link"]').blur(function(){
+			if($(this).val() == ''){
+				$(this).focus();
+				$(this).next().show();
+				link=false;
+			}else{
+				var preg = /(https?):\/\/([^\.\/]+)([\.]?)([^\.\/]+)([\.]?)([^\.\/]+)(\/[\w-\.\/\?\%\&\=]*)?/i;
+				if(preg.test($(this).val())){
+					$(this).next().hide();
+					link=true;
+				}else{
+					$(this).focus();
+					$(this).next().show().html('链接格式不正确！');
+					link=false;
+				}
+			}
+		})
+		// 图片上传插件
+		var img = '';
+		// alert('{:U("Flink/myupload")}');
+		$('#file_upload').click(function(){
+			$('#change').hide();
+		})
+		$('#file_upload').uploadify({
+	        'swf' : '__PUBLIC__/uploadify/uploadify.swf',
+	        'uploader' : '__CONTROLLER__/myupload',
+	        'buttonText' : '更改LOGO',
+	        'onUploadSuccess' : function(file, data, response) {
+	        	img = "<img height='30px' src='__PUBLIC__/"+data+"'>";
+	        	$('#imgs').html(img);
+	        	$('#uplogo').val(data);
+        	}
+    	});
+
+		$('#addtype').click(function(){
+			if(!link){
+				return false;
+			}
+			var data = $('#addform').serialize();
+			$.post('__CONTROLLER__/save',data,function(data){
+				if(data == 1){
+					// alert('success');
+					layer.msg('修改成功！',2,function(){
+						location.href = '__CONTROLLER__/index';
+					});
+				}else{
+					layer.msg('修改失败！',2,3);
+					// alert('error');
+				}
+			})
+		})
+	})
+</script>
+</block>

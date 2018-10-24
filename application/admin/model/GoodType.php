@@ -7,6 +7,10 @@ class GoodType extends Model
 	
 	protected $field = true;
 	
+	public function good()
+	{
+		return $this->hasMany('good');
+	}
 	/**
 	 * 无限极分类
 	 * @param   $list array()

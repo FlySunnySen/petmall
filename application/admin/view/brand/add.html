@@ -1,0 +1,178 @@
+{extend name="public:layout" /}
+{block name="head"}
+    <link rel="stylesheet" href="__PUBLIC__/uploadify/Huploadify.css" />
+{/block}
+{block name="main"}
+	<div class="page-content">
+		<div class="page-header">
+			<h1>
+				品牌管理
+				<small> <i class="icon-double-angle-right"></i>
+					添加品牌
+				</small>
+			</h1>
+		</div>
+		<!-- /.page-header -->
+
+		<div class="row">
+			<div class="col-xs-12">
+				<!-- PAGE CONTENT BEGINS -->
+
+				<form class="form-horizontal" role="form" action="{:url('admin/brand/addEditBrand')}" method="post" enctype="multipart/form-data" id="form">
+
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="form-field-1">品牌名称</label>
+
+						<div class="col-sm-9">
+							<input type="text" id="form-field-1"  class="col-xs-10 col-sm-5" name="brand_name" /><span></span>
+						</div>
+					</div>
+
+					
+
+					<div class="space-4"></div>
+
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="form-field-3">品牌排序</label>
+
+						<div class="col-sm-9">
+							<input type="text" id="form-field-3"  class="col-xs-10 col-sm-5" name="brand_order" />
+
+						</div>
+					</div>
+
+					<div class="space-4"></div>
+
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right">是否显示</label>
+
+						<div class="col-sm-9">
+							<div class="col-xs-12 col-sm-6">
+								<div class="control-group">
+
+									<label>
+										<input name="is_show" type="radio" class="ace" value="1" />
+										<span class="lbl">是</span>
+									</label>
+
+									<label>
+										<input name="is_show" type="radio" class="ace" value="0" />
+										<span class="lbl">否</span>
+									</label>
+
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group" id="logo">
+						<label class="col-sm-3 control-label no-padding-right" for="form-field-1" >品牌logo</label>
+
+						<div class="col-sm-9">
+							
+							<!-- uploadify上传插件 -->
+							<div id="imgs"></div>
+							<div id="file_upload"></div>
+							<!-- uploadify上传插件 -->
+							<input type="hidden" value="" id="uplogo" name="brand_logo">
+							<!-- 上传的图片地址放到这里面 -->
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="form-field-11">品牌描述</label>
+
+						<div class="col-sm-9 col-xs-6">
+							<textarea name="brand_desc" id="" cols="30" rows="5" class="col-xs-6" style="resize:none;"></textarea>
+						</div>
+					</div>
+
+					<div class="clearfix form-actions">
+						<div class="col-md-offset-3 col-md-9">
+							<button class="btn btn-info" type="button"> <i class="icon-ok bigger-110"></i>
+								提 交
+							</button>
+							&nbsp; &nbsp; &nbsp;
+							
+							<button class="btn" type="reset">
+								<i class="icon-undo bigger-110"></i>
+								重　置
+							</button><span id="wanning"></span>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<script src="__PUBLIC__/uploadify/jquery.Huploadify.js"></script>
+	<script>
+	$(function() {
+		var img = '';
+		
+		var up = $('#file_upload').Huploadify({
+				auto:false,
+				fileTypeExts:'*.*',
+				multi:true,
+				formData:{key:123456,key2:'vvvv'},
+				fileSizeLimit:99999999999,
+				showUploadedPercent:true,
+				showUploadedSize:true,
+				removeTimeout:9999999,
+				uploader:'{:url('admin/brand/myUpload')}',
+				onUploadStart:function(file){
+					console.log(file.name+'开始上传');
+				},
+				onInit:function(obj){
+					console.log('初始化');
+					console.log(obj);
+				},
+				onUploadComplete:function(file, data, response) {
+		        	img = "<img width='200px' src="+data.replace(/\\/g,'')+">";
+		        	$('#imgs').html(img);
+		        	$('#uplogo').val(data.replace(/\\/g,''));
+	            },	    	    
+			 	onCancel:function(file){
+					console.log(file.name+'删除成功');
+				},
+				onClearQueue:function(queueItemCount){
+					console.log('有'+queueItemCount+'个文件被删除了');
+				},
+				onDestroy:function(){
+					console.log('destroyed!');
+				},
+				onSelect:function(file){
+					console.log(file.name+'加入上传队列');
+				},
+				onQueueComplete:function(queueData){
+					console.log('队列中的文件全部上传完成',queueData);
+				}
+			})
+
+
+		var name = false;
+		
+		$('#form-field-1').blur(function() {
+			if(!$(this).val()) {
+				$(this).next().css('color','red').html('请填入品牌名称');
+				name = false;
+			}else{	
+				name = true;
+			}	
+		})
+
+		
+
+		$('button[type="button"]').bind('click',function() {
+			//品牌logo
+			if(!$('#uplogo').val()){
+				$(this).next().next().css('color','red').html('请上传品牌logo！');return;
+			}
+			if(name) {
+				$('#form').submit();
+			}else{
+				$(this).next().next().css('color','red').html('请输入合理的品牌信息！');	
+			}
+		})
+	})
+	</script>
+{/block}

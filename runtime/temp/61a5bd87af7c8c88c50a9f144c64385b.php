@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:75:"C:\wamp64\www\new_petmall\public/../application/admin\view\index\index.html";i:1536198715;s:78:"C:\wamp64\www\new_petmall\public/../application/admin\view\Public\\layout.html";i:1536477408;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:75:"C:\wamp64\www\new_petmall\public/../application/admin\view\index\index.html";i:1536721823;s:78:"C:\wamp64\www\new_petmall\public/../application/admin\view\public\\layout.html";i:1539084273;}*/ ?>
 ﻿<!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -44,8 +44,8 @@
 		<script src="/static/admin/js/respond.min.js"></script>
 		<![endif]-->
 		<!-- uploadify图像上传插件 -->
-		<link rel="stylesheet" href="/static/uploadify/uploadify.css">
-		<script src='/static/uploadify/jquery.uploadify.min.js'></script>
+		<link rel="stylesheet" href="/static/uploadify/Huploadify.css">
+		<script src='/static/uploadify/jquery.Huploadify.js'></script>
 		<!-- 百度在线编辑器 -->
 		<script type="text/javascript">
     		window.UEDITOR_HOME_URL = '/static/ueditor/';
@@ -55,6 +55,11 @@
 		<script type="text/javascript" src="/static/ueditor/ueditor.parse.min.js"></script>
 		<script type="text/javascript" src="/static/ueditor/lang/zh-cn/zh-cn.js"></script>
 		<!-- 百度在线编辑器 结束-->
+		
+		
+		
+		
+		
 	</head>
 
 	<body class="skin-2">
@@ -219,13 +224,13 @@
 							</a>
 							<ul class="submenu">
 								<li class="<?php if($menuList == 'Goods-index'): ?>active open<?php endif; ?>">
-									<a href="/<?php echo request()->module(); ?>/Goods/index">
+									<a href="/<?php echo request()->module(); ?>/Good/index">
 										<i class="icon-double-angle-right"></i>
 										商品列表
 									</a>
 								</li>
-								<li class="<eq name='menuList' value='Goods-add'>active open</eq>">
-									<a href="/<?php echo request()->module(); ?>/Goods/add">
+								<li class="<eq name='menuList' value='Goods-addEditGood'>active open</eq>">
+									<a href="/<?php echo request()->module(); ?>/Good/addEditGood">
 										<i class="icon-double-angle-right"></i>
 										添加商品
 									</a>
@@ -251,7 +256,7 @@
 									</a>
 								</li>
 								<li class="<eq name='menuList' value='Brand-add'>active open</eq>">
-									<a href="/<?php echo request()->module(); ?>/Brand/add">
+									<a href="/<?php echo request()->module(); ?>/Brand/addeditbrand">
 										<i class="icon-double-angle-right"></i>
 										添加商品品牌
 									</a>
@@ -264,7 +269,7 @@
 									</a>
 								</li>
 								<li class="<eq name='menuList' value='Recycle-index'>active open</eq>">
-									<a href="/<?php echo request()->module(); ?>/Recycle/index">
+									<a href="/<?php echo request()->module(); ?>/Good/recycle">
 										<i class="icon-double-angle-right"></i>
 										商品回收站
 									</a>
@@ -507,7 +512,7 @@
 						<!-- 文章管理结束 -->
 						
 						<!-- 广告管理 开始 -->
-						<li class="<eq name='menu' value='Ad'>active open</eq>">
+						<li class="<?php if($menu == 'Ad'): ?>active open<?php endif; ?>">
 							<a href="#" class="dropdown-toggle">
 								<i class="icon-facetime-video"></i>
 								<span class="menu-text"> 广告管理 </span>
@@ -516,14 +521,14 @@
 							</a>
 
 							<ul class="submenu">
-								<li class="<eq name='menuList' value='Adindex'>active open</eq>">
+								<li class="<?php if($menuList == 'Adindex'): ?>active open<?php endif; ?>">
 									<a href="/<?php echo request()->module(); ?>/Ad/index">
 										<i class="icon-double-angle-right"></i>
 										广告列表
 									</a>
 								</li>
 
-								<li class="<eq name='menuList' value='Adadd'>active open</eq>">
+								<li class="<?php if($menuList == 'Adadd'): ?>active open<?php endif; ?>">
 									<a href="/<?php echo request()->module(); ?>/Ad/add">
 										<i class="icon-double-angle-right"></i>
 										添加广告
@@ -590,8 +595,8 @@
 								<i class="icon-home home-icon"></i>
 								<a href="/<?php echo request()->module(); ?>/Index/index">首页</a>
 							</li>
-							<block name="toptitle">
-							</block>
+							
+							
 						</ul>
 						<!-- 页面标题结束 -->
 

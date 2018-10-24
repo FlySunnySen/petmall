@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:79:"C:\wamp64\www\new_petmall\public/../application/admin\view\good_type\index.html";i:1536561766;s:77:"C:\wamp64\www\new_petmall\public/../application/admin\view\Public\layout.html";i:1536477408;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:79:"C:\wamp64\www\new_petmall\public/../application/admin\view\good_type\index.html";i:1536741883;s:77:"C:\wamp64\www\new_petmall\public/../application/admin\view\public\layout.html";i:1539084273;}*/ ?>
 ﻿<!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -44,8 +44,8 @@
 		<script src="/static/admin/js/respond.min.js"></script>
 		<![endif]-->
 		<!-- uploadify图像上传插件 -->
-		<link rel="stylesheet" href="/static/uploadify/uploadify.css">
-		<script src='/static/uploadify/jquery.uploadify.min.js'></script>
+		<link rel="stylesheet" href="/static/uploadify/Huploadify.css">
+		<script src='/static/uploadify/jquery.Huploadify.js'></script>
 		<!-- 百度在线编辑器 -->
 		<script type="text/javascript">
     		window.UEDITOR_HOME_URL = '/static/ueditor/';
@@ -55,6 +55,11 @@
 		<script type="text/javascript" src="/static/ueditor/ueditor.parse.min.js"></script>
 		<script type="text/javascript" src="/static/ueditor/lang/zh-cn/zh-cn.js"></script>
 		<!-- 百度在线编辑器 结束-->
+		
+		
+		
+		
+		
 	</head>
 
 	<body class="skin-2">
@@ -219,13 +224,13 @@
 							</a>
 							<ul class="submenu">
 								<li class="<?php if($menuList == 'Goods-index'): ?>active open<?php endif; ?>">
-									<a href="/<?php echo request()->module(); ?>/Goods/index">
+									<a href="/<?php echo request()->module(); ?>/Good/index">
 										<i class="icon-double-angle-right"></i>
 										商品列表
 									</a>
 								</li>
-								<li class="<eq name='menuList' value='Goods-add'>active open</eq>">
-									<a href="/<?php echo request()->module(); ?>/Goods/add">
+								<li class="<eq name='menuList' value='Goods-addEditGood'>active open</eq>">
+									<a href="/<?php echo request()->module(); ?>/Good/addEditGood">
 										<i class="icon-double-angle-right"></i>
 										添加商品
 									</a>
@@ -251,7 +256,7 @@
 									</a>
 								</li>
 								<li class="<eq name='menuList' value='Brand-add'>active open</eq>">
-									<a href="/<?php echo request()->module(); ?>/Brand/add">
+									<a href="/<?php echo request()->module(); ?>/Brand/addeditbrand">
 										<i class="icon-double-angle-right"></i>
 										添加商品品牌
 									</a>
@@ -264,7 +269,7 @@
 									</a>
 								</li>
 								<li class="<eq name='menuList' value='Recycle-index'>active open</eq>">
-									<a href="/<?php echo request()->module(); ?>/Recycle/index">
+									<a href="/<?php echo request()->module(); ?>/Good/recycle">
 										<i class="icon-double-angle-right"></i>
 										商品回收站
 									</a>
@@ -507,7 +512,7 @@
 						<!-- 文章管理结束 -->
 						
 						<!-- 广告管理 开始 -->
-						<li class="<eq name='menu' value='Ad'>active open</eq>">
+						<li class="<?php if($menu == 'Ad'): ?>active open<?php endif; ?>">
 							<a href="#" class="dropdown-toggle">
 								<i class="icon-facetime-video"></i>
 								<span class="menu-text"> 广告管理 </span>
@@ -516,14 +521,14 @@
 							</a>
 
 							<ul class="submenu">
-								<li class="<eq name='menuList' value='Adindex'>active open</eq>">
+								<li class="<?php if($menuList == 'Adindex'): ?>active open<?php endif; ?>">
 									<a href="/<?php echo request()->module(); ?>/Ad/index">
 										<i class="icon-double-angle-right"></i>
 										广告列表
 									</a>
 								</li>
 
-								<li class="<eq name='menuList' value='Adadd'>active open</eq>">
+								<li class="<?php if($menuList == 'Adadd'): ?>active open<?php endif; ?>">
 									<a href="/<?php echo request()->module(); ?>/Ad/add">
 										<i class="icon-double-angle-right"></i>
 										添加广告
@@ -590,8 +595,8 @@
 								<i class="icon-home home-icon"></i>
 								<a href="/<?php echo request()->module(); ?>/Index/index">首页</a>
 							</li>
-							<block name="toptitle">
-							</block>
+							
+							
 						</ul>
 						<!-- 页面标题结束 -->
 
@@ -689,9 +694,10 @@
 													<span class="label label-sm <?php echo !empty($vo['is_show'])?'label-success' : 'label-warning'; ?>"><?php echo !empty($vo['is_show'])?'显示' : '不显示'; ?></span>
 												</td>
 												<td>
-													<a href="/<?php echo request()->module(); ?>/<?php echo request()->controller(); ?>/addEditCategory/id/<?php echo $vo['id']; ?>">修改</a>
+													
+													<a href="<?php echo url('admin/good_type/addEditCategory',array('id'=>$vo['id'])); ?>">修改</a>
 													|
-													<a href="<?php echo request()->controller(); ?>/addEditCategory/id/<?php echo $vo['id']; ?>">删除</a>
+													<a  href="<?php echo url('admin/good_type/deleteCategory',array('id'=>$vo['id'])); ?>">删除</a>
 												</td>
 											</tr>
 										<?php endforeach; endif; else: echo "" ;endif; ?>
@@ -735,19 +741,21 @@
 					$(this).prop('checked',!$(this).prop('checked'));					
 				})
 			})
+			
+			
 
 			//批量删除
 			$('#delall').bind('click',function() {
 				var data = $('#allform').serialize();
 				if(!confirm('确定要删除么？')) return;
-				$.post('__CONTROLLER__/delall',data,function(data) {		
+				$.post("<?php echo url('admin/good_type/delMore'); ?>",data,function(data) {		
 				console.log(data);		
 					if(data){
-						layer.msg(data,1,function(){
-							location.reload();
-						});
+						alert(data);
+						location.reload();
+						
 					}else{
-						layer.msg('批量删除失败！',2,3);
+						alert('删除失败');
 					}				
 				})
 			})
