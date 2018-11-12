@@ -53,7 +53,7 @@
 		
         <div class="constants" style="margin:5% 20%">
         	<div>
-        		<form id="register" class="form-horizontal" method="post" action="__CONTROLLER__/register">
+        		<form id="register" class="form-horizontal" method="post" action="{:url('index/user/register')}">
         			<div class="form-group">
         				<label class="col-sm-3 control-label no-padding-right" for="email">邮箱</label>
         				<div class="col-sm-9">
@@ -78,14 +78,16 @@
         			</div>
         			
         			<div  class="form-group">
-        				<label class="col-sm-3 control-label no-padding-right" for="re_pwd">验证码</label>
+        				<label class="col-sm-3 control-label no-padding-right" for="re_pwd">
+        					
+        				</label>
         				<div class="col-sm-3">
         				   <input class="col-xs-10 col-sm-5" id="code" type="text" name="re_pwd" style="width: 203px;" required/>
       			   
         				</div>
         				<div class="col-sm-6">
-        					<img id="verifyimg" src="__CONTROLLER__/captcha" border="0"  width="105px" height="52px"/>
-        					<span class="btn btn-info" onclick="javascript:verifyimg.src='__CONTROLLER__/captcha/'+Math.random()" style="width: 88px;height: 50px;line-height: 35px;font-size: 15px;">换一换</span>
+        					<img id="verifyimg" src="{:url('index/user/captcha')}" border="0"  width="105px" height="52px"/>
+        					<span class="btn btn-info" onclick="javascript:verifyimg.src='{:url('index/user/captcha')}?rand='+Math.random()"'" style="width: 88px;height: 50px;line-height: 35px;font-size: 15px;">换一换</span>
         					<span id="code-check"></span>
         				</div>
         				
@@ -102,7 +104,7 @@
 	
 	<script type="text/javascript">
         	
-	//  检查邮箱
+	// 检测邮箱
 		 $(document).ready(function(){		 	
 		 	var email_status = false;  
         	$('#email').bind('blur',function(){
@@ -116,8 +118,8 @@
                     if(!result){
 				        $(this).next().removeClass("glyphicon glyphicon-ok").addClass("error-style").html('邮箱格式不正确！');
 				    }else{
-		                $.post('__CONTROLLER__/checkEmail',{email:uemail},function(data){
-		                if(data){
+		                $.post('{:url('index/user/checkEmail')}',{email:uemail},function(data){
+		                if(data == true){
 		                   $("#email-check").removeClass("glyphicon glyphicon-ok").addClass("error-style").html('用户已存在，请更换邮箱');
 						          
 		                }else{
@@ -185,8 +187,8 @@
           $('#code-check').removeClass("error-style glyphicon glyphicon-ok").html('验证码不能为空！').css("color","#ff6f4a").addClass("error-style");
           return false;
         }else{
-          $.post('__CONTROLLER__/yzm',{code:codeNumber},function(data){
-            if(data){
+          $.post('{:url('index/user/checkCaptcha')}',{code:codeNumber},function(data){
+            if(data == true){
               $("#code-check").addClass("error-style").css("color","green").addClass("glyphicon glyphicon-ok").html('');
                 code = true;
             }else{
