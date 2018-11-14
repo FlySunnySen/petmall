@@ -23,10 +23,10 @@ class Good extends Common{
 		                 ->view('good_type','type_name','good.type_id = good_type.id')
 						 ->view('brand','brand_name','brand.id=good.brand_id')
 						 ->where($status)
-						 ->select(); 
+						 ->paginate(10); 
 						
 		$this->assign('good_data',$good_data);
-		$this->assign('page',123);
+		
          return $this->fetch();
     }
 	
@@ -146,10 +146,10 @@ class Good extends Common{
 		                 ->view('good_type','type_name','good.type_id = good_type.id')
 						 ->view('brand','brand_name','brand.id=good.brand_id')
 						 ->where($status)
-						 ->select(); 
+						 ->paginate(10); 
 				
 		$this->assign('good_data',$good_data);
-		$this->assign('page',123);
+		
          return $this->fetch();
 	}
 	
