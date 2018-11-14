@@ -18,20 +18,25 @@ class GoodType extends Common
 	public function index()
 	{
 		$category = new category();
-		$data = $category->select();
-		$data = collection($data)->toArray();
-		//获取父id的名称		
-		foreach($data as $k=>$v){			
-			if($v['pid']==0){			
-				$data[$k]['p_name']="顶级分类";
-			}else{
-				$data[$k]['p_name'] = $category->where('id',$v['pid'])->value('type_name');
-			}
-		}	
-	
-		$this->assign('type',$data);
+		//获取商品分类
+		$data = Db::name('good_type')->paginate(10,false,['query'=>request()->param()])->each(function($item){
+			   //修改结果集
+               $pid = $item['pid']; 
+               if($item['pid'] == 0){
+               	 $item['p_name'] = "顶级分类";
+               }else{
+               	 $category = new category();
+               	 $item['p_name'] = $category->where('id',$item['pid'])->value('type_name');
+
+               }
+           
+            return $item;
+        
+          
+		});
 		
-		$this->assign('page',111);
+	
+		$this->assign('type',$data);	
 		return $this->fetch();
 	}
 	
