@@ -1,0 +1,22 @@
+.form-group input{
+	border: #ddd solid 1px;
+	height: 52px;
+	border-radius: 5px;
+	width: 413px;
+	color: #999;
+	text-indent: 16px;
+	font-size: 14px;
+	
+}
+.form-group label{
+	font-size: 16px;
+	margin-top: 10px;
+}
+
+.error-style{
+	 color:#ff6f4a;
+	 width:96px;
+     font-size:14px;
+     line-height:54px;
+     margin-left:10px;
+}
