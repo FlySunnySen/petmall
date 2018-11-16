@@ -22,7 +22,7 @@
 			<div class="login-content">
 				
                 <img src="__STATIC__/img/login/log_n.jpg" />
-				<form  method="post" action="__CONTROLLER__/login">
+				<form  method="post" action="{:url('index/user/loginAction')}">
 					<div class="login-window">
 						<div class="login-list">
 							<img src="__STATIC__/img/login/username.jpg">
@@ -55,20 +55,47 @@
 						</div>
 
 					</div>
-					<script type="text/javascript">
-					$(function() {
-						//检查邮箱格式
-							$("#email").bind('blur',function(){
-								var uemail= $(this).val();
-								var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-]+)+$/;
-                                var result = reg.test(uemail);
-                                if(!result){
-                                	$("#login-mistake").addClass("login-mistake");
-									$("#login-mistake").text("邮箱格式不正确！");
-                                }
-							});
-					})
-					</script>
+					
+				</form>
+			</div>
+		</div>
+	</body>
+    
+
+  <script type="text/javascript">
+        	
+	// 检测邮箱
+		 $(document).ready(function(){		 	
+		 	var email_status = false;  
+        	$('#email').bind('blur',function(){
+        		var uemail= $(this).val();
+        		if(!$(this).val()) {
+        			$(this).next().removeClass("glyphicon glyphicon-ok").addClass("error-style").html('邮箱不能为空');
+        			email_status = false;
+        		}else{
+        			var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-]+)+$/;
+                    var result = reg.test(uemail);
+                    if(!result){
+				        $(this).next().removeClass("glyphicon glyphicon-ok").addClass("error-style").html('邮箱格式不正确！');
+				    }else{
+		                $.post('{:url('index/user/checkEmail')}',{email:uemail},function(data){
+		                if(data == true){
+		                   $("#email-check").removeClass("glyphicon glyphicon-ok").addClass("error-style").html('用户已存在，请更换邮箱');
+						          
+		                }else{
+			                $("#email-check").addClass("error-style").css("color","green").addClass("glyphicon glyphicon-ok").html('');
+			                email_status = true;
+			            }
+        			})
+    
+        		   }
+				  }
+        	    })
+        });
+
+     
+
+    </script>
 					<script type="text/javascript">
 						$(function() {
 							//检查各个表单是否为空
@@ -90,9 +117,4 @@
 								
 						})
 					</script>
-				</form>
-			</div>
-		</div>
-	</body>
-
 </html>

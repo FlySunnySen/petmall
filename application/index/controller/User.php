@@ -10,6 +10,10 @@ class User extends Common
 		return $this->fetch();
 	}
 	
+	//登录动作
+	public function loginAction(){
+		halt(input());
+	}
 	
 	
 	//注册
