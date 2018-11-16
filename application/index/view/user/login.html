@@ -37,8 +37,8 @@
 								<p>验证码：</p><input type="text" id="code" name="code" />
 
 							</div>
-							<img id="verifyimg" src="__CONTROLLER__/captcha" border="0"  width="105px" height="47px" />
-							<a onclick="javascript:verifyimg.src='__CONTROLLER__/captcha/'+Math.random()" style="width: 88px;height: 50px;line-height: 47px;font-size: 15px;">换一换</a>
+							<img id="verifyimg" src="{:url('index/user/captcha')}" border="0"  width="105px" height="47px" />
+							<a onclick="javascript:verifyimg.src='{:url('index/user/captcha')}?rand='+Math.random()" style="width: 88px;height: 50px;line-height: 47px;font-size: 15px;">换一换</a>
 						</div>
 
 						<!--登陆错误-->
@@ -46,7 +46,7 @@
 						</div>
 
 						<div class="login-operate">
-							<a href="#">免费注册</a>
+							<a href="{:url('index/user/reg')}">免费注册</a>
 							<span>丨</span>
 							<a href="#">忘记密码</a>
 						</div>
