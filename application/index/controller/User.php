@@ -51,9 +51,23 @@ class User extends Common
 	
 	//用户进行注册
 	public function register(){
-	     $email = input('post.email');
-		 $pwd   = md5(md5(input('post.pwd')));
-		 Db::startTrans();//开启事务
+	     $userData['user_email'] = input('post.email');
+		 $userData['user_pwd']   = md5(md5(input('post.pwd')));
+		 $userData['is_delete']  = 1;
+		 Db::startTrans();
+		 try{
+              Db::name('user')->insert($userData);
+              $userId = Db::name('user')->getLastInsID();
+              Db::name('user_details')->data(['user_Uid' => $userId,'user_alias' => '用户'.time().rand(0,10000)])->insert();            
+              Db::commit();
+              $status = true;
+		 } catch(\Exception $e){
+		 		
+             Db::rollback();
+		 }
+		 if($status){
+		 	$this->success('注册成功',url('index/user/login'));
+		 }
 		 
 	}
 	

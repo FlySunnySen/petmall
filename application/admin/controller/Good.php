@@ -76,8 +76,7 @@ class Good extends Common{
 		}
 	
 	    
-		$this->assign('page',123);
-		
+	
 		
 		
 		

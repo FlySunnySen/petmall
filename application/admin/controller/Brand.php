@@ -18,9 +18,9 @@ class Brand extends Common
 	
 	public function index()
 	{
-		$brand = Db::name('brand')->select();
+		$brand = Db::name('brand')->paginate(10);
 		$this->assign('brand',$brand);
-		$this->assign('page',123);
+		
 		return $this->fetch();
 	}
 	
@@ -57,7 +57,7 @@ class Brand extends Common
 		}
 		
 		$this->assign('vo',123);
-		$this->assign('page',123);
+		
 	    return $this->fetch('add');	
 	}
 	

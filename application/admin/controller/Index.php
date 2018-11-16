@@ -12,8 +12,8 @@ class Index extends Common
 	
     public function index()
     {
-    	$this->assign('vo',13);
-		$this->assign('page',111);
+  //   	$this->assign('vo',13);
+		// $this->assign('page',111);
         return $this->fetch();
 	}
 }
