@@ -5,7 +5,7 @@
 			<h1>
 				会员管理
 				<small> <i class="icon-double-angle-right"></i>
-					会员列表
+					黑名单
 				</small>
 			</h1>
 		</div>
@@ -86,10 +86,11 @@
 													<span class="lbl">{$vo.reg_time}</span>
 												</td>
 										        <td>
+
 													
 													<a href="{:url('admin/User/editUserPwd',array('id'=>$vo.Uid))}">修改密码</a>
 													|
-													<a  href="{:url('admin/User/softDelUser',array('id'=>$vo.Uid,'action'=>0))}">禁用</a>
+													<a  href="{:url('admin/User/softDelUser',array('id'=>$vo.Uid,'action'=>1))}">恢复</a>
 												</td>
 											</tr>
 										{/foreach}
@@ -115,16 +116,27 @@
 			</div>
 		</div>
 	</div>
+    
 
+	
+	
+	
+  
 	<script>
-		$(function() {
+        $(function(){ 
 			//全选		
 			var bool = true;	
 			$('#setall').bind('click',function() {				
 				$('input[name="id[]"]').each(function() {
-					$(this).prop('checked',bool);					
+					$(this).prop('checked',bool);	
+
 				})
 				bool = !bool;
+				layer.open({
+					type:2,
+					content:'index'
+				});
+
 			})
 
 			//反选

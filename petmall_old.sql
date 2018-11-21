@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.4
+-- version 4.7.9
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: 2018-11-21 02:10:17
--- 服务器版本： 5.7.19
--- PHP Version: 5.6.31
+-- Generation Time: 2018-10-24 14:17:29
+-- 服务器版本： 5.7.21
+-- PHP Version: 5.6.35
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -349,23 +349,9 @@ CREATE TABLE IF NOT EXISTS `pet_user` (
   `Uid` int(11) NOT NULL AUTO_INCREMENT,
   `user_email` varchar(45) NOT NULL,
   `user_pwd` char(32) NOT NULL,
-  `reg_time` timestamp NOT NULL,
   `is_delete` varchar(45) DEFAULT '0' COMMENT '用户状态',
   PRIMARY KEY (`Uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
-
---
--- 转存表中的数据 `pet_user`
---
-
-INSERT INTO `pet_user` (`Uid`, `user_email`, `user_pwd`, `reg_time`, `is_delete`) VALUES
-(6, '274818439@qq.com', '14e1b600b1fd579f47433b88e8d85291', '0000-00-00 00:00:00', '1'),
-(7, '2748184390@qq.com', '14e1b600b1fd579f47433b88e8d85291', '0000-00-00 00:00:00', '1'),
-(8, '2848184390@qq.com', '14e1b600b1fd579f47433b88e8d85291', '0000-00-00 00:00:00', '1'),
-(9, '28481184390@qq.com', '14e1b600b1fd579f47433b88e8d85291', '0000-00-00 00:00:00', '1'),
-(10, '18481184390@qq.com', '14e1b600b1fd579f47433b88e8d85291', '0000-00-00 00:00:00', '1'),
-(11, '274818339@qq.com', '14e1b600b1fd579f47433b88e8d85291', '0000-00-00 00:00:00', '1'),
-(22, '274818437@qq.com', '14e1b600b1fd579f47433b88e8d85291', '2018-11-21 02:09:38', '1');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -409,20 +395,7 @@ CREATE TABLE IF NOT EXISTS `pet_user_details` (
   `user_phone` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_pet_user_details_pet_user1_idx` (`user_Uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
-
---
--- 转存表中的数据 `pet_user_details`
---
-
-INSERT INTO `pet_user_details` (`id`, `user_Uid`, `user_alias`, `user_question`, `user_answer`, `user_sex`, `user_money`, `user_integral`, `user_level`, `user_phone`) VALUES
-(2, 6, '用户15423316148150', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(3, 7, '用户15423317948860', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(4, 8, '用户15423318396407', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(5, 9, '用户1542331889227', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(6, 10, '用户15423319301196', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(7, 11, '用户15426787501649', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(17, 22, '用户15427661787490', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- 限制导出的表

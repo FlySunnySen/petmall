@@ -94,21 +94,38 @@ class User extends Controller
 	public function register(){
 	     $userData['user_email'] = strtolower(input('email'));
 		 $userData['user_pwd']   = md5(md5(input('post.pwd')));
-		 $userData['is_delete']  = 1;
+		 $userData['is_delete']  = 0;
+		 $userData['reg_time']   = date('Y-m-d H:i:s',time());
+         
+         $rst = Db::name('user')->where('user_email','=',$userData['user_email'])->find();
+         //判断是否重复注册
+         if($rst){
+             $this->error('该用户已经注册过了');
+         }
+		  
+         $status = false;
+		
 		 Db::startTrans();
 		 try{
               Db::name('user')->insert($userData);
               $userId = Db::name('user')->getLastInsID();
-              Db::name('user_details')->data(['user_Uid' => $userId,'user_alias' => '用户'.time().rand(0,10000)])->insert();            
+              Db::name('user_details')->data(['user_Uid' => $userId,'user_alias' => '用户'.time().rand(0,10000)])->insert();                    
               Db::commit();
               $status = true;
+
+		 
 		 } catch(\Exception $e){
-		 		
+		 	 	
              Db::rollback();
+            
 		 }
-		 if($status){
+
+
+          if($status){
 		 	$this->success('注册成功',url('index/user/login'));
-		 }
+		  }else{
+		  	$this->error('注册失败',url('index/user/reg'));
+		  }
 		 
 	}
 	

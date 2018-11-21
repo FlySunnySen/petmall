@@ -16,6 +16,8 @@
 		<link rel="stylesheet" href="/static/admin/css/ace-rtl.min.css" />
 		<link rel="stylesheet" href="/static/admin/css/ace-skins.min.css" />
 		<link rel="stylesheet" href="/static/admin/css/myace.css" />
+		<link rel="stylesheet" type="text/css" href="/static/admin/jQuery-tck/css/common.css">
+
 
 		<!--[if lte IE 8]>
 		  <link rel="stylesheet" href="/static/admin/css/ace-ie.min.css" />
@@ -30,8 +32,7 @@
 		<script src="/static/admin/js/jquery-2.0.3.min.js"></script>
 		<![endif]-->
 		<script src="/static/admin/js/jquery-2.0.3.min.js"></script>
-		<!-- 加载layer弹窗插件 -->
-		<script src="/static/layer/layer.min.js"></script>
+	
 		<!-- ace settings handler -->
 
 		<script src="/static/admin/js/ace-extra.min.js"></script>
@@ -53,8 +54,11 @@
 		<script type="text/javascript" src="/static/ueditor/ueditor.all.min.js"></script>
 		<script type="text/javascript" src="/static/ueditor/ueditor.parse.min.js"></script>
 		<script type="text/javascript" src="/static/ueditor/lang/zh-cn/zh-cn.js"></script>
+
 		<!-- 百度在线编辑器 结束-->
-		
+
+
+		<script type="text/javascript" src="/static/layer/layer.js"></script>
 		{block name="head"}
 		{/block}
 		
@@ -344,6 +348,12 @@
 									<a href="/{:request()->module()}/User/add">
 										<i class="icon-double-angle-right"></i>
 										添加会员
+									</a>
+								</li>
+									<li class="<eq name='userList' value='User-blackList'>active open</eq>">
+									<a href="/{:request()->module()}/User/blackList">
+										<i class="icon-double-angle-right"></i>
+										黑名单
 									</a>
 								</li>
 							</ul>
@@ -713,6 +723,8 @@
 		<script src="/static/admin/js/ace.min.js"></script>
 
 		<!-- inline scripts related to this page -->
+
+
 
 		
 </body>
