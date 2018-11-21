@@ -43,6 +43,7 @@ class User extends Controller
 		return $this->fetch();
 	}
 	
+
 	public function logout(){
 		session_start();
 		setcookie("PHPSESSION","",time()-1,"/");
@@ -50,6 +51,7 @@ class User extends Controller
 		session_destroy();
 		$this->success("注销成功",'index/index');
 	}
+
 	
 	//注册
 	public function reg(){
