@@ -7,6 +7,8 @@ use app\admin\model\GoodType as category;
 
 class Index extends Common
 {
+    
+
     public function index()
     {
     	

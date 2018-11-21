@@ -87,7 +87,7 @@
         				</div>
         				<div class="col-sm-6">
         					<img id="verifyimg" src="{:url('index/user/captcha')}" border="0"  width="105px" height="52px"/>
-        					<span class="btn btn-info" onclick="javascript:verifyimg.src='{:url('index/user/captcha')}?rand='+Math.random()" style="width: 88px;height: 50px;line-height: 35px;font-size: 15px;">换一换</span>
+        					<span id="clickCode" class="btn btn-info" onclick="javascript:verifyimg.src='{:url('index/user/captcha')}?rand='+Math.random()" style="width: 88px;height: 50px;line-height: 35px;font-size: 15px;">换一换</span>
         					<span id="code-check"></span>
         				</div>
         				
@@ -105,7 +105,7 @@
 	<script type="text/javascript">
         	
 	// 检测邮箱
-		 $(document).ready(function(){		 	
+		$(document).ready(function(){		 	
 		 	var email_status = false;  
         	$('#email').bind('blur',function(){
         		var uemail= $(this).val();
@@ -119,19 +119,19 @@
 				        $(this).next().removeClass("glyphicon glyphicon-ok").addClass("error-style").html('邮箱格式不正确！');
 				    }else{
 		                $.post('{:url('index/user/checkEmail')}',{email:uemail},function(data){
-		                if(data == true){
-		                   $("#email-check").removeClass("glyphicon glyphicon-ok").addClass("error-style").html('用户已存在，请更换邮箱');
-						          
-		                }else{
-			                $("#email-check").addClass("error-style").css("color","green").addClass("glyphicon glyphicon-ok").html('');
-			                email_status = true;
-			            }
-        			})
+    		                if(data == true){
+    		                   $("#email-check").removeClass("glyphicon glyphicon-ok").addClass("error-style").html('用户已存在，请更换邮箱');
+    						          
+    		                }else{
+    			                $("#email-check").addClass("error-style").css("color","green").addClass("glyphicon glyphicon-ok").html('');
+    			                email_status = true;
+    			            }
+            			})
     
         		   }
-				  }
-        	    })
-});
+				}
+        	})
+        });
 
 				    
 				    
@@ -192,7 +192,9 @@
               $("#code-check").addClass("error-style").css("color","green").addClass("glyphicon glyphicon-ok").html('');
                 code = true;
             }else{
+               $("#clickCode").click(); 
                $('#code-check').removeClass("error-style glyphicon glyphicon-ok").html('验证码不正确！').css("color","#ff6f4a").addClass("error-style");
+               
               
             }
           })

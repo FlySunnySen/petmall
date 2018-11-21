@@ -1,16 +1,55 @@
 <?php
 namespace app\index\controller;
+use think\Controller;
 use think\Db;
 
 
-class User extends Common
+
+
+class User extends Controller
 {
 	//登录
 	public function login(){
+		if(request()->isPost()){
+			$data = request()->param();	
+			$map['user_email'] = strtolower($data['email']);
+			$map['user_pwd']   = md5(md5($data['password']));
+			$rst = Db::name('user')
+			       ->alias('a')
+			       ->join('user_details b','a.Uid = b.user_Uid')
+			       ->where($map)
+			       ->find();
+			
+			if($rst['is_delete'] == 0){
+				$this->error('该用户已被禁用');
+			}elseif($rst['is_delete'] == 1){
+				if(isset($data['holdStatus']) && $data['holdStatus'] == 1){
+					//使用cookie实现自动登录 
+					setcookie("user_email",$map['user_email'],time()+3600,'/');
+					setcookie("user_pwd",md5($data['password']),time()+3600,'/');
+
+				}
+			
+				session_start();
+				$_SESSION['alias']= $rst['user_alias'];
+				$_SESSION['user'] = $rst['user_email'];
+				$_SESSION['uid']  = $rst['Uid'];								
+				$this->success('登录成功','index/index');
+
+			}else{
+				$this->error('账号或密码错误');
+			}
+		}
 		return $this->fetch();
 	}
 	
-	
+	public function logout(){
+		session_start();
+		setcookie("PHPSESSION","",time()-1,"/");
+		setcookie("user_email","",time()-1,"/");
+		session_destroy();
+		$this->success("注销成功",'index/index');
+	}
 	
 	//注册
 	public function reg(){
@@ -20,7 +59,7 @@ class User extends Common
 	
 	//注册时检测邮箱
 	public function checkEmail(){
-		$email = input('email');
+		$email = strtolower(input('email'));
 		
 		$result = Db::name('user')->where('user_email','=',$email)->find();
 		if($result){
@@ -51,7 +90,7 @@ class User extends Common
 	
 	//用户进行注册
 	public function register(){
-	     $userData['user_email'] = input('post.email');
+	     $userData['user_email'] = strtolower(input('email'));
 		 $userData['user_pwd']   = md5(md5(input('post.pwd')));
 		 $userData['is_delete']  = 1;
 		 Db::startTrans();

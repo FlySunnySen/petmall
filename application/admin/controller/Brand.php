@@ -12,7 +12,7 @@ class Brand extends Common
 	public function _initialize() {
 		parent::_initialize();
 		$request = request();
-		$this->assign('menuList',$request->module().'-'.$request->module());
+		$this->assign('menuList',$request->controller().'-'.$request->action());
 		$this->assign('menu','Goods');
 	}
 	
