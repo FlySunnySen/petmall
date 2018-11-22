@@ -58,7 +58,7 @@
 								<form id="allform">
 									<tbody>
 										{foreach name="user_data" item="vo"}
-											<tr>
+											<tr id="user{$vo.user_Uid}">
 												<td class="center">
 													<label>
 														<input type="checkbox" class="ace" name="id[]" value="{$vo.user_Uid}"/>
@@ -90,7 +90,7 @@
 													
 													<a href="{:url('admin/User/editUserPwd',array('id'=>$vo.Uid))}">修改密码</a>
 													|
-													<a  href="{:url('admin/User/softDelUser',array('id'=>$vo.Uid,'action'=>1))}">恢复</a>
+													<a  class="softDelUser" uid = {$vo.Uid} href="javascript:void(0);">恢复</a>
 												</td>
 											</tr>
 										{/foreach}
@@ -124,6 +124,30 @@
   
 	<script>
         $(function(){ 
+
+            layui.use(['layer','form'],function(){
+            	var layer = layui.layer;
+
+                 //恢复用户
+                $('.softDelUser').bind('click',function(){
+                	  var uid = $(this).attr('uid');
+                	  var action = 1;
+                	   $.post("{:url('admin/User/softDelUser')}",{id:uid,action:action},function(data) {
+					          var dataObj=eval("("+data+")");					          
+					          if(dataObj == 1){
+					          	 layer.msg('恢复成功');
+					          	 $('#user'+uid).remove();
+
+					          }else{
+                                 layer.msg('恢复失败');
+					          }
+                              
+					  })
+                })
+
+
+            })
+
 			//全选		
 			var bool = true;	
 			$('#setall').bind('click',function() {				
