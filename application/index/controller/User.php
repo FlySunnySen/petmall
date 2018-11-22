@@ -20,9 +20,9 @@ class User extends Controller
 			       ->where($map)
 			       ->find();
 			
-			if($rst['is_delete'] == 0){
+			if($rst['is_delete'] == 1){
 				$this->error('该用户已被禁用');
-			}elseif($rst['is_delete'] == 1){
+			}elseif($rst['is_delete'] == 0){
 				if(isset($data['holdStatus']) && $data['holdStatus'] == 1){
 					//使用cookie实现自动登录 
 					setcookie("user_email",$map['user_email'],time()+3600,'/');

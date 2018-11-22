@@ -134,6 +134,7 @@
 			//批量删除
 			$('#delall').bind('click',function() {
 				var data = $('#allform').serialize();
+				
 				$.post("{:url('admin/good/softDelMore')}",data,function(data) {			
 
 					if(data){

@@ -88,7 +88,7 @@
 										        <td>
 
 													
-													<a href="{:url('admin/User/editUserPwd',array('id'=>$vo.Uid))}">修改密码</a>
+													<a class="editUserPwd" href="#" value="{$vo.user_Uid}">修改密码</a>
 													|
 													<a  class="softDelUser" uid = {$vo.Uid} href="javascript:void(0);">恢复</a>
 												</td>
@@ -101,7 +101,7 @@
 													<div class="col-xs-1 text-left">
 														<input class="btn btn-xs btn-inverse" id="against"  value=" 反 选 " type="button"></div>
 													<div class="col-xs-1 text-left">
-														<input class="btn btn-xs btn-inverse" id="delall" value="批量删除" type="button"></div>
+														<input class="btn btn-xs btn-inverse" id="delall" value="批量恢复" type="button"></div>
 
 													<!-- 显示分页 -->
 													<div class="col-xs-9 text-right">{$user_data->render()}</div>
@@ -118,6 +118,25 @@
 	</div>
     
 
+     <div id="test" style="display: none;">
+    	<form class="layui-form">
+    		  <div class="layui-form-item">
+				    <label class="layui-form-label">输入框</label>
+				    <div class="layui-input-block">
+				      <input type="text" id="Uid" name="Uid" value="0" placeholder="请输入新密码" autocomplete="off" style="display: none" >
+				      <input type="text" name="pwd" placeholder="请输入新密码" autocomplete="off" lay-verify="required" class="layui-input">
+				    </div>
+				  </div>
+			
+				  <div class="layui-form-item">
+				    <div class="layui-input-block">
+				      <button class="layui-btn" lay-submit lay-filter="*">立即提交</button>
+				      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+				    </div>
+				  </div>
+    	</form>
+    </div>
+
 	
 	
 	
@@ -127,6 +146,36 @@
 
             layui.use(['layer','form'],function(){
             	var layer = layui.layer;
+            	var form  = layui.form;
+                
+                
+                  //修改密码
+                  $('.editUserPwd').bind('click',function(){
+                    var id = $(this).attr('value'); //获取Uid的值
+                    $('#Uid').attr("value",id);	                                                              				                 
+                	 var index = layer.open({
+	                	type:1,
+	                	title:'修改密码',	
+	                	    
+	                	content: $('#test')
+	                }) 
+	                form.on('submit(*)', function(data){
+					  // console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
+					  // console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
+					  // console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+					  $.post("{:url('admin/User/editUserPwd')}",data.field,function(data) {
+					          var dataObj=eval("("+data+")");					          
+					          if(dataObj.code == 200){
+					          	layer.close(index);
+					          }
+                              layer.msg(dataObj.tip);
+
+
+					  })
+					  return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+					});          
+                });
+
 
                  //恢复用户
                 $('.softDelUser').bind('click',function(){
@@ -146,7 +195,28 @@
                 })
 
 
-            })
+                 //批量删除
+				$('#delall').bind('click',function() {
+					var data = $('#allform').serialize();                   
+					$.post("{:url('admin/User/softDelMoreUser',array('action'=>1))}",data,function(data) {			
+                         var dataObj=eval("("+data+")");
+						if(dataObj.code == 200){
+		                   
+		                   layer.msg("恢复成功");
+							
+						}else{
+						   layer.msg("部分用户无法恢复");
+						}
+						//循环取回的用户名单，删掉对应的行
+						$.each(dataObj.list,function(idx,item){							
+                             $('#user'+item).remove();
+						})	
+
+					})
+				})
+
+
+            })//layer结束
 
 			//全选		
 			var bool = true;	
@@ -156,10 +226,7 @@
 
 				})
 				bool = !bool;
-				layer.open({
-					type:2,
-					content:'index'
-				});
+				
 
 			})
 
@@ -170,20 +237,8 @@
 				})
 			})
 
-			//批量删除
-			$('#delall').bind('click',function() {
-				var data = $('#allform').serialize();
-				$.post("{:url('admin/good/softDelMore')}",data,function(data) {			
-
-					if(data){
-					        alert(data);
-							location.reload();
-						
-					}else{
-						 alert(data);
-					}				
-				})
-			})
+		
+		
 			
 			
 			

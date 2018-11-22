@@ -86,5 +86,37 @@ class User extends Common
 
 	}
 
+	//批量 禁用/恢复 用户
+	public function softDelMoreUser(){
+         
+         $uid = $_POST['id'];
+        
+         $action = input('action');  
+         //根据获取的action判断是禁用还是恢复
+	     if($action == 1){
+	    	$status = 0;
+         }else{
+        	$status = 1;
+         }
+
+         $data['is_delete'] = $status;
+         $success = array();
+         $success['code'] = 200;
+		 foreach ($uid as $key => $value) {
+		 	  
+              $rst = Db::name('user')->where('Uid','=',$value)->setField($data);
+              if($rst){
+                   $success['list'][] = $value; 
+              }else{
+                 $success['code'] = 500;
+              }
+
+		 }
+         
+         return json_encode($success);
+
+
+	}
+
 
 }
