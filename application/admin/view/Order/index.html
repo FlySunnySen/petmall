@@ -1,0 +1,166 @@
+{extend name="Public::layout" /}
+{block name="main"}
+	<div class="page-content">
+		<div class="page-header">
+			<h1>
+				订单管理
+				<small> <i class="icon-double-angle-right"></i>
+					订单列表
+				</small>
+			</h1>
+		</div>
+		<!-- 搜索条 -->
+		<div class="col-xs-4 col-sm-7"></div>
+		<form action="">
+			<div class="col-xs-4 col-sm-5 text-right" style="margin-bottom:10px">
+				<div class="input-group">
+					<input type="text" class="form-control search-query" placeholder="输入商品名关键字" name="keywords">
+					<span class="input-group-btn">
+						<button type="submit" class="btn btn-purple btn-sm">
+							搜索 <i class="icon-search icon-on-right bigger-110"></i>
+						</button>
+					</span>
+				</div>
+			</div>
+		</form>
+		<!-- 搜索条结束 -->
+		<div class="row">
+			<div class="col-xs-12">
+				<!-- PAGE CONTENT BEGINS -->
+
+				<div class="row">
+					<div class="col-xs-12">
+
+						<div class="table-responsive">
+
+							<table id="sample-table-1" class="table table-striped table-bordered table-hover">
+								<thead>
+									<tr>
+										<th class="center">
+											<label>
+												<!-- <input type="checkbox" class="ace" />
+												<span class="lbl"></span>
+												-->
+											</label>
+										</th>
+										<th>acti交易号</th>
+										<th>用户id</th>
+										<th>订单状态</th>
+										<th>付款状态</th>
+										<th>订单创建时间</th>
+										<th>买家留言</th>
+										<th>快递类型</th>
+										<th>快递单号</th>
+										<th>付款方式</th>
+										<th>操作</th>
+									</tr>
+								</thead>
+								<form id="allform">
+									<tbody>
+										{foreach name="order_data" item="vo"}
+											<tr>
+												<td class="center">
+													<label>
+														<input type="checkbox" class="ace" name="id[]" value="{$vo.id}"/>
+														<span class="lbl"></span>
+													</label>
+												</td>
+
+												<td>
+													<span class="lbl">{$vo.acti}</span>
+
+												</td>
+												<td>
+													<span class="lbl">{$vo.user_Uid}</span>
+												</td>
+												<td>
+													<span class="lbl">{$vo.action_status}</span>
+												</td>
+												<td class="hidden-480">{$vo.pay_status}</td>
+												<td class="hidden-480">{$vo.create_time}</td>
+												<td class="hidden-480">
+													<span>{$vo.order_message}</span>
+												</td>
+												<td>
+													<span class="lbl">{$vo.express_type}</span>
+												</td>
+												<td>
+													<span class="lbl">{$vo.express_number}</span>
+												</td>
+												<td>
+													<span class="lbl">{$vo.pay_id}</span>
+												</td>
+												
+
+												<td>
+													<a href="{:url('admin/good/addEditGood',array('id'=>$vo.id))}">修改</a>
+													|
+													<a href="{:url('admin/goodImages/index',array('id'=>$vo.id))}">查看相册</a>
+													
+													|
+													<a href="{:url('admin/good/softDelGood',array('id'=>$vo.id))}">删除</a>
+												</td>
+											</tr>
+										{/foreach}
+										<tr>
+											<td class="center" colspan="11">
+												<div class="col-xs-1 text-left">
+													<input class="btn btn-xs btn-inverse" id="setall"  value=" 全 选 " type="button"></div>
+												<div class="col-xs-1 text-left">
+													<input class="btn btn-xs btn-inverse" id="against"  value=" 反 选 " type="button"></div>
+												<div class="col-xs-1 text-left">
+													<input class="btn btn-xs btn-inverse" id="delall" value="批量删除" type="button"></div>
+
+												<!-- 显示分页 -->
+												<div class="col-xs-9 text-right"></div>
+											</td>
+										</tr>
+									</tbody>
+								</form>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		$(function() {
+			//全选		
+			var bool = true;	
+			$('#setall').bind('click',function() {				
+				$('input[name="id[]"]').each(function() {
+					$(this).prop('checked',bool);					
+				})
+				bool = !bool;
+			})
+
+			//反选
+			$('#against').bind('click',function() {
+				$('input[name="id[]"]').each(function() {
+					$(this).prop('checked',!$(this).prop('checked'));					
+				})
+			})
+
+			//批量删除
+			$('#delall').bind('click',function() {
+				var data = $('#allform').serialize();
+				
+				$.post("{:url('admin/good/softDelMore')}",data,function(data) {			
+
+					if(data){
+					        alert(data);
+							location.reload();
+						
+					}else{
+						 alert(data);
+					}				
+				})
+			})
+			
+			
+			
+		})
+		</script>
+{/block}
