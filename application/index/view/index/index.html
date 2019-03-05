@@ -126,10 +126,10 @@
 		<h3 class="floor-title">{$v['type_name']}</h3>
 		<div class="floor-nav-list clearfix">
 			{foreach name="v['tmenu']" item="v2" key="k2"}
-			<a class="floor-nav-item" href="{:url('Home/Goods/goodsList',array('id'=>$v2['id']))}">{$v2['type_name']}</a>
+			<a class="floor-nav-item" href="{:url('Indexs/Good/goodsList',array('id'=>$v2['id']))}">{$v2['type_name']}</a>
 			{/foreach}
 		</div>
-		<a class="nav-more-btn" href="{:url('Home/Goods/goodsList',array('id'=>$v['id']))}">更多<i>></i></a>
+		<a class="nav-more-btn" href="{:url('Index/Goodss/goodsList',array('id'=>$v['id']))}">更多<i>></i></a>
 	</div>
 	<div class="floor-main">
 		<div class="floor-brand">
@@ -137,7 +137,7 @@
 		</div>
 		<div class="floor-goods-list">
 			{foreach name="v['hot_goods']" item="g" key="gk"}
-			<a class="floor-goods-item" href="{:url('Home/Goods/goodsInfo',array('id'=>$g['id']))}">
+			<a class="floor-goods-item" href="{:url('Index/Good/goodsInfo',array('id'=>$g['id']))}">
 				<div class="googs-title ellipsis-1">{$g['goods_name']|substr=0,20}</div>
 				<div class="googs-price ellipsis-1">￥{$g['goods_price']}</div>
 				<div class="goods-pic"><img class="w-100" src={$g['goods_img']} alt=""></div>

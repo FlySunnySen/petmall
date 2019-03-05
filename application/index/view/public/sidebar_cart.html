@@ -3,7 +3,7 @@
     <div class="sidertabs tab-lis-1">
         <div class="sider-top-stra sider-midd-1">
             <div class="icon-tabe-chan">
-                <a href="{:U('Home/User/index')}">
+                <a href="{:url('Home/User/index')}">
                     <i class="share-side share-side1"></i>
                     <i class="share-side tab-icon-tip triangleshow"></i>
                 </a>
@@ -12,12 +12,12 @@
                     <div class="hinihdk">
                         <img src="__STATIC__/images/dl.png"/>
 
-                        <p class="loginafter nologin"><span>你好，请先</span><a href="{:U('Home/user/login')}">登录！</a></p>
+                        <p class="loginafter nologin"><span>你好，请先</span><a href="{:url('Home/user/login')}">登录！</a></p>
                         <!--未登录-e--->
                         <!--登录后-s--->
                         <p class="loginafter islogin">
                             <span class="id_jq userinfo">陈xxxxxxx</span>
-                            <span>&nbsp;&nbsp;&nbsp;&nbsp;</span><a href="{:U('Home/user/logout')}" title="点击退出">退出！</a>
+                            <span>&nbsp;&nbsp;&nbsp;&nbsp;</span><a href="{:url('Home/user/logout')}" title="点击退出">退出！</a>
                         </p>
                         <!--未登录-s--->
                     </div>
@@ -36,7 +36,7 @@
                 </a>
             </div>
             <div class="icon-tabe-chan massage">
-                <a href="{:U('Home/User/message_notice')}" target="_blank">
+                <a href="{:url('Home/User/message_notice')}" target="_blank">
                     <i class="share-side share-side1"></i>
                     <!--<i class="share-side tab-icon-tip"></i>-->
                     <span class="tab-tip">消息</span>
@@ -45,14 +45,14 @@
         </div>
         <div class="sider-top-stra sider-midd-2">
             <div class="icon-tabe-chan mmm">
-                <a href="{:U('Home/User/goods_collect')}" target="_blank">
+                <a href="{:url('Home/User/goods_collect')}" target="_blank">
                     <i class="share-side share-side1"></i>
                     <!--<i class="share-side tab-icon-tip"></i>-->
                     <span class="tab-tip">收藏</span>
                 </a>
             </div>
             <div class="icon-tabe-chan hostry">
-                <a href="{:U('Home/User/visit_log')}" target="_blank">
+                <a href="{:url('Home/User/visit_log')}" target="_blank">
                     <i class="share-side share-side1"></i>
                     <!--<i class="share-side tab-icon-tip"></i>-->
                     <span class="tab-tip">足迹</span>
@@ -69,11 +69,7 @@
     </div>
     <div class="sidertabs tab-lis-2">
         <div class="icon-tabe-chan advice">
-            <a title="点击这里给我发消息" href="tencent://message/?uin={$tpshop_config['shop_info_qq2']}&amp;Site=TPshop商城&amp;Menu=yes" target="_blank">
-                <i class="share-side share-side1"></i>
-                <!--<i class="share-side tab-icon-tip"></i>-->
-                <span class="tab-tip">在线咨询</span>
-            </a>
+           
         </div>
         <!--<div class="icon-tabe-chan request">-->
             <!--<a href="" target="_blank">-->
@@ -87,8 +83,7 @@
                 <i class="share-side share-side1"></i>
                 <i class="share-side tab-icon-tip triangleshow"></i>
                 <span class="tab-tip qrewm">
-                    <img img-url="/index.php?m=Home&c=Index&a=qr_code&data={$mobile_url}&head_pic={$head_pic}&back_img={$back_img}"/>
-                    扫一扫下载APP
+                  
                 </span>
             </a>
         </div>
