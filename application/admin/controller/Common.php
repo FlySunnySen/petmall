@@ -25,5 +25,9 @@ class Common extends Controller {
 		}
 	}
 
+	public function ajaxReturn($data, $type = 'json') {
+		exit(json_encode($data));
+	}
+
 }
 ?>
