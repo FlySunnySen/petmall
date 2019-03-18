@@ -6,11 +6,13 @@ use think\Db;
 
 class Base extends Controller {
 	public $session_id;
+
 	public $cateTrre = array();
 	/*
 		     * 初始化操作
 	*/
 	public function _initialize() {
+		session_start();
 		// if (input("unique_id")) {
 		// 	// 兼容手机app
 		// 	session_id(input("unique_id"));
@@ -26,7 +28,6 @@ class Base extends Controller {
 		// } else {
 		// 	cookie('is_mobile', '0', 3600);
 		// }
-
 		$this->public_assign();
 	}
 	/**

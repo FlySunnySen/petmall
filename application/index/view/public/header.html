@@ -26,17 +26,14 @@
 				  	<script src="__STATIC__/js/location.js"></script>
 					<script>doInitRegion();</script>
                 </if>
-				
 
-				
 				{empty name="$_SESSION['uid']"}
 				     <div class="fl nologin">
 						<a class="red" href="{:url('index/user/login')}">登录</a>
 						<a href="{:url('index/user/reg')}">注册</a>
 					</div>
-				{else /}					
+				{else /}
 					<div class="fl islogin">
-						
 						<?php
 						   echo $_SESSION['alias']." 欢迎您";
 						?>
@@ -168,7 +165,7 @@
 			<div class="c-n fl">
 				<i class="share-shopcar-index"></i>
 				<span>我的购物车</span>
-				<em class="shop-nums" id="cart_quantity"></em>
+			
 			</div>
 			</a>
 			<div class="u-fn-cart" id="show_minicart">

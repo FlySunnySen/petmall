@@ -55,6 +55,7 @@ function doInitRegion()
 function ajaxDispatching(region_id) {
 	var goods_id = $("input[name='goods_id']").val();
     $('#dispatching_msg').attr('region_id',region_id);
+    return;
 	if(typeof(goods_id) != 'undefined' && region_id!= ''){
 		$.ajax({
 			type: "POST",

@@ -6,7 +6,6 @@ use think\Db;
 class Index extends Common {
 
 	public function index() {
-
 		$hot_goods = $hot_cate = $cateList = $recommend_goods = array();
 		$sql = "select a.goods_name,a.id,a.goods_price,a.goods_img,a.type_id,b.parent_id_path,b.type_name from " . config('database.prefix') . "good as a left join ";
 		$sql .= config('database.prefix') . "good_type as b on a.type_id=b.id where  a.is_on_sale=1 order by a.good_click"; //二级分类下热卖商品

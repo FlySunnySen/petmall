@@ -30,7 +30,7 @@ class Good extends Common {
 		return $this->fetch();
 	}
 
-	//添加商品
+	//添加或修改商品
 	public function addEditGood() {
 
 		if (request()->isPost()) {
@@ -55,12 +55,10 @@ class Good extends Common {
 				exit;
 			}
 		}
-
 		$data = model('good_type')->getCategory();
 		$brand = Db::name('brand')->select();
 		$this->assign('brand', $brand);
 		$this->assign('type', $data);
-
 		if (request()->param('id')) {
 
 			$good_data = Db::view('good')

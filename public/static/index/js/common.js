@@ -3,7 +3,7 @@
  */
 $(function(){
 	get_cart_num();
-	user_login_or_no();
+	
 })
 /****购物车 start****/
 function get_cart_num() {
@@ -11,7 +11,7 @@ function get_cart_num() {
 	if (cart_cn == '') {
 		$.ajax({
 			type: "GET",
-			url: "/index.php?m=Home&c=Cart&a=header_cart_list",//+tab,
+			url: "/index.php/index/Cart/header_cart_list",//+tab,
 			success: function (data) {
 				cart_cn = getCookie('cn');
 				$('#cart_quantity').html(cart_cn);
@@ -33,7 +33,7 @@ $('#hd-my-cart').hover(function () {
 	header_cart_list_over = 1;
 	$.ajax({
 		type: "GET",
-		url: "/index.php?m=Home&c=Cart&a=header_cart_list",//+tab,
+		url: "/index.php/index/Cart/header_cart_list",//+tab,
 		success: function (data) {
 			$("#hd-my-cart > #show_minicart").html(data);
 			get_cart_num();
@@ -54,14 +54,14 @@ function header_cart_del(ids) {
 	id_arr = ids.toString().split(","); //字符分割
 	$.ajax({
 		type: "POST",
-		url: "/index.php?m=Home&c=Cart&a=delete",
+		url: "/index.php/index/Cart/deleteCart",
 		data: {cart_ids: id_arr},
 		dataType: 'json',
 		success: function (data) {
 			if (data.status == 1) {
 				header_cart_list_over = 0; /// 标识鼠标已经离开
 				$("#hd-my-cart").trigger('mouseenter');	 // 无法触发 hover 改为 trigger('mouseenter');
-                ajax_side_cart_list()  //解决侧边栏购物车点击删除后不能立即更新 lxl
+                // ajax_side_cart_list()  //解决侧边栏购物车点击删除后不能立即更新 lxl
 			}
 		}
 	});
@@ -70,7 +70,7 @@ function header_cart_del(ids) {
 function ajax_side_cart_list() {
 	$.ajax({
 		type: "GET",
-		url: "/index.php?m=Home&c=Cart&a=header_cart_list&template=ajax_side_cart_list",//+tab,
+		url: "/index.php/Home/Cart/header_cart_list/template/ajax_side_cart_list",//+tab,
 		success: function (data) {
 			cart_cn = getCookie('cn');
 			$('#cart_quantity').html(cart_cn);
@@ -81,19 +81,19 @@ function ajax_side_cart_list() {
 }
 /*******购物车 end********/
 
-/*******用户登录变化class****/
-function user_login_or_no()
-{
-	var uname = getCookie('uname');
-	if (uname == '') {
-		$('.islogin').remove();
-		$('.nologin').show();
-	} else {
-		$('.nologin').remove();
-		$('.islogin').show();
-		$('.userinfo').html(decodeURIComponent(uname).substring(0,11));
-	}
-}
+// /*******用户登录变化class****/
+// function user_login_or_no()
+// {
+// 	var uname = getCookie('uname');
+// 	if (uname == '') {
+// 		$('.islogin').remove();
+// 		$('.nologin').show();
+// 	} else {
+// 		$('.nologin').remove();
+// 		$('.islogin').show();
+// 		$('.userinfo').html(decodeURIComponent(uname).substring(0,11));
+// 	}
+// }
 
 /*******ajax 图片懒加载****/
 function lazy_ajax()

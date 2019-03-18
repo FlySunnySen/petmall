@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="__STATIC__/css/tpshop.css"/>
     <link rel="stylesheet" type="text/css" href="__STATIC__/css/jquery.jqzoom.css">
     <script src="__STATIC__/js/jquery-1.11.3.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="__STATIC__/js/jquerysession.js" type="text/javascript" charset="utf-8"></script>
     <script src="__STATIC__/js/move.js" type="text/javascript" charset="utf-8"></script>
     <script src="__PUBLIC__/js/layer/layer-min.js"></script>
     <script type="text/javascript" src="__STATIC__/js/jquery.jqzoom.js"></script>
@@ -17,7 +18,7 @@
     <link rel="shortcut icon" type="image/x-icon"
           href="{$tpshop_config.shop_info_store_ico|default='/public/static/images/logo/storeico_default.png'}"
           media="screen"/>
- 
+
 </head>
 <body>
 <!--header-s-->
@@ -144,6 +145,7 @@
             <input type="hidden" name="shop_price" value="{$goods.goods_price}"/><!-- 活动价格 -->
             <input type="hidden" name="store_count" value="{$goods.goods_number}"/><!-- 活动库存 -->
             <input type="hidden" name="market_price" value="{$goods.goods_price+20}"/><!-- 商品原价 -->
+             <input type="hidden" name="item_id" value="{$Request.param.item_id}"/><!-- 商品规格id -->
             <input type="hidden" name="start_time" value=""/><!-- 活动开始时间 -->
             <input type="hidden" name="end_time" value=""/><!-- 活动结束时间 -->
             <input type="hidden" name="activity_title" value=""/><!-- 活动标题 -->
@@ -225,9 +227,30 @@
                 </div>
                 <notempty name="$goods['brand']">
                     <div class="standard p">
-                     
+
                     </div>
                 </notempty>
+
+                 <!-- 规格 start [[-->
+                {foreach name="filter_spec" item="v" key="k"}
+                    <div class="spec_goods_price_div standard p">
+                        <ul>
+                            <li class="jaj"><span>{$k}：</span></li>
+                            <li class="lawir colo">
+                                {foreach name="v" item="v2" key="k2"}
+                                    <input type="radio" hidden id="goods_spec_{$v2.item_id}" name="goods_spec[{$k}]" value="{$v2.item_id}"/>
+                                    <a id="goods_spec_a_{$v2.item_id}" class="spec_item">
+                                       {$v2.item}
+                                    </a>
+                                {/foreach}
+                            </li>
+                        </ul>
+                    </div>
+                {/foreach}
+                <script>
+
+                </script>
+                <!-- 规格end ]]-->
 
                 <div class="standard">
                     <ul class="p">
@@ -243,6 +266,11 @@
                         </li>
                     </ul>
                 </div>
+
+
+
+
+
                 <!-- 预售 s -->
                 <div class="allpre-ne-ter pre_sell_div" style=" margin-top: 15px; min-height: 100px;display: none">
                     <div class="presell_allpri" style="display:block">
@@ -318,7 +346,7 @@
                 </div>
                 <div class="type-bot">
                     <ul class="xg_typ">
-                       
+
                     </ul>
                 </div>
             </div>
@@ -327,7 +355,7 @@
                     <h2>推荐热卖</h2>
                 </div>
                 <div class="tjhot-shoplist type-bot">
-                   
+
                 </div>
             </div>
         </div>
@@ -357,7 +385,7 @@
 {include file="public/sidebar_cart"/}
 <!--看了又看-s-->
 <div style="display: none" id="look_see">
-   
+
     <!--看了又看-s-->
 </div>
 <!--footer-e-->
@@ -400,20 +428,10 @@
     var join_cart = $('#join_cart');
     //购买按钮显示
     function buy_button(){
-        var is_virtual = $("input[name='is_virtual']").val();//是否是虚拟商品
-        var exchange_integral = $("input[name='exchange_integral']").val();//是否是为积分商品
         var goods_prom_type = $('input[name="goods_prom_type"]').attr('value');//活动商品
         var activity_is_on = $('input[name="activity_is_on"]').attr('value'); //活动是否进行中
         buy_now.hide();
         join_cart.hide();
-        if(is_virtual == 1){
-            buy_now.html('立即购买').show();
-            return;
-        }
-        if(exchange_integral > 0){
-            buy_now.html('立即兑换').show();
-            return;
-        }
         if(goods_prom_type == 4 && activity_is_on == 1){
             buy_now.html('立即预订').show();
             return;
@@ -423,60 +441,49 @@
     }
 
     //购买按钮
-    $(function () {
-        //立即购买
-        $(document).on('click', '#buy_now', function () {
-            if ($(this).hasClass('buy_bt_disable')) {
-                return;
-            }
-            if (getCookie('user_id') == '') {
-                pop_login();
-                return;
-            }
-            var is_virtual = $("input[name='is_virtual']").val();//是否是虚拟商品
-            var exchange_integral = $("input[name='exchange_integral']").val();//是否是积分兑换商品
-            var goods_id = $("input[name='goods_id']").val();
-            var store_count = $("input[name='store_count']").attr('value');// 商品原始库存
-            var goods_num = parseInt($("input[name='goods_num']").val());
-            var goods_prom_type = $('input[name="goods_prom_type"]').attr('value');//活动商品
-            var activity_is_on = $('input[name="activity_is_on"]').attr('value'); //活动是否进行中
-            var form = $('#buy_goods_form');
-            if (is_virtual == 1) {
-                var virtual_limit = parseInt($('#virtual_limit').val());
-                if ((goods_num <= store_count && goods_num <= virtual_limit) || (goods_num < store_count && virtual_limit == 0)) {
-                    form.attr('action', "{:url('Home/Cart/cart2',['action'=>'buy_now'])}").submit();
-                } else {
-                    layer.msg('购买数量超过此商品购买上限', {icon: 3});
-                }
-                return;
-            }
-            if (exchange_integral > 0) {
-                buyIntegralGoods(goods_id, 1);
-                return;
-            }
-//            if(goods_prom_type == 4 && activity_is_on == 1){
-//                form.attr('action', "{:url('Home/Cart/pre_sell')}").submit();
-//                return;
-//            }
-            //普通流程
-            if (goods_num <= store_count) {
-                form.attr('action', "{:url('Home/Cart/cart2',['action'=>'buy_now'])}").submit();
-            } else {
-                layer.msg('购买数量超过此商品购买上限', {icon: 3});
-            }
-        })
-        //加入购物车
-        $(document).on('click', '#join_cart', function () {
-            if ($(this).hasClass('buy_bt_disable')) {
-                return;
-            }
-            var goods_id = $("input[name='goods_id']").val();
-            AjaxAddCart(goods_id, 1);
-        })
+
+    //立即购买
+    $(document).on('click', '#buy_now', function () {
+        if ($(this).hasClass('buy_bt_disable')) {
+            return;
+        }
+        if (<?php if(isset($_SESSION['uid'])){echo $_SESSION['uid'];}else{echo "undefined";} ?> == undefined) {
+            var url = window.location.href;
+            console.log(url);
+            $(location).attr('href',"{:url('index/user/login')}"+"?redirst="+url);
+            return;
+        }
+        var goods_id = $("input[name='goods_id']").val();
+        var store_count = $("input[name='store_count']").attr('value');// 商品原始库存
+        var goods_num = parseInt($("input[name='goods_num']").val());
+        var goods_prom_type = $('input[name="goods_prom_type"]').attr('value');//活动商品
+        var activity_is_on = $('input[name="activity_is_on"]').attr('value'); //活动是否进行中
+        var form = $('#buy_goods_form');
+        //普通流程
+        if (goods_num <= store_count) {
+            form.attr('action', "{:url('index/Cart/cart2',['action'=>'buy_now'])}").submit();
+        } else {
+            layer.msg('购买数量超过此商品购买上限', {icon: 3});
+        }
+    })
+    //加入购物车
+    $(document).on('click', '#join_cart', function () {
+        if ($(this).hasClass('buy_bt_disable')) {
+            return;
+        }
+        if (<?php if(isset($_SESSION['uid'])){echo $_SESSION['uid'];}else{echo "undefined";} ?> == undefined) {
+            var url = window.location.href;
+            console.log(url);
+            $(location).attr('href',"{:url('index/user/login')}"+"?redirst="+url);
+            return;
+        }
+        var goods_id = $("input[name='goods_id']").val();
+        AjaxAddCart(goods_id, 1);
     })
 
     //有规格id的时候，解析规格id选中规格
     function initSpec() {
+
         var item_id = $("input[name='item_id']").val();
         $.each(spec_goods_price, function (i, o) {
             if (o.item_id == item_id) {
@@ -489,6 +496,7 @@
                 })
             }
         })
+
         if (item_id > 0 && !$.isEmptyObject(spec_goods_price)) {
             var item_arr = [];
             $.each(spec_goods_price, function (i, o) {
@@ -554,7 +562,6 @@
         var $picBox = $('#small-pic');
         var $picList = $picBox.find('.small-pic-li');
         var length = $picList.length;
-        console(length);
         $picBox.css('width', 70 * length);
         if ($('#video').length > 0) { //判断是否有视频标签
             $('#photoBody').addClass('videoshow-ac');
@@ -638,7 +645,7 @@
                 $('#spec_store_count').html(0);
                 $('input[name="shop_price"]').attr('value', 0);//商品价格
                 $('input[name="store_count"]').attr('value', 0);//商品库存
-                $('.buy_button').addClass('buy_bt_disable');
+                // $('.buy_button').addClass('buy_bt_disable');
                 return false;
             }
         }
@@ -646,7 +653,7 @@
             type: 'post',
             dataType: 'json',
             data: {goods_id: goods_id, item_id: item_id, goods_num: goods_num},
-            url: "{:url('Home/Goods/activity')}",
+            url: "{:url('index/Good/activity')}",
             success: function (data) {
                 if (data.status == 1) {
                     $('input[name="goods_prom_type"]').attr('value', data.result.goods.prom_type);//商品活动类型
@@ -690,25 +697,7 @@
         $('.pre_sell_div').hide();
         var goods_prom_type = $('input[name="goods_prom_type"]').attr('value');
         var activity_is_on = $('input[name="activity_is_on"]').attr('value');
-        if (activity_is_on == 0) {
-            setNormalGoodsPrice();
-        } else {
-            if (goods_prom_type == 0 || goods_prom_type == 6) {
-                //普通商品
-                setNormalGoodsPrice();
-            } else if (goods_prom_type == 1) {
-                //抢购
-                setFlashSaleGoodsPrice();
-            } else if (goods_prom_type == 2) {
-                //团购
-                setGroupByGoodsPrice();
-            } else if (goods_prom_type == 3) {
-                //优惠促销
-                setPromGoodsPrice();
-            } else {
-
-            }
-        }
+        setNormalGoodsPrice();
         var buy_num = parseInt($('#number').val());//购买数
         var store = parseInt($('input[name="store_count"]').val());//实际库存数量
         if (store <= 0) {
@@ -904,8 +893,7 @@
         }
         // 更新商品价格
         initGoodsPrice();
-        //获取搭配购列表
-        getCombination();
+
     })
 
 </script>

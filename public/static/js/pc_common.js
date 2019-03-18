@@ -17,7 +17,7 @@
 	 }
 	 $.ajax({
 		 type: "POST",
-		 url: "/index.php?m=Home&c=Cart&a=ajaxAddCart",
+		 url: "/index.php/index/Cart/ajaxAddCart",
 		 data: data,
 		 dataType: 'json',
 		 success: function (data) {
@@ -40,15 +40,10 @@
 				 }
 				 layer.alert(data.msg, {icon: 2});
 				 return false;
+			 }else{
+			 	layer.alert(data.msg, {icon: 1});
 			 }
 			 $('#cart_quantity').html(cart_num);
-			 layer.open({
-				 type: 2,
-				 title: '温馨提示',
-				 skin: 'layui-layer-rim', //加上边框
-				 area: ['490px', '386px'], //宽高
-				 content: "/index.php?m=Home&c=Goods&a=open_add_cart"
-			 });
 		 }
 	 });
  }
@@ -101,11 +96,11 @@ function collect_goods(goods_id){
  function pop_login(){
 	 layer.open({
 		 type: 2,
-		 title: '<b>登陆TPshop网</b>',
+		 title: '<b>登陆PetMall网</b>',
 		 skin: 'layui-layer-rim',
 		 shadeClose: true,
-		 shade: 0.5,
+		 shade: 0.9,
 		 area: ['490px', '460px'],
-		 content: "/index.php?m=Home&c=User&a=pop_login",
+		 content: "/index.php/index/User/login",
 	 });
  }
