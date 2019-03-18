@@ -189,7 +189,7 @@
 							<h3 class="cata-nav-name">
 								<div class="cata-nav-wrap">
 									<i class="ico ico-nav-{$kr-1}"></i>
-									<a href="{:url('index/Goods/goodsList',array('id'=>$v['id']))}" title="{$v['type_name']}">{$v['type_name']}</a>
+									<a href="{:url('index/Good/goodsList',array('id'=>$v['id']))}" title="{$v['type_name']}">{$v['type_name']}</a>
 								</div>
 								<!--<a href="" >手机店</a>-->
 							</h3>
@@ -203,11 +203,11 @@
 									{foreach name="$v['tmenu']" key="k2" item='v2'}
 									{if condition="$v2['pid'] eq $v['id']"}
 										<dl class="clearfix">
-											<dt><a href="{:url('index/Goods/goodsList',array('id'=>$v2['id']))}" target="_blank">{$v2['type_name']}</a></dt>
+											<dt><a href="{:url('index/Good/goodsList',array('id'=>$v2['id']))}" target="_blank">{$v2['type_name']}</a></dt>
 											<dd class="clearfix">
 												{foreach name="$v2['tmenu']" key="k3" item='v3'}
 													{if condition="$v3['pid'] eq $v2['id']"}
-													<a href="{:url('index/Goods/goodsList',array('id'=>$v3['id']))}" target="_blank">{$v3['type_name']}</a>
+													<a href="{:url('index/Good/goodsList',array('id'=>$v3['id']))}" target="_blank">{$v3['type_name']}</a>
 													{/if}
 												{/foreach}
 											</dd>

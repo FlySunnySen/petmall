@@ -60,7 +60,7 @@ class Index extends Common {
 	//无限级分类
 	public function always_category($path = 0, $level = 1) {
 		$data = Db::name('good_type')->where(['pid' => $path])->where(['is_show' => 1])->select();
-
+		// var_dump($data);die;
 		foreach ($data as $key => $val) {
 			$data[$key]['level'] = $level;
 
