@@ -23,7 +23,7 @@ function navigate_goods($id, $type = 0) {
 	if ($type == 1) {
 		$cat_id = model('good')->where("id", $id)->value('type_id');
 	}
-	$categoryList = model('GoodType')->column("id,type_name,pid");
+	$categoryList = Db::name('good_type')->column("id,type_name,pid");
 	// var_dump($cat_id);
 	// var_dump($categoryList);die;
 	// 第一个先装起来
@@ -109,4 +109,18 @@ function refresh_stock($goods_id) {
 
 function ajaxReturn($data) {
 	exit(json_encode($data, JSON_UNESCAPED_UNICODE));
+}
+
+/**
+ * 获取数组中的某一列
+ * @param array $arr 数组
+ * @param string $key_name  列名
+ * @return array  返回那一列的数组
+ */
+function get_arr_column($arr, $key_name) {
+	$arr2 = array();
+	foreach ($arr as $key => $val) {
+		$arr2[] = $val[$key_name];
+	}
+	return $arr2;
 }

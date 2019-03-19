@@ -315,7 +315,7 @@ class GoodsLogic extends Model {
 		$menu_list = array();
 		// 品牌
 		if (!empty($filter_param['brand_id'])) {
-			$brand_list = model('brand')->getField('id,name');
+			$brand_list = model('brand')->column('id,brand_name');
 			$brand_id = explode('_', $filter_param['brand_id']);
 			$brand['text'] = "品牌:";
 			foreach ($brand_id as $k => $v) {
@@ -324,13 +324,13 @@ class GoodsLogic extends Model {
 			$brand['text'] = substr($brand['text'], 0, -1);
 			$tmp = $filter_param;
 			unset($tmp['brand_id']); // 当前的参数不再带入
-			$brand['href'] = urldecode(U("Goods/$action", $tmp, ''));
+			$brand['href'] = urldecode(url("Goods/$action", $tmp, ''));
 			$menu_list[] = $brand;
 		}
 		// 规格
 		if (!empty($filter_param['spec'])) {
-			$spec = model('spec')->getField('id,name');
-			$spec_item = model('spec_item')->getField('id,item');
+			$spec = model('spec')->column('id,name');
+			$spec_item = model('spec_item')->column('id,item');
 			$spec_group = explode('@', $filter_param['spec']);
 			foreach ($spec_group as $k => $v) {
 				$spec_group2 = explode('_', $v);
@@ -345,13 +345,13 @@ class GoodsLogic extends Model {
 				$tmp2 = $filter_param;
 				unset($tmp[$k]);
 				$tmp2['spec'] = implode('@', $tmp); // 当前的参数不再带入
-				$spec_menu['href'] = urldecode(U("Goods/$action", $tmp2, ''));
+				$spec_menu['href'] = urldecode(url("Goods/$action", $tmp2, ''));
 				$menu_list[] = $spec_menu;
 			}
 		}
 		// 属性
 		if (!empty($filter_param['attr'])) {
-			$goods_attribute = model('goods_attribute')->getField('attr_id,attr_name');
+			$goods_attribute = model('goods_attribute')->column('attr_id,attr_name');
 			$attr_group = explode('@', $filter_param['attr']);
 			foreach ($attr_group as $k => $v) {
 				$attr_group2 = explode('_', $v);

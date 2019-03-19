@@ -2,6 +2,8 @@
 namespace app\index\controller;
 use app\common\logic\GoodsLogic;
 use think\Controller;
+use think\Db;
+use think\Page;
 
 // use app\admin\model\GoodType as category;
 
@@ -82,7 +84,7 @@ class Good extends Base {
 		}
 
 		$filter_param = array(); // 帅选数组
-		$id = input('get.id/d', 1); // 当前分类id
+		$id = input('id', 1); // 当前分类id
 		$brand_id = input('get.brand_id', 0);
 		$spec = input('get.spec', 0); // 规格
 		$attr = input('get.attr', ''); // 属性
@@ -105,14 +107,14 @@ class Good extends Base {
 		$goodsLogic = new GoodsLogic(); // 前台商品操作逻辑类
 
 		// 分类菜单显示
-		$goodsCate = model('GoodsCategory')->where("id", $id)->find(); // 当前分类
-		//($goodsCate['level'] == 1) && header('Location:'.U('Home/Channel/index',array('cat_id'=>$id))); //一级分类跳转至大分类馆
-		$cateArr = $goodsLogic->get_goods_cate($goodsCate);
+		$goodsCate = Db::name("good_type")->where("id", $id)->find(); // 当前分类
+		// $cateArr = $goodsLogic->get_goods_cate($goodsCate);
 
 		// 帅选 品牌 规格 属性 价格
-		$cat_id_arr = getCatGrandson($id);
-		$goods_where = ['is_on_sale' => 1, 'exchange_integral' => 0, 'cat_id' => ['in', $cat_id_arr]];
-		$filter_goods_id = Db::name('goods')->where($goods_where)->cache(true)->getField("goods_id", true);
+		$cat_id_arr = self::getCatGrandson($id);
+		$goods_where = ['is_on_sale' => 1, 'type_id' => ['in', $cat_id_arr]];
+		$filter_goods_id = Db::name('good')->where($goods_where)->column("id", true);
+
 		// 过滤帅选的结果集里面找商品
 		if ($brand_id || $price) // 品牌或者价格
 		{
@@ -131,41 +133,61 @@ class Good extends Base {
 		}
 
 		$filter_menu = $goodsLogic->get_filter_menu($filter_param, 'goodsList'); // 获取显示的帅选菜单
+		var_dump($filter_param);die;
 		$filter_price = $goodsLogic->get_filter_price($filter_goods_id, $filter_param, 'goodsList'); // 帅选的价格期间
+
 		$filter_brand = $goodsLogic->get_filter_brand($filter_goods_id, $filter_param, 'goodsList'); // 获取指定分类下的帅选品牌
+
 		$filter_spec = $goodsLogic->get_filter_spec($filter_goods_id, $filter_param, 'goodsList', 1); // 获取指定分类下的帅选规格
 		$filter_attr = $goodsLogic->get_filter_attr($filter_goods_id, $filter_param, 'goodsList', 1); // 获取指定分类下的帅选属性
 
 		$count = count($filter_goods_id);
 		$page = new Page($count, 20);
 		if ($count > 0) {
-			$goods_list = M('goods')->where("goods_id", "in", implode(',', $filter_goods_id))->order([$sort => $sort_asc])->limit($page->firstRow . ',' . $page->listRows)->select();
-			$filter_goods_id2 = get_arr_column($goods_list, 'goods_id');
+			$goods_list = model('good')->where("id", "in", implode(',', $filter_goods_id))->limit($page->firstRow . ',' . $page->listRows)->select();
+			$filter_goods_id2 = get_arr_column($goods_list, 'id');
 			if ($filter_goods_id2) {
-				$goods_images = M('goods_images')->where("goods_id", "in", implode(',', $filter_goods_id2))->cache(true)->select();
+				$goods_images = Db::name('good_images')->where("good_id", "in", implode(',', $filter_goods_id2))->select();
 			}
 
 		}
 		// print_r($filter_menu);
-		$goods_category = M('goods_category')->where('is_show=1')->cache(true)->getField('id,name,parent_id,level'); // 键值分类数组
+		$goods_category = Db::name("good_type")->where('is_show=1')->column('id,type_name,pid'); // 键值分类数组
+
 		$navigate_cat = navigate_goods($id); // 面包屑导航
 		$this->assign('goods_list', $goods_list);
+		// var_dump($goods_list);die;
 		$this->assign('navigate_cat', $navigate_cat);
 		$this->assign('goods_category', $goods_category);
 		$this->assign('goods_images', $goods_images); // 相册图片
-		$this->assign('filter_menu', $filter_menu); // 帅选菜单
-		$this->assign('filter_spec', $filter_spec); // 帅选规格
-		$this->assign('filter_attr', $filter_attr); // 帅选属性
-		$this->assign('filter_brand', $filter_brand); // 列表页帅选属性 - 商品品牌
-		$this->assign('filter_price', $filter_price); // 帅选的价格期间
+		// $this->assign('filter_menu', $filter_menu); // 帅选菜单
+		// $this->assign('filter_spec', $filter_spec); // 帅选规格
+		// $this->assign('filter_attr', $filter_attr); // 帅选属性
+		// $this->assign('filter_brand', $filter_brand); // 列表页帅选属性 - 商品品牌
+		// $this->assign('filter_price', $filter_price); // 帅选的价格期间
 		$this->assign('goodsCate', $goodsCate);
-		$this->assign('cateArr', $cateArr);
+		// $this->assign('cateArr', $cateArr);
 		$this->assign('filter_param', $filter_param); // 帅选条件
 		$this->assign('cat_id', $id);
 		$this->assign('page', $page); // 赋值分页输出
 		$html = $this->fetch();
 		// S($key, $html);
 		return $html;
+	}
+
+	public function getCatGrandson($cat_id) {
+		$GLOBALS['catGrandson'] = array();
+		$GLOBALS['category_id_arr'] = array();
+		// 先把自己的id 保存起来
+		$GLOBALS['catGrandson'][] = $cat_id;
+		// 把整张表找出来
+		$GLOBALS['category_id_arr'] = Db::name("good_type")->column('id,pid');
+		// 先把所有儿子找出来
+		$son_id_arr = model('good_type')->where("pid", $cat_id)->column('id', true);
+		foreach ($son_id_arr as $k => $v) {
+			getCatGrandson2($v);
+		}
+		return $GLOBALS['catGrandson'];
 	}
 
 }
