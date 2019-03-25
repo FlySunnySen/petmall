@@ -24,48 +24,19 @@
 <div class="search-box p">
 	<div class="w1430">
 		<div class="search-path fl">
-			<a href="{:url('index/good/goodsList',array('id'=>$cat_id))}">全部结果</a>
+			<a href="">全部结果</a>
 			<i class="litt-xyb"></i>
 			<!--如果当前分类是三级分类 则二级也要显示-->
 
 		</div>
 
-		<div class="search-clear fr">
-			<span><a href="{:url('index/good/goodsList',array('id'=>$cat_id))}">清空筛选条件</a></span>
-		</div>
 	</div>
 </div>
 <!-- 筛选 start -->
 <div class="search-opt troblect">
     <div class="w1430">
-        <div class="opt-list">
-            <!-- 分类筛选 start -->
-            {if condition="$goodsCate.level lt 3"}
-                <dl class="brand-section m-tr">
-                    <dt>分类筛选</dt>
-                    <dd class="ri-section">
-                        <div class="lf-list">
-                            <div class="brand-list">
-                                <div class="clearfix p">
-                                    {foreach name="goods_category" item="v" key="k"}
-                                        {if condition="$v.pid eq $goodsCate.id"}
-                                            <a href="{:url('index/Good/goodsList',array('id'=>$v['id']))}">
-                                                <span >{$v.type_name}</span>
-                                            </a>
-                                        {/if}
-                                    {/foreach}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="lr-more">
-                            <a href="javascript:void(0)"><span class="gd_more">更多</span><i class="litt-tcr"></i></a>
-                        </div>
-                    </dd>
-                </dl>
-            {/if}
-          
-        </div>
-        <p class="moreamore"><a >浏览更多</a></p>
+
+      
     </div>
 </div>
 <!-- 筛选 end -->
@@ -83,25 +54,25 @@
 				<div class="f-sort fl">
 					<ul>
 						<li class="{if condition="$Request.param.sort eq ''"}red{/if}">
-                            <a href="<?php echo urldecode(url("/index/Good/goodsList",$filter_param,''));?>">综合</a>
+                            <a href="<?php echo urldecode(url("/index/Good/search",$filter_param,''));?>">综合</a>
                         </li>
 						<li class="{if condition="$Request.param.sort eq 'sales_sum'"}red{/if}">
-                            <a href="<?php echo urldecode(url("/index/good/goodsList",array_merge($filter_param,array('sort'=>'sales_sum')),''));?>">销量</a>
+                            <a href="<?php echo urldecode(url("/index/good/search",array_merge($filter_param,array('sort'=>'sales_sum')),''));?>">销量</a>
                         </li>
 						{if condition="$Request.param.sort_asc eq 'desc'"}
                             <li class="{if condition="$Request.param.sort eq 'shop_price'"}red{/if}">
-                                <a href="<?php echo urldecode(url("/index/good/goodsList",array_merge($filter_param,array('sort'=>'shop_price','sort_asc'=>'asc')),''));?>">价格<i class="litt-zzx1"></i></a>
+                                <a href="<?php echo urldecode(url("/index/good/search",array_merge($filter_param,array('sort'=>'shop_price','sort_asc'=>'asc')),''));?>">价格<i class="litt-zzx1"></i></a>
                             </li>
                         {else /}
                             <li class="{if condition="$Request.param.sort eq 'shop_price'"}red{/if}">
-                                <a href="<?php echo urldecode(url("/index/good/goodsList",array_merge($filter_param,array('sort'=>'shop_price','sort_asc'=>'desc')),''));?>">价格<i class="litt-zzx1"></i></a>
+                                <a href="<?php echo urldecode(url("/index/good/search",array_merge($filter_param,array('sort'=>'shop_price','sort_asc'=>'desc')),''));?>">价格<i class="litt-zzx1"></i></a>
                             </li>
                         {/if}
 						<li class="{if condition="$Request.param.sort eq 'comment_count'"}red{/if}">
-                            <a href="<?php echo urldecode(url("/index/good/goodsList",array_merge($filter_param,array('sort'=>'comment_count')),''));?>">评论</a>
+                            <a href="<?php echo urldecode(url("/index/good/search",array_merge($filter_param,array('sort'=>'comment_count')),''));?>">评论</a>
                         </li>
 						<li class="{if condition="$Request.param.sort eq 'is_new'"}red{/if}">
-                            <a href="<?php echo urldecode(url("/index/good/goodsList",array_merge($filter_param,array('sort'=>'is_new')),''));?>">新品</a>
+                            <a href="<?php echo urldecode(url("/index/good/search",array_merge($filter_param,array('sort'=>'is_new')),''));?>">新品</a>
                         </li>
 					</ul>
 				</div>
@@ -408,7 +379,7 @@ function submitMoreFilter(t,btn)
     {
         url += "&"+k+'='+get_parment[k];
     }
-    location.href ="/index.php?m=Home&c=Goods&a=goodsList"+url;
+    location.href ="/index.php?m=Home&c=Goods&a=search"+url;
 }
 //媒体查询
 /*$(function(){

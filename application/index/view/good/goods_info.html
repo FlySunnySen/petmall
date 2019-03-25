@@ -449,8 +449,13 @@
         }
         if (<?php if(isset($_SESSION['uid'])){echo $_SESSION['uid'];}else{echo "undefined";} ?> == undefined) {
             var url = window.location.href;
-            console.log(url);
-            $(location).attr('href',"{:url('index/user/login')}"+"?redirst="+url);
+             layer.msg('请先登录！', {
+              icon: 2,
+              time: 2000 //2秒关闭（如果不配置，默认是3秒）
+            }, function(){
+              //do something
+              $(location).attr('href',"{:url('index/user/login')}"+"?redirst="+url);
+            });
             return;
         }
         var goods_id = $("input[name='goods_id']").val();
@@ -473,9 +478,14 @@
         }
         if (<?php if(isset($_SESSION['uid'])){echo $_SESSION['uid'];}else{echo "undefined";} ?> == undefined) {
             var url = window.location.href;
-            console.log(url);
-            $(location).attr('href',"{:url('index/user/login')}"+"?redirst="+url);
-            return;
+            layer.msg('请先登录！', {
+              icon: 2,
+              time: 2000 //2秒关闭（如果不配置，默认是3秒）
+            }, function(){
+              //do something
+              $(location).attr('href',"{:url('index/user/login')}"+"?redirst="+url);
+            });
+
         }
         var goods_id = $("input[name='goods_id']").val();
         AjaxAddCart(goods_id, 1);

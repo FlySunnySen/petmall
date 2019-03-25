@@ -32,8 +32,9 @@ class Cart extends Base {
 	public function AsyncUpdateCart() {
 		$cart = input('cart/a', []);
 		$cartLogic = new CartLogic();
-		$cartLogic->setUserId($this->user_id);
-		$result = $cartLogic->AsyncUpdateCart($cart);
+		$user_id = $_SESSION['uid'];
+		$cartLogic->setUserId($user_id);
+		$result = $cartLogic->AsyncUpdateCart($cart, $user_id);
 		$this->ajaxReturn($result);
 	}
 
@@ -46,8 +47,10 @@ class Cart extends Base {
 			$this->ajaxReturn(['status' => 0, 'msg' => '请选择要更改的商品', 'result' => '']);
 		}
 		$cartLogic = new CartLogic();
-		$result = $cartLogic->changeNum($cart['id'], $cart['goods_num']);
-		$this->ajaxReturn($result);
+		$map['user_Uid'] = $_SESSION['uid'];
+		$map['id'] = $cart['id'];
+		$result = Db::name('cart')->where($map)->update(['num' => $cart['goods_num']]);
+		$this->ajaxReturn(['status' => 1, 'msg' => '修改成功', 'result' => '']);
 	}
 
 	/**
@@ -55,9 +58,10 @@ class Cart extends Base {
 	 */
 	public function delete() {
 		$cart_ids = input('cart_ids/a', []);
-		$cartLogic = new CartLogic();
-		$cartLogic->setUserId($this->user_id);
-		$result = $cartLogic->delete($cart_ids);
+		foreach ($cart_ids as $key => $value) {
+			# code...
+			$result = Db::name('cart')->where('id', $value)->delete();
+		}
 		if ($result !== false) {
 			$this->ajaxReturn(['status' => 1, 'msg' => '删除成功', 'result' => $result]);
 		} else {

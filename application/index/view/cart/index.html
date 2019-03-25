@@ -84,11 +84,11 @@
 										<input class="check-box" name="checkItem" value="{$cart.id}" type="checkbox" {if condition='$cart.is_on_sale eq 1'}checked="checked"{/if} style="display: none;">
 
 										<i data-goods-id="{$cart.goods_id}" data-goods-cat-id3="{$cart['item_id']}" data-cart-id="{$cart.id}" data-type="{$cart['prom_type']}" class="checkall checkItem {if condition='$cart.is_on_sale eq 1'}checkall-true{/if}"></i>
-										<img class="msp_picture" src="{$cart.goods_img}"/>
+										<img class="msp_picture" src={$cart.goods_img}>
 									</div>
 									<div class="column t-goods">
 										<p class="msp_spname">
-											<a href="{:url('index/Goods/goodsInfo',array('id'=>$cart.goods_id))}">{$cart.goods_name}</a>
+											<a href="{:url('index/Good/goodsInfo',array('id'=>$cart.goods_id))}">{$cart.goods_name}</a>
 
 										</p>
 										<div class="msp_return">
@@ -115,6 +115,8 @@
 								<div class="column t-quantity mtp quantity-form">
 									<a href="javascript:void(0);" class="decrement" id="decrement_{$cart['id']}">-</a>
 									<input name="changeQuantity_{$cart['id']}" type="text" id="changeQuantity_{$cart['id']}" value="{$cart.num}">
+
+                                    <input name="item_{$cart['id']}" type="hidd" style="display:none" id="item_{$cart['id']}" value="{$cart.item_id}">
 									<a href="javascript:void(0);" class="increment" id="increment_{$cart['id']}">+</a>
 									<!--无货时隐藏数量选择，显示无货-->
 									<!--<span>无货</span>-->
@@ -169,7 +171,7 @@
 									<div class="ui-tips-main">不含运费及送装服务费</div>
 									<span class="price-tipsbox-arrow"></span>
 								</div>
-								<span class="car_conta">已节省：<em id="goods_fee">-￥0</em></span>
+								<!-- <span class="car_conta">已节省：<em id="goods_fee">-￥0</em></span> -->
 							</div>
 
 						</div>
@@ -225,10 +227,11 @@
         AsyncUpdateCart();
     });
     //购物车对象
-    function CartItem(id, goods_num,selected) {
+    function CartItem(id, goods_num,selected,item_id) {
         this.id = id;
         this.goods_num = goods_num;
         this.selected = selected;
+        this.item_id = item_id;
     }
     //初始化计算订单价格
     function AsyncUpdateCart(){
@@ -238,11 +241,12 @@
             var id = $(this).attr("value");
 
             var goods_num = $(this).parents('.item-single').find("input[id^='changeQuantity']").attr('value');
+            var item_num = $(this).parents('.item-single').find("input[id^='item']").attr('value');
             if ($(this).attr("checked") == 'checked') {
-                var cartItemCheck = new CartItem(id,goods_num,1);
+                var cartItemCheck = new CartItem(id,goods_num,1,item_num);
                 cart.push(cartItemCheck);
             }else{
-                var cartItemNoCheck = new CartItem(id,goods_num,0);
+                var cartItemNoCheck = new CartItem(id,goods_num,0,item_num);
                 cart.push(cartItemNoCheck);
             }
         })
@@ -256,7 +260,6 @@
                     $('#goods_num').empty().html(data.result.goods_num);
                     $('.current').find('em').text('（'+data.result.goods_num+'）'); //数量
                     $('#total_fee').empty().html('￥'+data.result.total_fee);
-                    $('#goods_fee').empty().html('-￥'+data.result.goods_fee);
                     var cartList = data.result.cartList;
                     if(cartList.length > 0){
                         for(var i = 0; i < cartList.length; i++){
@@ -266,8 +269,8 @@
                             }else{
                                 $('#store_'+cartList[0].id+'_cut_price').empty();
                             }
-                            $('#cart_'+cartList[i].id+'_goods_price').empty().html('￥'+cartList[i].goods_price);
-                            $('#cart_'+cartList[i].id+'_total_price').empty().html('￥'+cartList[i].total_fee);
+                           
+                            $('#cart_'+cartList[i].id+'_total_price').empty().html('￥'+cartList[i].cut_fee);
                             var member_goods_price = (cartList[i].member_goods_price*cartList[i].goods_num).toFixed(2);
                             $('#cart_'+cartList[i].id+'_market_price').empty().html('￥'+member_goods_price); //活动价格
                             $('#changeQuantity_'+cartList[i].id).empty().html(cartList[i].goods_num); //数量
@@ -483,25 +486,41 @@
     $(function () {
         //删除购物车商品事件
         $(document).on("click", '.deleteGoods', function (e) {
-            var dh = $(document).height();
-            var dw = $(document).width();
-            $('.ui-mask').height(dh).width(dw).show();
-            $('.ui-dialog').show();
-            if($(this).hasClass('deleteItem')){
-                //删除单个
-                $('#removeGoods').removeClass('deleteAll').addClass('deleteItem').attr('data-cart-id',$(this).data('cart-id'));
-                $('#addCollect').attr('data-id',$(this).data('goodsid'))
-                $('#addCollect').removeClass('collectAll').addClass('collectItem');
-            }else{
-                //删除多个
-                $('#removeGoods').removeClass('deleteItem').addClass('deleteAll');
-                $('#addCollect').removeClass('collectItem').addClass('collectAll');
-            }
-        })
-        //关闭删掉购物车提示框事件
-        $(document).on("click", '.ui-dialog-close', function (e) {
-            $('.ui-mask').hide();
-            $('.ui-dialog').hide();
+            var cart_ids = $(this).attr('data-cart-id');
+            layer.confirm('是否移除商品', {icon: 3, title:'提示'}, function(index){
+                $.ajax({
+                    type : "POST",
+                    url:"{:url('index/Cart/delete')}",//,
+                    dataType:'json',
+                    data: {cart_ids: cart_ids},
+                    success: function(data){
+                        layer.close(index);
+
+                        $('#edge_' + cart_ids).remove();
+                        $('.edge_' + cart_ids).remove();
+                        layer.msg('删除成功', {
+                          icon: 1,
+                          time: 2000 //2秒关闭（如果不配置，默认是3秒）
+                        });
+                        var inputCheckShop = $("input[name^='checkShop']");
+                        var inputCheckItemAll = $("input[name^='checkItem']");
+                        inputCheckShop.each(function(i,o){
+                            var inputCheckItem = $(this).parents('.shoplist_detail_a').find("input[name^='checkItem']");
+
+                            if(inputCheckItem.length == 0){
+                                $(this).parents('.shoplist_detail_a').remove();
+                            }
+                        })
+                        if(inputCheckItemAll.length == 0){
+                            $('#tpshop-cart').remove();
+                            $('.shopcar_empty').show();
+                            $('.shoplist_deta').empty();
+                        }
+                        AsyncUpdateCart();
+                    }
+                })
+                layer.close(index);
+            });
         })
 
     })
