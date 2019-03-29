@@ -174,78 +174,10 @@ class Cart extends Base {
 	 * 购物车第二步确定页面
 	 */
 	public function cart2() {
-		$goods_id = input("goods_id/d"); // 商品id
-		$goods_num = input("goods_num/d"); // 商品数量
-		$item_id = input("item_id/d"); // 商品规格id
-		$action = input("action"); // 行为
-		if ($this->user_id == 0) {
-			$this->error('请先登录', U('Home/User/login'));
-		}
-		$cartLogic = new CartLogic();
-		$couponLogic = new CouponLogic();
-		$cartLogic->setUserId($this->user_id);
-		//立即购买
-		if ($action == 'buy_now') {
-			$cartLogic->setGoodsModel($goods_id);
-			$cartLogic->setSpecGoodsPriceById($item_id);
-			$cartLogic->setGoodsBuyNum($goods_num);
-			$buyGoods = [];
-			try {
-				$buyGoods = $cartLogic->buyNow();
-			} catch (TpshopException $t) {
-				$error = $t->getErrorArr();
-				$this->error($error['msg']);
-			}
-			$cartList['cartList'][0] = $buyGoods;
-			$cartGoodsTotalNum = $goods_num;
-		} else {
-			if ($cartLogic->getUserCartOrderCount() == 0) {
-				$this->error('你的购物车没有选中商品', 'Cart/index');
-			}
-			$cartList['cartList'] = $cartLogic->getCartList(1); // 获取用户选中的购物车商品
-			$cartGoodsTotalNum = count($cartList['cartList']);
-		}
-		$cartGoodsList = get_arr_column($cartList['cartList'], 'goods');
-		$cartGoodsId = get_arr_column($cartGoodsList, 'goods_id');
-		$cartGoodsCatId = get_arr_column($cartGoodsList, 'cat_id');
-		$cartPriceInfo = $cartLogic->getCartPriceInfo($cartList['cartList']); //初始化数据。商品总额/节约金额/商品总共数量
-		$userCouponList = $couponLogic->getUserAbleCouponList($this->user_id, $cartGoodsId, $cartGoodsCatId); //用户可用的优惠券列表
-		$cartList = array_merge($cartList, $cartPriceInfo);
-		$userCartCouponList = $cartLogic->getCouponCartList($cartList, $userCouponList);
-		$this->assign('userCartCouponList', $userCartCouponList); //优惠券，用able判断是否可用
-		$this->assign('cartGoodsTotalNum', $cartGoodsTotalNum);
-		$this->assign('cartList', $cartList['cartList']); // 购物车的商品
-		$this->assign('cartPriceInfo', $cartPriceInfo); //商品优惠总价
+		$user_Uid = $_SESSION['uid'];
+		$address = Db::name('user_address')->where('user_Uid', '=', $user_Uid)->select();
+		$this->assign('user_address', $address);
 		return $this->fetch();
-	}
-
-	/*
-		     * ajax 获取用户收货地址 用于购物车确认订单页面
-	*/
-	public function ajaxAddress() {
-		$address_list = Db::name('UserAddress')->where(['user_id' => $this->user_id])->order('is_default desc')->select();
-		if ($address_list) {
-			$area_id = array();
-			foreach ($address_list as $val) {
-				$area_id[] = $val['province'];
-				$area_id[] = $val['city'];
-				$area_id[] = $val['district'];
-				$area_id[] = $val['twon'];
-			}
-			$area_id = array_filter($area_id);
-			$area_id = implode(',', $area_id);
-			$regionList = Db::name('region')->where("id", "in", $area_id)->getField('id,name');
-			$this->assign('regionList', $regionList);
-		}
-		$address_where['is_default'] = 1;
-		$c = Db::name('UserAddress')->where(['user_id' => $this->user_id, 'is_default' => 1])->count(); // 看看有没默认收货地址
-		if ((count($address_list) > 0) && ($c == 0)) // 如果没有设置默认收货地址, 则第一条设置为默认收货地址
-		{
-			$address_list[0]['is_default'] = 1;
-		}
-
-		$this->assign('address_list', $address_list);
-		return $this->fetch('ajax_address');
 	}
 
 	/**
@@ -426,6 +358,46 @@ class Cart extends Base {
 		} else {
 			$this->ajaxReturn(['status' => 0, 'msg' => '删除失败', 'result' => $result]);
 		}
+	}
+
+	/**
+	 * [saveAddress 保存收获地址]
+	 * @return [type] [description]
+	 */
+	public function saveAddress() {
+		var_dump(input('post.'));
+		var_dump('ok');die;
+
+	}
+
+	/**
+	 * [ajaxAddress 获取用户收货地址 用于购物车确认订单页面]
+	 * @return [type] [description]
+	 */
+	public function ajaxAddress() {
+		$user_Uid = $_SESSION['uid'];
+		$address_list = Db::name('user_address')->where($user_Uid)->order('is_default desc')->select();
+		if ($address_list) {
+			$area_id = array();
+			foreach ($address_list as $val) {
+				$area_id[] = $val['address_province'];
+				$area_id[] = $val['address_city'];
+				$area_id[] = $val['address_county'];
+			}
+			$area_id = array_filter($area_id);
+			$area_id = implode(',', $area_id);
+			// var_dump($area_id);die;
+			$regionList = Db::name('region')->where("id", "in", $area_id)->column('id,name');
+			$this->assign('regionList', $regionList);
+		}
+		$address_where['is_default'] = 1;
+		$c = Db::name('UserAddress')->where(['user_Uid' => $user_Uid, 'is_default' => 1])->count(); // 看看有没默认收货地址
+		if ((count($address_list) > 0) && ($c == 0)) // 如果没有设置默认收货地址, 则第一条设置为默认收货地址
+		{
+			$address_list[0]['is_default'] = 1;
+		}
+		$this->assign('address_list', $address_list);
+		return $this->fetch('ajax_address');
 	}
 
 	/**

@@ -664,10 +664,7 @@
 
     //结算
     $('.paytotal').click(function(){
-        if(getCookie('user_id') == ''){
-            pop_login();
-            return;
-        }
+       
         window.location.href = $(this).attr('data-url');
     })
     //移到我的收藏

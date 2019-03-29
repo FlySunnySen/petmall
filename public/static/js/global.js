@@ -44,7 +44,7 @@ function get_city(t,city,district,twon){
     }
     $('#'+district_id).empty().css('display','none');
     $('#'+twon_id).empty().css('display','none');
-    var url = '/index.php?m=Home&c=Api&a=getRegion&level=2&parent_id='+ parent_id;
+    var url = '/index.php/index/Api/getRegion/level/2/parent_id/'+ parent_id;
     $.ajax({
         type : "GET",
         url  : url,
@@ -79,7 +79,7 @@ function get_area(t,district,twon){
     }
     $('#'+district_id).empty().css('display','inline');
     $('#'+twon_id).empty().css('display','none');
-    var url = '/index.php?m=Home&c=Api&a=getRegion&level=3&parent_id='+ parent_id;
+    var url = '/index.php/index/Api/getRegion/level/3/parent_id/'+ parent_id;
     $.ajax({
         type : "GET",
         url  : url,
@@ -183,8 +183,8 @@ function checkTelphone(tel){
  * @callback string  回调函数(单张图片返回保存路径字符串，多张则为路径数组 )
  */
 function GetUploadify(num,elementid,path,callback,fileType)
-{	   	
-	var upurl ='/index.php?m=Admin&c=Uploadify&a=upload&num='+num+'&input='+elementid+'&path='+path+'&func='+callback+'&fileType='+fileType;
+{       
+    var upurl ='/index.php?m=Admin&c=Uploadify&a=upload&num='+num+'&input='+elementid+'&path='+path+'&func='+callback+'&fileType='+fileType;
     var title = '上传图片';
     if(fileType == 'Flash'){
         title = '上传视频';
@@ -209,8 +209,8 @@ function GetUploadify(num,elementid,path,callback,fileType)
  * @callback string  回调函数(单张图片返回保存路径字符串，多张则为路径数组 )
  */
 function GetUploadify2(num,elementid,path,callback)
-{	   	
-	var upurl ='/index.php?m=Home&c=Uploadify&a=upload&num='+num+'&input='+elementid+'&path='+path+'&func='+callback;
+{       
+    var upurl ='/index.php?m=Home&c=Uploadify&a=upload&num='+num+'&input='+elementid+'&path='+path+'&func='+callback;
     layer.open({
         type: 2,
         title: '上传图片',
@@ -228,10 +228,10 @@ function GetUploadify2(num,elementid,path,callback)
  */
 function ClearPicArr(val)
 {
-	$("li[rel='"+ val +"']").remove();
-	$.get(
-		"{:U('Admin/Uploadify/delupload')}",{action:"del", filename:val},function(){}
-	);
+    $("li[rel='"+ val +"']").remove();
+    $.get(
+        "{:U('Admin/Uploadify/delupload')}",{action:"del", filename:val},function(){}
+    );
 }
 /*
  * 删除组图input
@@ -245,13 +245,13 @@ function ClearPicArr2(val)
         "{:U('Home/Uploadify/delupload')}",{action:"del", filename:val},function(){}
     );
 }
-	
+    
 // 获取活动剩余天数 小时 分钟
 //倒计时js代码精确到时分秒，使用方法：注意 var EndTime= new Date('2013/05/1 10:00:00'); //截止时间 这一句，特别是 '2013/05/1 10:00:00' 这个js日期格式一定要注意，否则在IE6、7下工作计算不正确哦。
 //js代码如下：
 function GetRTime(end_time){
       // var EndTime= new Date('2016/05/1 10:00:00'); //截止时间 前端路上 http://www.51xuediannao.com/qd63/
-	   var EndTime= new Date(end_time); //截止时间 前端路上 http://www.51xuediannao.com/qd63/
+       var EndTime= new Date(end_time); //截止时间 前端路上 http://www.51xuediannao.com/qd63/
        var NowTime = new Date();
        var t =EndTime.getTime() - NowTime.getTime();
        /*var d=Math.floor(t/1000/60/60/24);
@@ -266,8 +266,8 @@ function GetRTime(end_time){
        var h=Math.floor(t/1000/60/60%24);
        var m=Math.floor(t/1000/60%60);
        var s=Math.floor(t/1000%60);
-	   if(s >= 0)	
-	   return d + '天' + h + '小时' + m + '分' +s+'秒';
+       if(s >= 0)   
+       return d + '天' + h + '小时' + m + '分' +s+'秒';
    }
    
    
@@ -280,14 +280,14 @@ function get_category(id,next,select_id){
         url  : '/index.php?m=Home&c=api&a=get_category&parent_id='+ id,
         dataType:'json',
         success: function(data) {
-			var html = "<option value='0'>请选择商品分类</option>";
+            var html = "<option value='0'>请选择商品分类</option>";
             if(data.status == 1){
                 for (var i=0 ;i<data.result.length;i++){
                     html+= "<option value='"+data.result[i].id+"'>"+data.result[i].name+"</option>";
                 }
             }
             $('#'+next).empty().html(html);
-			(select_id > 0) && $('#'+next).val(select_id);//默认选中
+            (select_id > 0) && $('#'+next).val(select_id);//默认选中
         }
     });
 }
@@ -295,29 +295,29 @@ function get_category(id,next,select_id){
 // 读取 cookie
 function getCookie(c_name)
 {
-	if (document.cookie.length>0)
-	{
-	  c_start = document.cookie.indexOf(c_name + "=")
-	  if (c_start!=-1)
-	  { 
-	    c_start=c_start + c_name.length+1 
-	    c_end=document.cookie.indexOf(";",c_start)
-	    if (c_end==-1) c_end=document.cookie.length
-	    	return unescape(document.cookie.substring(c_start,c_end))
-	  } 
-	}
-	return "";
+    if (document.cookie.length>0)
+    {
+      c_start = document.cookie.indexOf(c_name + "=")
+      if (c_start!=-1)
+      { 
+        c_start=c_start + c_name.length+1 
+        c_end=document.cookie.indexOf(";",c_start)
+        if (c_end==-1) c_end=document.cookie.length
+            return unescape(document.cookie.substring(c_start,c_end))
+      } 
+    }
+    return "";
 }
 
 function setCookies(name, value, time)
 {
-	var cookieString = name + "=" + escape(value) + ";";
-	if (time != 0) {
-		var Times = new Date();
-		Times.setTime(Times.getTime() + time);
-		cookieString += "expires="+Times.toGMTString()+";"
-	}
-	document.cookie = cookieString+"path=/";
+    var cookieString = name + "=" + escape(value) + ";";
+    if (time != 0) {
+        var Times = new Date();
+        Times.setTime(Times.getTime() + time);
+        cookieString += "expires="+Times.toGMTString()+";"
+    }
+    document.cookie = cookieString+"path=/";
 }
 function delCookie(name){
     var exp=new Date();
@@ -334,29 +334,29 @@ function delCookie(name){
 */
 function set_first_leader()
 { 
-	 //获取地址栏 分销推广链接id 将推荐人id 存入cookie
-	 var first_leader = GetUrlParams("first_leader");
-	 if(!(first_leader > 0)){
-		 first_leader = GetFirstLeaderByMode('first_leader/');
-    	 if(first_leader == -1){
-    		 first_leader = GetFirstLeaderByMode('first_leader=');
-    	 } 
-	 }
-	 // 将推荐人id 存入cookie	
-	 if(first_leader > 0){
-		 setCookies('first_leader', first_leader);
-	 }
+     //获取地址栏 分销推广链接id 将推荐人id 存入cookie
+     var first_leader = GetUrlParams("first_leader");
+     if(!(first_leader > 0)){
+         first_leader = GetFirstLeaderByMode('first_leader/');
+         if(first_leader == -1){
+             first_leader = GetFirstLeaderByMode('first_leader=');
+         } 
+     }
+     // 将推荐人id 存入cookie 
+     if(first_leader > 0){
+         setCookies('first_leader', first_leader);
+     }
 }
 
 function GetFirstLeaderByMode(mode){
-  	 var req_url = window.location.href;
- 	 var regexp = /[0-9]*/;
-  	 var split_str = req_url.split(mode); 
-  	 if(split_str.length < 2){
-  		 return -1;
-  	 }
-  	 var match_result = split_str[1].match(regexp)
-  	 return match_result[0];
+     var req_url = window.location.href;
+     var regexp = /[0-9]*/;
+     var split_str = req_url.split(mode); 
+     if(split_str.length < 2){
+         return -1;
+     }
+     var match_result = split_str[1].match(regexp)
+     return match_result[0];
 }
 
 function GetUrlParams(name)
@@ -368,20 +368,20 @@ function GetUrlParams(name)
 
 
 function layConfirm(msg , callback){
-	layer.confirm(msg, {
-		  btn: ['确定','取消'] //按钮
-		}, function(){
-			callback();
-			layer.closeAll();
-		}, function(index){
-			layer.close(index);
-			return false;// 取消
-		}
-	);
+    layer.confirm(msg, {
+          btn: ['确定','取消'] //按钮
+        }, function(){
+            callback();
+            layer.closeAll();
+        }, function(index){
+            layer.close(index);
+            return false;// 取消
+        }
+    );
 }
 
 function isMobile(){
-	return "yes";
+    return "yes";
 }
 
 // 判断是否手机浏览器
@@ -399,7 +399,7 @@ function isMobileBrowser()
     if (bIsIpad || bIsIphoneOs || bIsMidp || bIsUc7 || bIsUc || bIsAndroid || bIsCE || bIsWM ){    
         return true;
     }else 
-	    return false;
+        return false;
 }
 
 function getCookieByName(name) {

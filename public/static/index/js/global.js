@@ -44,7 +44,7 @@ function get_city(t,city,district,twon){
     }
     $('#'+district_id).empty().css('display','none');
     $('#'+twon_id).empty().css('display','none');
-    var url = '/index.php?m=Home&c=Api&a=getRegion&level=2&parent_id='+ parent_id;
+    var url = '/index.php/index/Api/getRegion/level/2/parent_id/'+ parent_id;
     $.ajax({
         type : "GET",
         url  : url,
@@ -79,7 +79,7 @@ function get_area(t,district,twon){
     }
     $('#'+district_id).empty().css('display','inline');
     $('#'+twon_id).empty().css('display','none');
-    var url = '/index.php?m=Home&c=Api&a=getRegion&level=3&parent_id='+ parent_id;
+    var url = '/index.php/index/Api/getRegion/level/3/parent_id/'+ parent_id;
     $.ajax({
         type : "GET",
         url  : url,
