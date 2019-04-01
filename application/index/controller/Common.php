@@ -9,7 +9,6 @@ class Common extends Controller {
 
 	public function _initialize() {
 		session_start();
-		//暂时关闭登陆功能s
 		self::checkLogin();
 	}
 
@@ -42,7 +41,7 @@ class Common extends Controller {
 					$this->error('请先登录', 'user/login');
 				}
 			}
-			$allowController = ['Index'];
+			$allowController = ['Index', 'User'];
 			if (!in_array($controller, $allowController)) {
 				$this->error('请先登录', 'user/login');
 			}

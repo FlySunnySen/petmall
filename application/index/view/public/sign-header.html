@@ -2,29 +2,21 @@
 <div class="top-hander" moduleid="1539923">
     <div class="w1224 clearfix">
       <div class="fl">
-        
-          <div class="ls-dlzc fl nologin">
-              <a href="{:url('Home/user/login')}">Hi,请登录</a>
-              <a class="red" href="{:url('Home/user/reg')}">免费注册</a>
+          {empty name="$_SESSION['uid']"}
+             <div class="fl nologin">
+            <a class="red" href="{:url('index/user/login')}">登录</a>
+            <a href="{:url('index/user/reg')}">注册</a>
           </div>
-          <div class="ls-dlzc fl islogin">
-              <a class="red userinfo" href="{:url('Home/user/index')}"></a>
-              <a href="{:url('Home/user/logout')}">退出</a>
-          </div>
-          <script>
-              $(function (){
-                      var uname = getCookie('uname');
-                      if (uname == '') {
-                          $('.islogin').remove();
-                          $('.nologin').show();
-                      } else {
-                          $('.nologin').remove();
-                          $('.islogin').show();
-                          $('.userinfo').html(decodeURIComponent(uname).substring(0,11));
-                      }
-              })
-
-          </script>
+        {else /}
+          <div class="fl islogin">
+            <?php
+               echo $_SESSION['alias']." 欢迎您";
+            ?>
+            <a class="red userinfo" href="{:url('index/user/index')}"></a>
+            <a  href="{:url('index/user/logout')}"  title="退出" target="_self">安全退出</a>
+            </div>
+        {/empty}
+         
         <!-- <li class="fl sep"></li> -->
         <!--<li class="fl select-city dropdown">
           <span class="menu-item">

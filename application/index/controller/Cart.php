@@ -3,7 +3,6 @@
 namespace app\index\controller;
 use app\common\logic\CartLogic;
 use think\Db;
-use think\Loader;
 
 class Cart extends Base {
 
@@ -49,6 +48,17 @@ class Cart extends Base {
 		$cartLogic = new CartLogic();
 		$map['user_Uid'] = $_SESSION['uid'];
 		$map['id'] = $cart['id'];
+		$item_id = Db::name('cart')->where($map)->value('item_id');
+		/* 获取商品库存 */
+		if ($item_id !== 0) {
+			$good_num = Db::name('spec_goods_price')->where('item_id', '=', $item_id)->value('store_count');
+		} else {
+			$good_id = Db::name('cart')->where($map)->value('good_id');
+			$good_num = Db::name('good')->where($good_id)->value('goods_number');
+		}
+		if ($cart['goods_num'] > $good_num) {
+			$this->ajaxReturn(['status' => 0, 'msg' => '超出库存', 'result' => ['limit_num' => $good_num]]);
+		}
 		$result = Db::name('cart')->where($map)->update(['num' => $cart['goods_num']]);
 		$this->ajaxReturn(['status' => 1, 'msg' => '修改成功', 'result' => '']);
 	}
@@ -176,156 +186,20 @@ class Cart extends Base {
 	public function cart2() {
 		$user_Uid = $_SESSION['uid'];
 		$address = Db::name('user_address')->where('user_Uid', '=', $user_Uid)->select();
+		$cartList = Db::view('good', 'sn,goods_name,goods_price,goods_number,goods_img,is_on_sale,type_id')
+			->view('spec_goods_price', '*', 'spec_goods_price.goods_id=good.id')
+			->view('cart', '*', 'cart.item_id=spec_goods_price.item_id')
+			->where(['user_Uid' => $user_Uid, 'selected' => 1])
+			->select();
+		$sum = 0;
+		foreach ($cartList as $key => $value) {
+			# code...
+			$sum += $value['price'] * $value['num'];
+		}
+		$this->assign('count', $sum); //订单总价
 		$this->assign('user_address', $address);
-		return $this->fetch();
-	}
-
-	/**
-	 * ajax 获取订单商品价格 或者提交 订单
-	 */
-	public function cart3() {
-		if ($this->user_id == 0) {
-			exit(json_encode(array('status' => -100, 'msg' => "登录超时请重新登录!", 'result' => null))); // 返回结果状态
-		}
-		$address_id = input("address_id/d", 0); //  收货地址id
-		$invoice_title = input('invoice_title'); // 发票
-		$taxpayer = input('taxpayer'); // 纳税人识别号
-		$coupon_id = input("coupon_id/d"); //  优惠券id
-		$pay_points = input("pay_points/d", 0); //  使用积分
-		$user_money = input("user_money/f", 0); //  使用余额
-		$user_note = input("user_note/s", ''); // 用户留言
-		$payPwd = input("payPwd/s", ''); // 支付密码
-		$goods_id = input("goods_id/d"); // 商品id
-		$goods_num = input("goods_num/d"); // 商品数量
-		$item_id = input("item_id/d"); // 商品规格id
-		$action = input("action"); // 立即购买
-		$shop_id = input('shop_id/d', 0); //自提点id
-		$take_time = input('take_time/d'); //自提时间
-		$consignee = input('consignee/s'); //自提点收货人
-		$mobile = input('mobile/s'); //自提点联系方式
-		$data = input('request.');
-		$cart_validate = Loader::validate('Cart');
-		if (!$cart_validate->check($data)) {
-			$error = $cart_validate->getError();
-			$this->ajaxReturn(['status' => 0, 'msg' => $error[0], 'result' => '']);
-		}
-		$address = Db::name('user_address')->where("address_id", $address_id)->find();
-		$cartLogic = new CartLogic();
-		$pay = new Pay();
-		try {
-			$cartLogic->setUserId($this->user_id);
-			$pay->setUserId($this->user_id);
-			$pay->setShopById($shop_id);
-			if ($action == 'buy_now') {
-				$cartLogic->setGoodsModel($goods_id);
-				$cartLogic->setSpecGoodsPriceById($item_id);
-				$cartLogic->setGoodsBuyNum($goods_num);
-				$buyGoods = $cartLogic->buyNow();
-				$cartList[0] = $buyGoods;
-				$pay->payGoodsList($cartList);
-			} else {
-				$userCartList = $cartLogic->getCartList(1);
-				$cartLogic->checkStockCartList($userCartList);
-				$pay->payCart($userCartList);
-			}
-			$pay->delivery($address['district']);
-			$pay->orderPromotion();
-			$pay->useCouponById($coupon_id);
-			$pay->useUserMoney($user_money);
-			$pay->usePayPoints($pay_points);
-			// 提交订单
-			if ($_REQUEST['act'] == 'submit_order') {
-				$placeOrder = new PlaceOrder($pay);
-				$placeOrder->setUserAddress($address);
-				$placeOrder->setConsignee($consignee);
-				$placeOrder->setMobile($mobile);
-				$placeOrder->setInvoiceTitle($invoice_title);
-				$placeOrder->setUserNote($user_note);
-				$placeOrder->setTaxpayer($taxpayer);
-				$placeOrder->setPayPsw($payPwd);
-				$placeOrder->setTakeTime($take_time);
-				$placeOrder->addNormalOrder();
-				$cartLogic->clear();
-				$order = $placeOrder->getOrder();
-				$this->ajaxReturn(['status' => 1, 'msg' => '提交订单成功', 'result' => $order['order_sn']]);
-			}
-			$this->ajaxReturn(['status' => 1, 'msg' => '计算成功', 'result' => $pay->toArray()]);
-		} catch (TpshopException $t) {
-			$error = $t->getErrorArr();
-			$this->ajaxReturn($error);
-		}
-	}
-
-	/**
-	 * 订单支付页面
-	 */
-	public function cart4() {
-		if (empty($this->user_id)) {
-			$this->redirect('User/login');
-		}
-		$order_id = input('order_id/d');
-		$order_sn = input('order_sn/s', '');
-		$order_where['user_id'] = $this->user_id;
-		if ($order_sn) {
-			$order_where['order_sn'] = $order_sn;
-		} else {
-			$order_where['order_id'] = $order_id;
-		}
-		$order = M('Order')->where($order_where)->find();
-		empty($order) && $this->error('订单不存在！');
-		if ($order['order_status'] == 3) {
-			$this->error('该订单已取消', U("Mobile/Order/order_detail", array('id' => $order['order_id'])));
-		}
-		if (empty($order) || empty($this->user_id)) {
-			$order_order_list = U("User/login");
-			header("Location: $order_order_list");
-			exit;
-		}
-		// 如果已经支付过的订单直接到订单详情页面. 不再进入支付页面
-		if ($order['pay_status'] == 1) {
-			$order_detail_url = U("Home/Order/order_detail", array('id' => $order['order_id']));
-			header("Location: $order_detail_url");
-			exit;
-		}
-		//如果是预售订单，支付尾款
-		if ($order['pay_status'] == 2 && $order['prom_type'] == 4) {
-			$pre_sell_info = M('goods_activity')->where(array('act_id' => $order['prom_id']))->find();
-			$pre_sell_info = array_merge($pre_sell_info, unserialize($pre_sell_info['ext_info']));
-			if ($pre_sell_info['retainage_start'] > time()) {
-				$this->error('还未到支付尾款时间' . date('Y-m-d H:i:s', $pre_sell_info['retainage_start']));
-			}
-			if ($pre_sell_info['retainage_end'] < time()) {
-				$this->error('对不起，该预售商品已过尾款支付时间' . date('Y-m-d H:i:s', $pre_sell_info['retainage_start']));
-			}
-		}
-		$payment_where = array(
-			'type' => 'payment',
-			'status' => 1,
-			'scene' => array('in', array(0, 2)),
-		);
-		//预售和抢购暂不支持货到付款
-		$orderGoodsPromType = M('order_goods')->where(['order_id' => $order['order_id']])->getField('prom_type', true);
-		$no_cod_order_prom_type = ['4,5']; //预售订单，虚拟订单不支持货到付款
-		if (in_array($order['prom_type'], $no_cod_order_prom_type) || in_array(1, $orderGoodsPromType) || $order['shop_id'] > 0) {
-			$payment_where['code'] = array('neq', 'cod');
-		}
-		$paymentList = M('Plugin')->where($payment_where)->select();
-		$paymentList = convert_arr_key($paymentList, 'code');
-
-		foreach ($paymentList as $key => $val) {
-			$val['config_value'] = unserialize($val['config_value']);
-			if ($val['config_value']['is_bank'] == 2) {
-				$bankCodeList[$val['code']] = unserialize($val['bank_code']);
-			}
-		}
-
-		$bank_img = include APP_PATH . 'home/bank.php'; // 银行对应图片
-		$this->assign('paymentList', $paymentList);
-		$this->assign('bank_img', $bank_img);
-		$this->assign('order', $order);
-		$this->assign('bankCodeList', $bankCodeList);
-		$this->assign('pay_date', date('Y-m-d', strtotime("+1 day")));
-
+		// var_dump($cartList);die;
+		$this->assign('cartList', $cartList);
 		return $this->fetch();
 	}
 
@@ -400,239 +274,4 @@ class Cart extends Base {
 		return $this->fetch('ajax_address');
 	}
 
-	/**
-	 * 预售商品下单流程
-	 */
-	public function pre_sell_cart() {
-		$act_id = input('act_id/d');
-		$goods_num = input('goods_num/d');
-		if (empty($act_id)) {
-			$this->error('没有选择需要购买商品');
-		}
-		if (empty($goods_num)) {
-			$this->error('购买商品数量不能为0', U('Home/Activity/pre_sell', array('act_id' => $act_id)));
-		}
-		if ($this->user_id == 0) {
-			$this->error('请先登录', U('Home/User/login'));
-		}
-		$pre_sell_info = M('goods_activity')->where(array('act_id' => $act_id, 'act_type' => 1))->find();
-		if (empty($pre_sell_info)) {
-			$this->error('商品不存在或已下架', U('Home/Activity/pre_sell_list'));
-		}
-		$pre_sell_info = array_merge($pre_sell_info, unserialize($pre_sell_info['ext_info']));
-		if ($pre_sell_info['act_count'] + $goods_num > $pre_sell_info['restrict_amount']) {
-			$buy_num = $pre_sell_info['restrict_amount'] - $pre_sell_info['act_count'];
-			$this->error('预售商品库存不足，还剩下' . $buy_num . '件', U('Home/Activity/pre_sell', array('id' => $act_id)));
-		}
-		$goodsActivityLogic = new GoodsActivityLogic();
-		$pre_count_info = $goodsActivityLogic->getPreCountInfo($pre_sell_info['act_id'], $pre_sell_info['goods_id']); //预售商品的订购数量和订单数量
-		$pre_sell_price['cut_price'] = $goodsActivityLogic->getPrePrice($pre_count_info['total_goods'], $pre_sell_info['price_ladder']); //预售商品价格
-		$pre_sell_price['goods_num'] = $goods_num;
-		$pre_sell_price['deposit_price'] = floatval($pre_sell_info['deposit']);
-		// 提交订单
-		if ($_REQUEST['act'] == 'submit_order') {
-			$invoice_title = input('invoice_title'); // 发票
-			$taxpayer = input('taxpayer'); // 纳税人识别号
-			$address_id = input("address_id/d"); //  收货地址id
-			if (empty($address_id)) {
-				exit(json_encode(array('status' => -3, 'msg' => '请先填写收货人信息', 'result' => null))); // 返回结果状态
-			}
-			$orderLogic = new OrderLogic();
-			$result = $orderLogic->addPreSellOrder($this->user_id, $address_id, $invoice_title, $act_id, $pre_sell_price, $taxpayer); // 添加订单
-			exit(json_encode($result));
-		}
-		$this->assign('pre_sell_info', $pre_sell_info); // 购物车的预售商品
-		$this->assign('pre_sell_price', $pre_sell_price);
-		return $this->fetch();
-	}
-
-	/**
-	 * 兑换积分商品
-	 */
-	public function buyIntegralGoods() {
-		$goods_id = input('goods_id/d');
-		$item_id = input('item_id/d');
-		$goods_num = input('goods_num');
-		$Integral = new Integral();
-		$Integral->setUserById($this->user_id);
-		$Integral->setGoodsById($goods_id);
-		$Integral->setSpecGoodsPriceById($item_id);
-		$Integral->setBuyNum($goods_num);
-		try {
-			$Integral->checkBuy();
-			$url = U('Cart/integral', ['goods_id' => $goods_id, 'item_id' => $item_id, 'goods_num' => $goods_num]);
-			$result = ['status' => 1, 'msg' => '购买成功', 'result' => ['url' => $url]];
-			$this->ajaxReturn($result);
-		} catch (TpshopException $t) {
-			$result = $t->getErrorArr();
-			$this->ajaxReturn($result);
-		}
-	}
-
-	/**
-	 *  积分商品结算页
-	 * @return mixed
-	 */
-	public function integral() {
-		$goods_id = input('goods_id/d');
-		$item_id = input('item_id/d');
-		$goods_num = input('goods_num/d');
-		if (empty($this->user)) {
-			$this->error('请登录');
-		}
-		if (empty($goods_id)) {
-			$this->error('非法操作');
-		}
-		if (empty($goods_num)) {
-			$this->error('购买数不能为零');
-		}
-		$Goods = new Goods();
-		$goods = $Goods->where(['goods_id' => $goods_id])->find();
-		if (empty($goods)) {
-			$this->error('该商品不存在');
-		}
-		if (empty($item_id)) {
-			$goods_spec_list = SpecGoodsPrice::all(['goods_id' => $goods_id]);
-			if (count($goods_spec_list) > 0) {
-				$this->error('请传递规格参数');
-			}
-			$goods_price = $goods['shop_price'];
-			//没有规格
-		} else {
-			//有规格
-			$specGoodsPrice = SpecGoodsPrice::get(['item_id' => $item_id, 'goods_id' => $goods_id]);
-			if ($goods_num > $specGoodsPrice['store_count']) {
-				$this->error('该商品规格库存不足，剩余' . $specGoodsPrice['store_count'] . '份');
-			}
-			$goods_price = $specGoodsPrice['price'];
-			$this->assign('specGoodsPrice', $specGoodsPrice);
-		}
-		$point_rate = tpCache('shopping.point_rate');
-		$this->assign('point_rate', $point_rate);
-		$this->assign('goods', $goods);
-		$this->assign('goods_price', $goods_price);
-		$this->assign('goods_num', $goods_num);
-		return $this->fetch();
-	}
-
-	/**
-	 *  积分商品价格提交
-	 * @return mixed
-	 */
-	public function integral2() {
-		if ($this->user_id == 0) {
-			$this->ajaxReturn(['status' => -100, 'msg' => "登录超时请重新登录!", 'result' => null]);
-		}
-		$goods_id = input('goods_id/d');
-		$item_id = input('item_id/d');
-		$goods_num = input('goods_num/d');
-		$address_id = input("address_id/d"); //  收货地址id
-		$user_note = input('user_note'); // 给卖家留言
-		$invoice_title = input('invoice_title'); // 发票
-		$taxpayer = input('taxpayer'); // 发票纳税人识别号
-		$user_money = input("user_money/f", 0); //  使用余额
-		$payPwd = input('payPwd');
-		$shop_id = input('shop_id/d', 0); //自提点id
-		$take_time = input('take_time/d'); //自提时间
-		$consignee = input('consignee/s'); //自提点收货人
-		$mobile = input('mobile/s'); //自提点联系方式
-		$integral = new Integral();
-		$integral->setUserById($this->user_id);
-		$integral->setShopById($shop_id);
-		$integral->setGoodsById($goods_id);
-		$integral->setBuyNum($goods_num);
-		$integral->setSpecGoodsPriceById($item_id);
-		$integral->setUserAddressById($address_id);
-		$integral->useUserMoney($user_money);
-		try {
-			$integral->checkBuy();
-			$pay = $integral->pay();
-			// 提交订单
-			if ($_REQUEST['act'] == 'submit_order') {
-				$placeOrder = new PlaceOrder($pay);
-				$placeOrder->setUserAddress($integral->getUserAddress());
-				$placeOrder->setConsignee($consignee);
-				$placeOrder->setMobile($mobile);
-				$placeOrder->setInvoiceTitle($invoice_title);
-				$placeOrder->setUserNote($user_note);
-				$placeOrder->setTaxpayer($taxpayer);
-				$placeOrder->setPayPsw($payPwd);
-				$placeOrder->setTakeTime($take_time);
-				$placeOrder->addNormalOrder();
-				$order = $placeOrder->getOrder();
-				$this->ajaxReturn(['status' => 1, 'msg' => '提交订单成功', 'result' => $order['order_id']]);
-			}
-			$this->ajaxReturn(['status' => 1, 'msg' => '计算成功', 'result' => $pay->toArray()]);
-		} catch (TpshopException $t) {
-			$error = $t->getErrorArr();
-			$this->ajaxReturn($error);
-		}
-
-	}
-
-	/**
-	 *  获取发票信息
-	 * @date2017/10/19 14:45
-	 */
-	public function invoice() {
-		$map['user_id'] = $this->user_id;
-		$field = [
-			'invoice_title',
-			'taxpayer',
-			'invoice_desc',
-		];
-
-		$info = M('user_extend')->field($field)->where($map)->find();
-		if (empty($info)) {
-			$result = ['status' => -1, 'msg' => 'N', 'result' => ''];
-		} else {
-			$result = ['status' => 1, 'msg' => 'Y', 'result' => $info];
-		}
-		$this->ajaxReturn($result);
-	}
-
-	/**
-	 *  保存发票信息
-	 * @date2017/10/19 14:45
-	 */
-	public function save_invoice() {
-		if (IS_AJAX) {
-			//A.1获取发票信息
-			$invoice_title = trim(input("invoice_title"));
-			$taxpayer = trim(input("taxpayer"));
-			$invoice_desc = trim(input("invoice_desc"));
-			//B.1校验用户是否有历史发票记录
-			$map['user_id'] = $this->user_id;
-			$info = M('user_extend')->where($map)->find();
-			//B.2发票信息
-			$data = [];
-			$data['invoice_title'] = $invoice_title;
-			$data['taxpayer'] = $taxpayer;
-			$data['invoice_desc'] = $invoice_desc;
-			//B.3发票抬头
-			if ($invoice_title == "个人") {
-				$data['invoice_title'] = "个人";
-				$data['taxpayer'] = "";
-			}
-			//是否存贮过发票信息
-			if (empty($info)) {
-				$data['user_id'] = $this->user_id;
-				M('user_extend')->add($data) ? $status = 1 : $status = -1;
-			} else {
-				(M('user_extend')->where($map)->save($data)) ? $status = 1 : $status = -1;
-			}
-			$this->ajaxReturn(['status' => $status, 'msg' => '', 'result' => '']);
-
-		}
-	}
-
-	/**
-	 * 优惠券兑换
-	 */
-	public function cartCouponExchange() {
-		$coupon_code = input('coupon_code');
-		$couponLogic = new CouponLogic;
-		$return = $couponLogic->exchangeCoupon($this->user_id, $coupon_code);
-		$this->ajaxReturn($return);
-	}
 }

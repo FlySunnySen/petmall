@@ -13,21 +13,7 @@ class Base extends Controller {
 	*/
 	public function _initialize() {
 		session_start();
-		// if (input("unique_id")) {
-		// 	// 兼容手机app
-		// 	session_id(input("unique_id"));
-		// 	Session::start();
-		// }
-		// header("Cache-control: private"); // history.back返回后输入框值丢失问题 参考文章 http://www.tp-shop.cn/article_id_1465.html  http://blog.csdn.net/qinchaoguang123456/article/details/29852881
-		// $this->session_id = session_id(); // 当前的 session_id
-		// define('SESSION_ID', $this->session_id); //将当前的session_id保存为常量，供其它方法调用
-
-		// // 判断当前用户是否手机
-		// if (isMobile()) {
-		// 	cookie('is_mobile', '1', 3600);
-		// } else {
-		// 	cookie('is_mobile', '0', 3600);
-		// }
+		self::checkLogin();
 		$this->public_assign();
 	}
 	/**
@@ -107,5 +93,43 @@ class Base extends Controller {
 	*/
 	public function ajaxReturn($data) {
 		exit(json_encode($data));
+	}
+
+	public function checkLogin() {
+		// if(!isset($_SESSION['user'])){
+		// 	$this->error('请先登录','user/login');
+		// }
+		$controller = request()->controller();
+
+		if (empty($_SESSION['user'])) {
+
+			if (empty($_COOKIE['user_email']) || empty($_COOKIE['user_pwd'])) {
+				header("location:login.php?req_url=" . $_SERVER['REQUEST_URI']); //转到登录页面，记录请求的url，登录后跳转过去，用户体验好。
+				$url = $_SERVER['REQUEST_URI'];
+
+			} else {
+				$map['user_email'] = $_COOKIE['user_email'];
+				$map['user_pwd'] = md5($_COOKIE['user_pwd']);
+				$rst = Db::name('user')
+					->alias('a')
+					->join('user_details b', 'a.Uid = b.user_Uid')
+					->where($map)
+					->find();
+				if ($rst) {
+					$_SESSION['alias'] = $rst['user_alias'];
+					$_SESSION['user'] = $rst['user_email'];
+					$_SESSION['uid'] = $rst['Uid'];
+					$this->success('登录成功', 'index/index');
+				} else {
+					$this->error('请先登录', 'user/login');
+				}
+			}
+			$allowController = ['Index', 'User'];
+			if (!in_array($controller, $allowController)) {
+				$this->error('请先登录', 'user/login');
+			}
+
+		}
+
 	}
 }

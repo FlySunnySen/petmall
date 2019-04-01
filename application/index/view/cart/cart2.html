@@ -24,7 +24,7 @@
     <div class="nav-middan-z p">
         <div class="header w1224">
             <div class="ecsc-logo fon_gwcshcar">
-               
+
                 <span>购物车</span>
             </div>
             <div class="liucsell">
@@ -87,7 +87,7 @@
 
                         <div class="fl">
                             <input class="invoice_tt" name="consignee" type="text" value="" maxlength="12"/>
-                            <span class="err" id="err_consignee"></span>
+                            <span class="err" id="err_name"></span>
                         </div>
                     </div>
                     <div class="invoice_title p">
@@ -96,14 +96,14 @@
                         <div class="fl">
                             <input class="invoice_tt" name="mobile" type="text" value=""
                                    placeholder="固话号码格式:xx-xx(例如: 0755-86140485)" maxlength="15"/>
-                            <span class="err" id="err_mobile"></span>
+                            <span class="err" id="err_phone"></span>
                         </div>
                     </div>
                     <div class="invoice_title p">
                         <span class="label"><span class="red">*</span>收货地址：</span>
-                        <span class="err" id="err_province"></span>
-                        <span class="err" id="err_city"></span>
-                        <span class="err" id="err_district"></span>
+                        <span class="err" id="err_address_province"></span>
+                        <span class="err" id="err_address__city"></span>
+                        <span class="err" id="err_address_county"></span>
                         <select class="di-bl fl seauii" name="province" id="province" onChange="get_city(this)">
                             <option value="0">请选择</option>
                         </select>
@@ -111,16 +111,14 @@
                             <option value="0">请选择</option>
                         </select>
 
-                        <select class="di-bl fl seauii" name="district" id="district" onChange="get_twon(this)">
+                        <select class="di-bl fl seauii" name="district" id="district" onChange="">
                             <option value="0">请选择</option>
                         </select>
 
-                        <select class="di-bl fl seauii" name="twon" id="twon" style="display:none;">
-                        </select>
                     </div>
                     <div class="invoice_title p">
                         <span class="label"><span class="red">*</span>详细地址：</span>
-                        <span class="err" id="err_address"></span>
+                        <span class="err" id="err_address_info"></span>
 
                         <div class="fl">
                             <input class="invoice_tt" name="address" type="text" placeholder="详细地址" maxlength="100"/>
@@ -357,7 +355,48 @@
                         </div>
                     </div>
                     <ul class="buy-shopping-list">
-                        
+                        {volist name="cartList" id="cart"}
+                            <li>
+                                <div class="goods-extra clearfix">
+                                    <div class="p-img">
+                                        <a target="_blank"
+                                           href="{:url('index/Good/goodsInfo',array('id'=>$cart['id']))}">
+                                            <img src={$cart.goods_img} alt="">
+                                        </a>
+
+                                        <div class="p-img-tips" id="goods_shipping_img_{$cart.id}"
+                                             style="display: none">暂无商品
+                                        </div>
+                                    </div>
+                                    <div class="goods-msg clearfix">
+                                        <div class="goods-msg-gel">
+                                            <div class="tp-cart-goods-name">
+                                                <a href="{:url('index/Good/goodsInfo',array('id'=>$cart['goods_id']))}"
+                                                   target="_blank">{$cart.goods_name}</a>
+                                            </div>
+                                            <ul class="tp-cart-goods-mes">
+                                                <li class="tp-c-red1">{$cart.key_name}</li>
+                                                <li>
+                                                    <span>x{$cart.num}</span>
+                                                    <span class="tp-bold tp-c-red1">￥ {$cart.price}</span>
+                                                </li>
+                                                <li>
+                                                    <span class="p-state"
+                                                          id="goods_shipping_title_{$cart.id}">有货</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="msp_return">
+                                        <p class="guarantee-item">
+                                            <!--   <i class="return7"></i><span class="f_blue">支持七天无理由退货</span>
+                                               <i class="return7 return7-dark"></i><span class="f_dark">不支持七天无理由退货</span>-->
+                                        </p>
+                                        <!--<p class="btn-check-date"><i class="yb-h-gwc return7"></i><span class="f_blue f-999">选延保</span></p>-->
+                                    </div>
+                                </div>
+                            </li>
+                        {/volist}
                     </ul>
                 </div>
             </div>
@@ -366,41 +405,26 @@
     </div>
 </div>
 
-<div class="addremark">
-    <div class="w1224">
-        <div class="top_leg p ma-to-20">
-            <span class="paragraph fl"><i class="ddd"></i>发票信息</span>
-        </div>
-        <div class="invoice-cont ma-to-20" id="changeinfo">
-            <span id="span1">普通发票（纸质）</span>
-            <span id="span2">个人</span>
-            <span id="span3">明细</span>
-            <span id="span4" style="display:none">不开发票</span>
-            <a onclick="invoice_dialog();" href="javascript:void(0);">修改</a>
-        </div>
-    </div>
-</div>
+
 <div class="usecou-step-tit" id="usecou-step-tit">
     <div class="w1224">
-        
+
         <div class="coupon-detail">
-          
+
             <div class="detail-cont">
                 <ul class="available">
                     <li>
-                       
+
                     </li>
                     <li>
                         <div class="coupon-list p">
-                          
+
                         </div>
                     </li>
                 </ul>
             </div>
             <div class="score-list">
-             
-               
-              
+
             </div>
         </div>
     </div>
@@ -428,68 +452,7 @@
             }
         }
 
-        //保存发票
-        function save_invoice() {
-            var invoice_title = $("#personage").val();
-            var invoice_desc = $("#invoice_desc").val();
-            var data = {invoice_title: "个人", invoice_desc: invoice_desc};
-            if (!$('#ratepaying').is(":hidden") && invoice_desc != "不开发票") {
-                invoice_title = $("#invoice_title").val();
-                if (invoice_title.length == 0) {
-                    layer.msg("发票抬头不能为空", {icon: 2});
-                    return false;
-                }
-                var taxpayer = $("#taxpayer").val();
-//                    if (taxpayer.length > 0) {
-                if ((taxpayer.length == 15) || (taxpayer.length == 18) || (taxpayer.length == 20)) {
-                } else {
-                    layer.msg("请输入正确的纳税人识别号！", {icon: 2});
-                    return;
-                }
-                var addressCode = taxpayer.substring(0, 6);
-                // 校验地址码
-                var check = checkAddressCode(addressCode);
-                if (!check) {
-                    layer.msg("请输入正确的纳税人识别号(地址码)！", {icon: 2});
-                    return;
-                }
-                // 校验组织机构代码
-                var orgCode = taxpayer.substring(6, 9);
-                check = orgcodevalidate(orgCode);
-                if (!check) {
-                    layer.msg("请输入正确的纳税人识别号(组织机构代码) ！", {icon: 2});
-                    return;
-                }
-                $('#order_taxpayer').val(taxpayer);
-//                    }
-                $('#order_invoice_title').val(invoice_title);
-                var data = {invoice_title: invoice_title, taxpayer: taxpayer, invoice_desc: invoice_desc};
-            } else {
-                $('#order_taxpayer').val("");
-                $('#order_invoice_title').val("个人");
-//                    $("#invoice_title").val("个人");
-            }
-            if (invoice_desc == "不开发票") {
-                $('#order_invoice_title').val("");
-                $('#order_taxpayer').val("");
-                $("#span1,#span2,#span3").hide();
-                $("#span4").show();
-            } else {
-                $('#span2').text($('#order_invoice_title').val());
-                $('#span3').text(invoice_desc);
-                $("#span4").hide();
-                $("#span1,#span2,#span3").show();
-            }
-            $.post("{:url('Cart/save_invoice')}", data, function (json) {
-                var data = eval("(" + json + ")");
-                if(data.status==1){
-                    layer.open({icon: 1, content:'保存成功', time: 1000});
-                }else{
-                    layer.open({icon: 2, content: '保存失败', time: 1000});
-                }
-            });
-            return true;
-        }
+
         /*
          * 优惠券列表切换
          *1、优惠券数量: 根据列表里面的列表项的数量自动填充
@@ -563,29 +526,7 @@
 <div class="order-summary p">
     <div class="w1224">
         <div class="statistic fr">
-            <div class="list">
-              
-            </div>
-            <div class="list">
-                <span>优惠券：</span>
-                <em class="price" id="couponFee"> -￥0.00</em>
-            </div>
-            <div class="list">
-                <span>优惠：</span>
-                <em class="price" id="order_prom_amount"> -￥0.00</em>
-            </div>
-            <div class="list">
-                <span>运费：</span>
-                <em class="price" id="postFee">￥0.00</em>
-            </div>
-            <div class="list">
-                <span>余额支付：</span>
-                <em class="price" id="balance">-￥0.00</em>
-            </div>
-            <div class="list">
-                <span>积分支付：</span>
-                <em class="price" id="pointsFee">-￥0.00</em>
-            </div>
+            
         </div>
     </div>
 </div>
@@ -594,7 +535,7 @@
         <div class="trade-foot-detail-com">
             <div class="fc-price-info">
                 <span class="price-tit">应付总额：</span>
-                <span class="price-num" id="payables">￥0.00</span>
+                <span class="price-num" id="payables">￥{$count}</span>
             </div>
             <div class="fc-consignee-info">
                 <span class="mr20">寄送至： <span id="address_info"></span></span>
@@ -610,110 +551,7 @@
         </button>
     </div>
 </div>
-<!--发票信息弹窗-s--->
-<div class="ui-dialog infom-dia" id="invoice_dialog">
-    <div class="ui-dialog-title">
-        <span>发票信息</span>
-        <a class="ui-dialog-close" id="invoice_dialog_close" title="关闭">
-            <span class="ui-icon ui-icon-delete"></span>
-        </a>
-    </div>
-    <div class="ui-dialog-content" style="height: 600px">
-        <div class="invoice-dialog">
-            <div class="tab-nav p">
-                <ul>
-                    <li>
-                        <div class="item_select_t curtr">
-                            <span>普通发票</span>
-                            <b></b>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <div class="zinvoice-tips">
-                <i>1</i>
-                <span class="tip-cont">开票金额不包优惠券和积分支付部分。
-                    <!--<a target="_blank" class="newadd" href="">发票信息相关问题&gt;&gt;</a>--></span>
-                <i>2</i>
-                <span class="tip-cont">开企业抬头发票须填写纳税人识别号，以免影响报销</span>
-            </div>
-            <div class="ui-switchable-panel">
-                <div class="invoice_title p">
-                    <span class="label">发票抬头：</span>
 
-                    <div class="fl">
-                        <input class="invoice_tt" type="text" value="个人" onclick="hidediv();" id="personage" READONLY/>
-
-                        <div id="adddiv" class="invoice_tt" style="display:none">
-                            <div class='fl' style="margin-left:-5px">
-                                <input class='invoice_tt' type='text' value='' id='invoice_title'/>
-                                <!--<a onclick='save_invoice();' class='btn-9'-->
-                                   <!--style="margin-left:0px;margin-top: 5px">保存</a>-->
-                                <!--<a onclick='togglediv();' class='btn-9' style="margin-left:0px;margin-top: 5px">取消</a>-->
-                            </div>
-                        </div>
-                        </br>
-                        <a onclick="togglediv()" href="javascript:void(0);" id="addinvoice">新增单位发票</a>
-                    </div>
-                </div>
-                <div class="invoice_title p">
-                </div>
-                <div id="ratepaying" style="display:none" class="invoice_title p">
-                    <span class="label">纳税人编号：</span>
-
-                    <div class="fl">
-                        <input class="invoice_tt" type="text" value="" id="taxpayer"/>
-                    </div>
-                </div>
-                <div class="invoice_title p">
-                    <span class="label">发票内容：</span>
-                    <input type="hidden" name="invoice_desc" id="invoice_desc" value="">
-
-                    <div class="fl">
-                        <div class="tab-nav p">
-                            <ul id="invoice_class">
-                                <li>
-                                    <div class="item_select_t curtr" id="no_invoice">
-                                        <span>不开发票</span>
-                                        <b></b>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="item_select_t" id="detail_invoice">
-                                        <span>明细</span>
-                                        <b></b>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <script type="text/javascript">
-                    var invoice_type = $('#invoice_class');
-
-                    $("#invoice_desc").val(invoice_type.find('.curtr').find('span').text());
-                    invoice_type.find('li').click(function () {
-                        invoice_type.find('div').attr("class", "item_select_t");
-                        $("#invoice_desc").val($(this).find('span').text());
-                        $(this).find('div').attr("class", "item_select_t curtr");
-                    });
-
-                </script>
-                <div class="invoice_title p">
-                    <span class="label">&nbsp;</span>
-
-                    <div class="fl">
-                        <div class="op-btns  invoice_sendwithgift">
-                            <a id="invoiceBtn" class="btn-1">保存</a>
-                            <a onclick="$('#invoice_dialog_close').trigger('click');" class="btn-9">取消</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!--发票信息弹窗-e--->
 <div class="ui-mask" id="invoice_mask"></div>
 <!--footer-s-->
 <img class="rabbit" src="/public/images/qw.gif" alt="">
@@ -933,10 +771,10 @@
         var address_id = address_item.attr('data-address-id');
         var address_name = address_item.find('.addr-name').attr('title');
         var address_tel = address_item.find('.addr-tel').attr('title');
-
+        console.log(address_name,address_tel);
         $('#address_info').html(address_item.find('.addr-info').attr('title'));
-        if (address_name && address_tel) {
-            $('#address_user').html(address_name + ' ' + address_tel);
+        if (address_name) {
+            $('#address_user').html(address_name);
         }
         $("input[name='address_id']").attr('value', address_id);
         if (address_item.length == 0) {
@@ -951,57 +789,9 @@
             var latitude = address_item_select.data('latitude');
             last_select_address_arr = new last_select_address(province_id,city_id,district_id,town_id,address_name,address_tel,longitude,latitude);
             get_shop_list(province_id, city_id, district_id, '', longitude, latitude);
-            ajax_order_price(); // 计算订单价钱
         }
     }
 
-    /**
-     * 获取订单价格
-     */
-    function ajax_order_price() {
-        $.ajax({
-            type: "POST",
-            url: "{:url('index/Cart/cart3')}",
-            dataType: 'json',
-            data: $('#cart2_form').serialize(),
-            success: function (data) {
-                is_shipping_able = true;
-                if(data.hasOwnProperty('code') && data.code == 301){
-                    is_shipping_able = false;
-                }
-                door_to_door_hide_or_show();
-                if (data.status != 1) {
-                    layer.msg(data.msg, {icon: 2, time: 2000},function(){
-                        // 登录超时
-                        if (data.status == -100) {
-                            location.href = "{:url('index/User/login')}";
-                        }
-                    });
-                    // 显示商品有货无货配送
-                    for (v in data.result.goods_shipping) {
-                        if (data.result.goods_shipping[v] != '' && data.result.goods_shipping[v] != null) {
-                            if (data.result.goods_shipping[v].status == 1) {
-                                goods_shipping(v, true);
-                            } else {
-                                goods_shipping(v, false);
-                            }
-                        }
-                    }
-                    return false;
-                }
-                $("#postFee").text('￥' + data.result.shipping_price); // 物流费
-                if (data.result.coupon_price == null) {
-                    $("#couponFee").text('-￥0');// 优惠券
-                } else {
-                    $("#couponFee").text('-￥' + data.result.coupon_price);// 优惠券
-                }
-                $("#balance").text('-￥' + data.result.user_money);// 余额
-                $("#pointsFee").text('-￥' + data.result.integral_money);// 积分支付
-                $("#payables").text('￥' + data.result.order_amount);// 应付
-                $("#order_prom_amount").text('-￥' + data.result.order_prom_amount);// 订单 优惠活动
-            }
-        });
-    }
 
     // 提交订单
     var ajax_return_status = 1; // 标识ajax 请求是否已经回来 可以进行下一次请求
@@ -1015,25 +805,13 @@
         ajax_return_status = 0;
         $.ajax({
             type: "POST",
-            url: "{:url('index/Cart/cart3')}", //+tab,
+            url: "{:url('index/Order/submitOrder')}", //+tab,
             data: $('#cart2_form').serialize() + "&act=submit_order", //
             dataType: "json",
             success: function (data) {
 
                 // 上一次ajax 已经返回, 可以进行下一次 ajax请
                 ajax_return_status = 1;
-
-                // 当前人数过多 排队中
-                if (data.status == -99) {
-                    $('.mask-filter-div').show();
-                    $('.rabbit').show();
-                    setTimeout("submit_order()", 5000);
-                    return false;
-                } else {
-                    // 隐藏排队
-                    $('.mask-filter-div').hide();
-                    $('.rabbit').hide();
-                }
 
                 if (data.status != 1) {
                     layer.msg(data.msg, {
@@ -1050,7 +828,7 @@
                     icon: 1, // 成功图标
                     time: 2000 //2秒关闭（如果不配置，默认是3秒）
                 }, function () { // 关闭后执行的函数
-                    location.href = "/index.php?m=Home&c=Cart&a=cart4&order_sn=" + data.result; // 跳转到结算页
+                    location.href = "/index.php/index/order/pay/id/" + data.result; // 跳转到结算页
                 });
             }
         });
@@ -1265,28 +1043,28 @@
                     dataType: 'json',
                     success: function (data) {
                         if (data.status == 1) {
-                            $("input[name='consignee']").val(data.result.user_address.consignee);
-                            $("input[name='address']").val(data.result.user_address.address);
-                            $("input[name='mobile']").val(data.result.user_address.mobile);
-                            $("input[name='zipcode']").val(data.result.user_address.zipcode);
+                            $("input[name='consignee']").val(data.result.user_address.name);
+                            $("input[name='address']").val(data.result.user_address.address_info);
+                            $("input[name='mobile']").val(data.result.user_address.phone);
+                            $("input[name='zipcode']").val(data.result.user_address.address_zip);
                             var city_list_option_html = '<option value="0">请选择</option>';
                             var district_list_option_html = '<option value="0">请选择</option>';
                             var twon_list_option_html = '<option value="0">请选择</option>';
                             $.each(data.result.city_list, function (n, value) {
                                 city_list_option_html += '<option value="' + value.id + '">' + value.name + '</option>';
                             });
-                            $('#city').html(city_list_option_html).val(data.result.user_address.city);
+                            $('#city').html(city_list_option_html).val(data.result.user_address.address_city);
                             $.each(data.result.district_list, function (n, value) {
                                 district_list_option_html += '<option value="' + value.id + '">' + value.name + '</option>';
                             });
-                            $('#district').html(district_list_option_html).val(data.result.user_address.district);
+                            $('#district').html(district_list_option_html).val(data.result.user_address.address_county);
                             $.each(data.result.twon_list, function (n, value) {
                                 twon_list_option_html += '<option value="' + value.id + '">' + value.name + '</option>';
                             });
                             if (data.result.twon_list.length > 0) {
                                 $('#twon').html(twon_list_option_html).val(data.result.user_address.twon).show();
                             }
-                            $("#province").val(data.result.user_address.province);
+                            $("#province").val(data.result.user_address.address_province);
                         } else {
                             layer.open({icon: 2, content: data.msg, time: 1000});
                         }
@@ -1370,13 +1148,7 @@
     })
     //自提点
     $(function () {
-        //更换自提点
-        $(document).on("click", '#replace_shop', function (e) {
-            $(".z-instead-bg").show();
-            $(".z-instead-cont").show();
-            widget_area(last_select_address_arr.province_id,last_select_address_arr.city_id,last_select_address_arr.district_id,last_select_address_arr.town_id,'address_province','address_city','address_district');
-            show_map();
-        })
+
         //点击快递配送
         $(document).on("click", '#express_delivery', function (e) {
             if(!$(this).hasClass('z-parkage-li')){
@@ -1388,36 +1160,7 @@
                 $('.addressItem').find('.item_select_t').eq(0).trigger('click');
             }
         })
-        //点击上门自提
-        $(document).on("click", '#door_to_door', function (e) {
-            if(!$(this).hasClass('z-parkage-li')){
-                $('#express_delivery').removeClass("z-parkage-li");
-                $(this).addClass("z-parkage-li");
-                $('#express_delivery_modes').hide();
-                $('#door_to_door_modes').show();
-                $('.addressItem').find('.item_select_t').removeClass('curtr');
-                initShop();
-                ajax_order_price();
-            }
-        })
-        //关闭自提点弹窗
-        $(document).on("click", '#shop_dialog_close', function (e) {
-            $(".z-instead-bg").hide();
-            $(".z-instead-cont").hide();
-        })
-        //点击自提点弹窗确认
-        $(document).on("click", '#shop_submit', function (e) {
-            var shop_label = $('.class-labels');
-            if(shop_label.length == 0){
-                layer.open({icon: 2, time: 2000, content: "请选择自提点"});
-            }
-            initShopInfo();
-            $('#shop_dialog_close').trigger('click');
-        })
-        //点击自提点弹窗取消
-        $(document).on("click", '#shop_dialog_cancle', function (e) {
-            $('#shop_dialog_close').trigger('click');
-        })
+       
         //点击搜索
         $(document).on("click", '#search_shop', function (e) {
             var province_id = $("#address_province");
