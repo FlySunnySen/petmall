@@ -1,4 +1,27 @@
 {extend name="Public::layout" /}
+{block name="head"}
+	<style type="text/css" media="screen">
+		#order li{
+			float: left;
+			list-style: none;
+			display: list-item;
+			margin: 0 8px;
+			font: 14px/1.5 "Helvetica Neue",Helvetica,Arial,"Microsoft Yahei","Hiragino Sans GB","Heiti SC","WenQuanYi Micro Hei",sans-serif;
+    		color: #333333;
+		}
+		#order li{
+			display: inline-block;
+	    	padding: 0 8px;
+		    font-size: 16px;
+		    line-height: 38px;
+		    border-bottom: 2px solid transpare;
+		}
+		.selected{
+			color: #e23435;
+    		border-bottom: 2px solid red;
+		}
+	</style>
+{/block}
 {block name="main"}
 	<div class="page-content">
 		<div class="page-header">
@@ -27,7 +50,28 @@
 		<div class="row">
 			<div class="col-xs-12">
 				<!-- PAGE CONTENT BEGINS -->
+				<div class="row">
+					<div class="col-xs-12">
+						<ul id='order'>
+                            <li>
+                                <a href="{:url('Order/index')}" class="{if condition="$Request.param.type eq ''"}selected{/if}">全部订单</a>
+                            </li>
+                            <li>
+                                <a href="{:url('Order/index',array('type'=>'noPay'))}" class="{if condition="$Request.param.type eq 'noPay'"}selected{/if}">待付款</a>
+                            </li>
+                            <li>
+                                <a href="{:url('Order/index',array('type'=>'noFollow'))}" class="{if condition="$Request.param.type eq 'noFollow'"}selected{/if}">待发货</a>
+                            </li>
+                            <li>
+                                <a href="{:url('Order/index',array('type'=>'follow'))}" class="{if condition="$Request.param.type eq 'follow'"}selected{/if}">待收货</a>
+                            </li>
+                            <li>
+                                <a href="{:url('Order/comment',array('status'=>'0'))}" class="{if condition="$Request.param.type eq 'WAITCCOMMENT'"}selected{/if}">待评论</a>
+                            </li>
 
+                		</ul>
+					</div>
+				</div>
 				<div class="row">
 					<div class="col-xs-12">
 
@@ -51,7 +95,7 @@
 										<th>买家留言</th>
 										<th>快递类型</th>
 										<th>快递单号</th>
-										<th>付款方式</th>
+										<!-- <th>付款方式</th> -->
 										<th>操作</th>
 									</tr>
 								</thead>
@@ -74,9 +118,23 @@
 													<span class="lbl">{$vo.user_Uid}</span>
 												</td>
 												<td>
-													<span class="lbl">{$vo.action_status}</span>
+													<span class="lbl">
+														{if condition="$vo['shipping_status'] eq '0'"}
+															未发货
+														{elseif condition="$vo['shipping_status'] eq '1'"}
+															已发货
+														{else/}
+															已收货
+														{/if}
+													</span>
 												</td>
-												<td class="hidden-480">{$vo.pay_status}</td>
+												<td class="hidden-480">
+													{if condition="$vo['pay_status'] eq '0'"}
+														未付款
+													{else/}
+														已付款
+													{/if}
+												</td>
 												<td class="hidden-480">{$vo.create_time}</td>
 												<td class="hidden-480">
 													<span>{$vo.order_message}</span>
@@ -87,16 +145,18 @@
 												<td>
 													<span class="lbl">{$vo.express_number}</span>
 												</td>
-												<td>
+											<!-- 	<td>
 													<span class="lbl">{$vo.pay_id}</span>
-												</td>
-												
+												</td> -->
+
 
 												<td>
-													<a href="{:url('admin/good/addEditGood',array('id'=>$vo.id))}">修改</a>
+													{if condition="$vo.shipping_status eq '0'"}
+													<a class="send" value="{$vo.id}" href="javascript:void(0)">发货</a>
 													|
+													{/if}
 													<a href="{:url('admin/goodImages/index',array('id'=>$vo.id))}">查看相册</a>
-													
+
 													|
 													<a href="{:url('admin/good/softDelGood',array('id'=>$vo.id))}">删除</a>
 												</td>
@@ -127,11 +187,11 @@
 
 	<script>
 		$(function() {
-			//全选		
-			var bool = true;	
-			$('#setall').bind('click',function() {				
+			//全选
+			var bool = true;
+			$('#setall').bind('click',function() {
 				$('input[name="id[]"]').each(function() {
-					$(this).prop('checked',bool);					
+					$(this).prop('checked',bool);
 				})
 				bool = !bool;
 			})
@@ -139,28 +199,51 @@
 			//反选
 			$('#against').bind('click',function() {
 				$('input[name="id[]"]').each(function() {
-					$(this).prop('checked',!$(this).prop('checked'));					
+					$(this).prop('checked',!$(this).prop('checked'));
 				})
 			})
-
 			//批量删除
 			$('#delall').bind('click',function() {
 				var data = $('#allform').serialize();
-				
-				$.post("{:url('admin/good/softDelMore')}",data,function(data) {			
+
+				$.post("{:url('admin/good/softDelMore')}",data,function(data) {
 
 					if(data){
 					        alert(data);
 							location.reload();
-						
+
 					}else{
 						 alert(data);
-					}				
+					}
 				})
 			})
-			
-			
-			
+
+			/* 发货 */
+			$('.send').bind('click',function() {
+				var data = $(this).attr('value');
+				layer.open({
+			      type: 2,
+			      title: 'iframe父子操作',
+			      maxmin: true,
+			      shadeClose: true, //点击遮罩关闭层
+			      area : ['800px' , '520px'],
+			      content: ''
+			    });
+
+
+				$.post("{:url('admin/good/softDelMore')}",data,function(data) {
+
+					if(data){
+					        alert(data);
+							location.reload();
+
+					}else{
+						 alert(data);
+					}
+				})
+			})
+
+
 		})
 		</script>
 {/block}

@@ -28,29 +28,27 @@
                     <div class="navitems2 p" id="navitems5">
                         <ul>
                             <li>
-                                <a href="{:url('Order/order_list')}" class="<if condition="$Request.param.type eq ''">selected</if>">全部订单</a>
+                                <a href="{:url('Order/order_list')}" class="{if condition="$Request.param.type eq ''"}selected{/if}">全部订单</a>
                             </li>
                             <li>
-                                <a href="{:url('Order/order_list',array('type'=>'WAITPAY'))}" class="<if condition="$Request.param.type eq 'WAITPAY'">selected</if>">待付款</a>
+                                <a href="{:url('Order/order_list',array('type'=>'noPay'))}" class="{if condition="$Request.param.type eq 'noPay'"}selected{/if}">待付款</a>
                             </li>
                             <li>
-                                <a href="{:url('Order/order_list',array('type'=>'WAITSEND'))}" class="<if condition="$Request.param.type eq 'WAITSEND'">selected</if>">待发货</a>
+                                <a href="{:url('Order/order_list',array('type'=>'noFollow'))}" class="{if condition="$Request.param.type eq 'noFollow'"}selected{/if}">待发货</a>
                             </li>
                             <li>
-                                <a href="{:url('Order/order_list',array('type'=>'WAITRECEIVE'))}" class="<if condition="$Request.param.type eq 'WAITRECEIVE'">selected</if>">待收货</a>
+                                <a href="{:url('Order/order_list',array('type'=>'follow'))}" class="{if condition="$Request.param.type eq 'follow'"}selected{/if}">待收货</a>
                             </li>
                             <li>
-                                <a href="{:url('Order/comment',array('status'=>'0'))}" class="<if condition="$Request.param.type eq 'WAITCCOMMENT'">selected</if>">待评论</a>
+                                <a href="{:url('Order/comment',array('status'=>'0'))}" class="{if condition="$Request.param.type eq 'WAITCCOMMENT'"}selected{/if}">待评论</a>
                             </li>
                             <!--<li>-->
                             <!--<a href="javascript:void(0);" class="">预售订单</a>-->
                             <!--</li>-->
                         </ul>
-                        <div class="wrap-line" <if condition="$Request.param.type eq 'WAITPAY'">style="width: 130px; left: 140px;"<elseif condition="$Request.param.type eq 'WAITSEND'"/>style="width: 130px; left: 270px;"<elseif condition="$Request.param.type eq 'WAITRECEIVE'"/>style="width: 130px; left: 400px;"<else/>style="width: 130px; left: 10px;"</if> >
-                        <span style="left:15px;"></span>
                     </div>
                 </div>
-                
+
                 <div class="orderbook-list">
                     <div class="book-tit">
                         <ul>
@@ -65,9 +63,9 @@
                     <div class="hid-derei">
                         <ul>
                             <li><a href="{:url('Order/order_list')}">全部订单</a></li>
-                            <li><a href="{:url('Order/order_list',array('type'=>'WAITPAY'))}">待付款</a></li>
-                            <li><a href="{:url('Order/order_list',array('type'=>'WAITSEND'))}">待发货</a></li>
-                            <li><a href="{:url('Order/order_list',array('type'=>'WAITRECEIVE'))}">待收货</a></li>
+                            <li><a href="{:url('Order/order_list',array('pay_status'=>'0'))}">待付款</a></li>
+                            <li><a href="{:url('Order/order_list',array('shipping_status'=>'0'))}">待发货</a></li>
+                            <li><a href="{:url('Order/order_list',array('shipping_status'=>'1'))}">待收货</a></li>
                             <li><a href="{:url('Order/comment',array('status'=>'0'))}">待评论</a></li>
                             <li><a href="{:url('Order/order_list',array('type'=>'FINISH'))}">已完成</a></li>
 				    		<li><a href="{:url('Order/order_list',array('type'=>'CANCEL'))}">已取消</a></li>
@@ -75,19 +73,115 @@
                         </ul>
                     </div>
                 </div>
-                <div class="order-alone-li lastset_cm">
-                    <empty name="lists">
+                 <div class="order-alone-li lastset_cm">
+                    {empty name="lists"}
                         <div class="car-none-pl">
                             <i class="account-acco1"></i>您还没有订单，<a href="/">快去逛逛吧~</a>
                         </div>
-                        <else/>
-                        
-                    </empty>
+                        {else/}
+                        {volist name="lists" id="list"}
+                            <table width="100%" border="" cellspacing="" cellpadding="">
+                                <tr class="time_or">
+                                    <td colspan="6">
+                                        <div class="fl_ttmm">
+                                            <span class="time-num">下单时间{$list['create_time']}：<em class="num">{$list.create_time|date='Y-m-d H:i:s',###}</em></span>
+                                            <span class="time-num">订单编号：<em class="num">{$list.acti}</em></span>
+                                            <div class="paysoon">
+                                                {if condition="$list.pay_status eq 0"}
+                                                    <a class="ps_lj" href="{:url('index/order/pay',array('id'=>$list.id))}"  target="_blank">立即支付</a>
+                                                {/if}
+                                                {if condition="$list.shipping_status eq 1"}
+                                                    <a class="ps_lj" href="javascript:;" onclick="order_confirm({$list.id});">确认收货</a>{/if}
+                                                {if condition="$list.pay_status eq 0"}
+                                                    <a class="consoorder" href="javascript:void(0);" onClick="cancel_order({$list.id})" >取消订单</a>
+                                                {/if}
+                                                <!--<div class="dele"></div>-->
+                                            </div>
+                                        </div>
+                                        <div class="fr_ttmm"></div>
+                                    </td>
+                                </tr>
+                                {volist name="list.goods_list" id="goods" key="k"}
+                                    {if condition="$k eq 1"}
+                                        <tr class="conten_or">
+                                            <td class="sx1">
+                                                <div class="shop-if-dif">
+                                                    <div class="shop-difimg">
+                                                        <img src={$goods.img} width="60" height="60" />
+                                                    </div>
+                                                    <div class="shop_name">
+                                                        <a href="{:url('index/Good/goodsInfo',array('id'=>$goods['goods_id']))}">
+                                                            {$goods.goods_name}
+                                                        </a>
+                                                        <p>{$goods.spec_key_name}</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="sx2"><span>￥</span><span>{$goods.goods_price}</span></td>
+                                            <td class="sx3">
+                                                <span>x{$goods.goods_number}</span>
+                                            </td>
+                                            <td class="sx4" rowspan="{$list.goods_list|count}">
+                                                <div class="pric_rhz">
+                                                    <p class="d_pri"><span>￥</span><span>{$list.order_count}</span></p>
+                                                    <p class="d_yzo">
+                                                        <spna>含运费：</spna>
+                                                        <span>{$list.order_count}</span></p>
+                                                </div>
+                                            </td>
+                                            <td class="sx5" rowspan="{$list.goods_list|count}">
+                                                <div class="detail_or">
+                                                    <p>
+
+                                                            <a href="{:url('Order/virtual_order',array('order_id'=>$list['id']))}">查看详情</a>
+
+                                                    </p>
+                                                </div>
+                                            </td>
+                                            <td class="sx6" rowspan="{$list.goods_list|count}">
+                                                <div class="rbac">
+                                                    <br/>
+                                                    {if condition="$list['shipping_status'] eq 0"}待发货{/if}
+                                                    {if condition="$list['shipping_status'] eq 1"}已发货{/if}
+                                                    {if condition="($list['shipping_status'] eq 2) and ($goods[is_comment] eq 0)"}
+                                                        <p class="inspect">
+                                                            <a href="{:url('Home/Order/comment',array('status'=>0))}">评价</a>
+                                                        </p>
+                                                    {/if}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {else /}
+                                        <tr class="conten_or">
+                                            <td class="sx1">
+                                                <div class="shop-if-dif">
+                                                    <div class="shop-difimg">
+                                                            <img src={$goods.img} width="60" height="60"/>
+                                                    </div>
+                                                    <div class="shop_name">
+                                                        <a href="{:url('Home/Goods/goodsInfo',array('id'=>$goods['goods_id']))}">
+                                                            {$goods.goods_name}
+                                                        </a>
+                                                        <p>{$goods.spec_key_name}</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="sx2"><span>￥</span><span>{$goods.goods_price}</span></td>
+                                            <td class="sx3">
+                                                <span>x{$goods.goods_number}</span>
+                                               
+                                            </td>
+                                        </tr>
+                                    {/if}
+                                {/volist}
+                            </table>
+                        {/volist}
+                    {/empty}
                 </div>
             </div>
             <div class="operating fixed" id="bottom">
                 <div class="fn_page clearfix">
-                   
+
                 </div>
             </div>
         </div>
@@ -137,7 +231,7 @@
         );
     }
 
-   
+
     //确定收货
     function order_confirm(order_id){
         layer.confirm("你确定收到货了吗?",{
@@ -165,7 +259,7 @@
             layer.close(index);
         });
     }
-    
+
 	function refund_order(obj){
 		layer.open({
 			type: 2,

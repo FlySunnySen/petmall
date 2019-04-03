@@ -130,38 +130,53 @@ class Order extends Base {
 	 * @return [type] [description]
 	 */
 	public function order_list() {
-		$where = ' user_Uid=:user_id';
-		$bind['user_id'] = $_SESSION['uid'];
-		if (input('type')) {
-			$where .= strtoupper(input('type'));
+		$where['user_Uid'] = $_SESSION['uid'];
+		if (input('type') == 'noPay') {
+			$where['pay_status'] = 0;
 		}
-		$count = Db::name('order')->where($where)->bind($bind)->count();
+		if (input('type') == 'noFollow') {
+			$where['shipping_status'] = 0;
+		}
+		if (input('type') == 'follow') {
+			$where['shipping_status'] = 1;
+		}
+		$count = Db::name('order')->where($where)->count();
 		$Page = new Page($count, 10);
-
 		$show = $Page->show();
 		$order_str = "id DESC";
-		$order_list = Db::name('order')->order($order_str)->where($where)->bind($bind)->limit($Page->firstRow . ',' . $Page->listRows)->select();
+		$order_list = Db::name('order')->order($order_str)->where($where)->limit($Page->firstRow . ',' . $Page->listRows)->select();
+		// var_dump(Db::getlastsql());die;
 		$good = [];
 		//获取订单商品
-		$goods_list = Db::name('order_good')->where('order_id', '=', $order_list[0]['id'])->select();
-		// var_dump($goods_list);die;
-		var_dump($goods_list);die;
-		foreach ($goods_list as $key => $value) {
-			$good[$key]['goods_name'] = Db::name('good')->where('id', '=', $value['goods_id'])->value('goods_name');
-			if ($value['item_id'] !== 0) {
-				$good[$key]['goods_price'] = Db::name('good')->where('id', '=', $value['goods_id'])->value('goods_price');
-			} else {
-				$good[$key]['goods_price'] = Db::name('spec_goods_price')->where('item_id', '=', $value['item_id'])->value('price');
+		foreach ($order_list as $k => $v) {
+			# code...
+			$goods_list = Db::name('order_good')->where('order_id', '=', $v['id'])->select();
+			// var_dump($goods_list);die;
+			foreach ($goods_list as $key => $value) {
+				$good[$key]['goods_name'] = Db::name('good')->where('id', '=', $value['goods_id'])->value('goods_name');
+				$good[$key]['img'] = Db::name('good')->where('id', '=', $value['goods_id'])->value('goods_img');
+				$good[$key]['goods_id'] = $value['goods_id'];
+				$good[$key]['goods_number'] = $value['goods_number'];
+				if ($value['item_id'] == 0) {
+					$good[$key]['goods_price'] = Db::name('good')->where('id', '=', $value['goods_id'])->value('goods_price');
+					$good[$key]['spec_key_name'] = null;
+				} else {
+					$good[$key]['goods_price'] = Db::name('spec_goods_price')->where('item_id', '=', $value['item_id'])->value('price');
+					$good[$key]['spec_key_name'] = Db::name('spec_goods_price')->where('item_id', '=', $value['item_id'])->value('key_name');
+				}
 			}
+			// var_dump($order_list[$k]);die;
+			$order_list[$k]['goods_list'] = $good;
 		}
-		var_dump($good);die;
-		$this->assign('order_status', C('ORDER_STATUS'));
-		$this->assign('shipping_status', C('SHIPPING_STATUS'));
-		$this->assign('pay_status', C('PAY_STATUS'));
+
+		// var_dump($order_list[0]);die;
+		// $this->assign('order_status', C('ORDER_STATUS'));
+		$this->assign('shipping_status', config('shipping_status'));
+		$this->assign('pay_status', config('pay_status'));
 		$this->assign('page', $show);
 		$this->assign('lists', $order_list);
 		$this->assign('active', 'order_list');
-		$this->assign('active_status', input('get.type'));
+		$this->assign('active_status', input('type'));
 		return $this->fetch();
 	}
 
