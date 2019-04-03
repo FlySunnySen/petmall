@@ -222,7 +222,7 @@ class User extends Base {
 	public function setPwd() {
 		$uid = $_SESSION['uid'];
 		$pwd = input('pwd');
-		$rst = Db::name('user_details')->where('user_Uid', '=', $uid)->update(['user_pwd' => $pwd]);
+		$rst = Db::name('user_details')->where('user_Uid', '=', $uid)->update(['user_pay_pwd' => $pwd]);
 		if ($rst) {
 			$this->ajaxReturn(['status' => 1, 'msg' => '操作成功！']);
 		} else {

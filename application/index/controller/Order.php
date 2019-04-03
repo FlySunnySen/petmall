@@ -2,6 +2,7 @@
 namespace app\index\controller;
 use think\Controller;
 use think\Db;
+use think\Page;
 
 // use app\admin\model\GoodType as category;
 
@@ -17,13 +18,24 @@ class Order extends Base {
 		$data['order_message'] = input('user_note'); //买家留言
 		$data['address_id'] = input("address_id"); //  收货地址id
 		$data['create_time'] = time();
+		$data['order_count'] = 0;
 		$action = input("action"); // 立即购买
 		$address = Db::name('user_address')->where("id", $data['address_id'])->find();
-		$cartList = Db::view('good', 'id')
-			->view('spec_goods_price', 'item_id', 'spec_goods_price.goods_id=good.id')
-			->view('cart', 'num', 'cart.item_id=spec_goods_price.item_id')
+		$cartList = Db::view('good', 'id,goods_price')
+			->view('spec_goods_price', 'price', 'spec_goods_price.goods_id=good.id')
+			->view('cart', 'num,item_id', 'cart.item_id=spec_goods_price.item_id')
 			->where(['user_Uid' => $data['user_Uid'], 'selected' => 1])
 			->select();
+
+		/* 计算订单总金额 */
+		foreach ($cartList as $key => $value) {
+			# code...
+			if ($cartList[0]['item_id'] == 0) {
+				$data['order_count'] += $value['goods_price'] * $value['num'];
+			} else {
+				$data['order_count'] += $value['price'] * $value['num'];
+			}
+		}
 		try {
 			$id = Db::name('order')->insertGetId($data); //订单写入数据库
 			/* 订单商品详情 */
@@ -46,6 +58,7 @@ class Order extends Base {
 	 */
 	public function pay() {
 		$id = input('id');
+		$this->assign('orderID', $id);
 		return $this->fetch();
 	}
 
@@ -55,13 +68,120 @@ class Order extends Base {
 	 */
 	public function checkPwdSet() {
 		$uid = $_SESSION['uid'];
-		$isSet = Db::name('user_details')->where('user_Uid', '=', $uid)->value('user_pwd');
+		$isSet = Db::name('user_details')->where('user_Uid', '=', $uid)->value('user_pay_pwd');
 		if (empty($isSet)) {
 			$this->ajaxReturn(['status' => 0, 'msg' => '请设置支付密码']);
 		} else {
 			$this->ajaxReturn(['status' => 1, 'msg' => '已有支付密码']);
 		}
 
+	}
+
+	/**
+	 * [payOrder 支付订单]
+	 * @return [type] [description]
+	 */
+	public function payOrder() {
+		$uid = $_SESSION['uid'];
+		$pwd = input('pwd');
+		$orderID = input('orderID');
+		$checkPwd = Db::name('user_details')->where('user_Uid', '=', $uid)->value('user_pay_pwd');
+		/* 检查支付密码 */
+		if ($checkPwd !== $pwd) {
+			$this->ajaxReturn(['status' => 0, 'msg' => '支付密码错误']);
+			die;
+		}
+		/* 检查余额是否充足 */
+		$userMoney = Db::name('user_details')->where('user_Uid', '=', $uid)->value('user_money');
+		$orderMoney = Db::name('order')->where('id', '=', $orderID)->value('order_count');
+		if ($orderMoney > $userMoney) {
+			$this->ajaxReturn(['status' => 0, 'msg' => '用户余额不足']);
+			die;
+		}
+		/* 获取订单的商品 */
+		$goodList = Db::name('order_good')->where('order_id', '=', $orderID)->select();
+		/* 开启事务（减掉用户余额->减掉商品库存->修改订单状态） */
+		Db::startTrans();
+		try {
+			/*  减掉用户余额 */
+			Db::name('user_details')->where('user_Uid', '=', $uid)->setDec('user_money', $orderMoney);
+			/* 减掉商品库存 */
+			foreach ($goodList as $key => $value) {
+				Db::name('good')->where('id', '=', $value['goods_id'])->setDec('goods_number', $value['goods_number']);
+				/* 如果item_id不为0 ，则需再减规格表的库存 */
+				if ($value['item_id'] !== 0) {
+					Db::name('spec_goods_price')->where('item_id', '=', $value['item_id'])->setDec('store_count', $value['goods_number']);
+				}
+			}
+			/* 修改订单状态 */
+			Db::name('order')->where('id', '=', $orderID)->update(['pay_status' => 1]);
+			// 提交事务
+			Db::commit();
+			$this->ajaxReturn(['status' => 1, "msg" => '支付成功']);
+		} catch (\Exception $e) {
+			// 回滚事务
+			Db::rollback();
+			$this->ajaxReturn(['status' => 0, "msg" => '支付失败']);
+		}
+	}
+
+	/**
+	 * [order_list 订单列表]
+	 * @return [type] [description]
+	 */
+	public function order_list() {
+		$where = ' user_Uid=:user_id';
+		$bind['user_id'] = $_SESSION['uid'];
+		if (input('type')) {
+			$where .= strtoupper(input('type'));
+		}
+		$count = Db::name('order')->where($where)->bind($bind)->count();
+		$Page = new Page($count, 10);
+
+		$show = $Page->show();
+		$order_str = "id DESC";
+		$order_list = Db::name('order')->order($order_str)->where($where)->bind($bind)->limit($Page->firstRow . ',' . $Page->listRows)->select();
+		$good = [];
+		//获取订单商品
+		$goods_list = Db::name('order_good')->where('order_id', '=', $order_list[0]['id'])->select();
+		// var_dump($goods_list);die;
+		var_dump($goods_list);die;
+		foreach ($goods_list as $key => $value) {
+			$good[$key]['goods_name'] = Db::name('good')->where('id', '=', $value['goods_id'])->value('goods_name');
+			if ($value['item_id'] !== 0) {
+				$good[$key]['goods_price'] = Db::name('good')->where('id', '=', $value['goods_id'])->value('goods_price');
+			} else {
+				$good[$key]['goods_price'] = Db::name('spec_goods_price')->where('item_id', '=', $value['item_id'])->value('price');
+			}
+		}
+		var_dump($good);die;
+		$this->assign('order_status', C('ORDER_STATUS'));
+		$this->assign('shipping_status', C('SHIPPING_STATUS'));
+		$this->assign('pay_status', C('PAY_STATUS'));
+		$this->assign('page', $show);
+		$this->assign('lists', $order_list);
+		$this->assign('active', 'order_list');
+		$this->assign('active_status', input('get.type'));
+		return $this->fetch();
+	}
+
+	/*
+		     * 订单详情
+	*/
+	public function order_detail() {
+		$id = input('id/d', 0);
+		$Order = new OrderModel();
+		$order = $Order::get(['order_id' => $id, 'user_id' => $this->user_id]);
+		if (!$order) {
+			$this->error('没有获取到订单信息');
+		}
+		//获取订单
+		if ($order['prom_type'] == 5) {
+			//虚拟订单
+			$this->redirect(U('virtual/virtual_order', ['order_id' => $id]));
+		}
+		$this->assign('order', $order);
+		return $this->fetch();
 	}
 
 }
