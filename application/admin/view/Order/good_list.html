@@ -1,0 +1,36 @@
+<link href="/static/admin/css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="/static/admin/css/font-awesome.min.css" />
+<link rel="stylesheet" href="/static/admin/css/ace.min.css" />
+<link rel="stylesheet" href="/static/admin/css/ace-rtl.min.css" />
+<link rel="stylesheet" href="/static/admin/css/ace-skins.min.css" />
+<link rel="stylesheet" href="/static/admin/css/myace.css" />
+<link rel="stylesheet" type="text/css" href="/static/admin/jQuery-tck/css/common.css">
+<div class="row">
+	<div class="col-xs-12">
+		<div class="table-responsive">
+			<table  class="table">
+				<thead>
+					<tr>
+						<th>商品名</th>
+						<th>商品规格</th>
+						<th>商品数量</th>
+						<th>商品库存</th>
+						<!-- <th>付款方式</th> -->
+					</tr>
+				</thead>
+				<form id="allform">
+					<tbody>
+						{foreach name="goodList" item="vo"}
+							<tr>
+								<td>{$vo.goods_name}</td>
+								<td>{$vo.spec_key_name}</td>
+								<td>{$vo.goods_number}</td>
+								<td>{$vo.store_count}</td>
+							</tr>
+						{/foreach}
+					</tbody>
+				</form>
+			</table>
+		</div>
+	</div>
+</div>

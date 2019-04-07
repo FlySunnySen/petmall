@@ -42,7 +42,6 @@ class User extends Base {
 	}
 
 	public function logout() {
-		session_start();
 		setcookie("PHPSESSION", "", time() - 1, "/");
 		setcookie("user_email", "", time() - 1, "/");
 		session_destroy();

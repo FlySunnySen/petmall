@@ -155,7 +155,7 @@
 													<a class="send" value="{$vo.id}" href="javascript:void(0)">发货</a>
 													|
 													{/if}
-													<a href="{:url('admin/goodImages/index',array('id'=>$vo.id))}">查看相册</a>
+													<a class="goodList" value="{$vo.id}" href="javascript:void(0)">查看商品</a>
 
 													|
 													<a href="{:url('admin/good/softDelGood',array('id'=>$vo.id))}">删除</a>
@@ -221,26 +221,35 @@
 			/* 发货 */
 			$('.send').bind('click',function() {
 				var data = $(this).attr('value');
+				layer.prompt({
+				  formType: 0,
+				  value: '',
+				  title: '请输入快递单号',
+				}, function(value, index, elem){
+				  $.ajax({
+				  	 type:'post',
+				  	 data:'num='+value+'&id='+data,
+				  	 url:"{:url('order/send')}",
+				  	 dataType:'json',
+				  	 success:function(data){
+				  	 	layer.msg(data.msg);
+				  	 	layer.close(index);
+				  	 	window.location.reload();
+				  	 }
+				  });
+
+				});
+			})
+
+			/* 商品列表 */
+			$('.goodList').bind('click',function() {
+				var data = $(this).attr('value');
 				layer.open({
-			      type: 2,
-			      title: 'iframe父子操作',
-			      maxmin: true,
-			      shadeClose: true, //点击遮罩关闭层
-			      area : ['800px' , '520px'],
-			      content: ''
-			    });
-
-
-				$.post("{:url('admin/good/softDelMore')}",data,function(data) {
-
-					if(data){
-					        alert(data);
-							location.reload();
-
-					}else{
-						 alert(data);
-					}
-				})
+				  type: 2,
+				  area: ['400px', '260px'],
+				  shadeClose: true, //点击遮罩关闭
+				  content: "/admin/order/goodList/id/"+data
+				});
 			})
 
 

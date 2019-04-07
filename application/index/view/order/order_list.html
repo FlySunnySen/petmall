@@ -40,7 +40,7 @@
                                 <a href="{:url('Order/order_list',array('type'=>'follow'))}" class="{if condition="$Request.param.type eq 'follow'"}selected{/if}">待收货</a>
                             </li>
                             <li>
-                                <a href="{:url('Order/comment',array('status'=>'0'))}" class="{if condition="$Request.param.type eq 'WAITCCOMMENT'"}selected{/if}">待评论</a>
+                                <a href="{:url('Order/order_list',array('type'=>'comment'))}" class="{if condition="$Request.param.type eq 'comment'"}selected{/if}">待评论</a>
                             </li>
                             <!--<li>-->
                             <!--<a href="javascript:void(0);" class="">预售订单</a>-->
@@ -95,6 +95,10 @@
                                                 {if condition="$list.pay_status eq 0"}
                                                     <a class="consoorder" href="javascript:void(0);" onClick="cancel_order({$list.id})" >取消订单</a>
                                                 {/if}
+                                                {if condition="($list['shipping_status'] eq 2) and ($list['is_comment'] eq 0)"}
+                                                     待评价
+                                                {/if}
+                                                
                                                 <!--<div class="dele"></div>-->
                                             </div>
                                         </div>
@@ -143,10 +147,13 @@
                                                     <br/>
                                                     {if condition="$list['shipping_status'] eq 0"}待发货{/if}
                                                     {if condition="$list['shipping_status'] eq 1"}已发货{/if}
-                                                    {if condition="($list['shipping_status'] eq 2) and ($goods[is_comment] eq 0)"}
+                                                    {if condition="($list['shipping_status'] eq 2) and ($list['is_comment'] eq 0)"}
                                                         <p class="inspect">
-                                                            <a href="{:url('Home/Order/comment',array('status'=>0))}">评价</a>
+                                                            <a class="comment" href="{:url('order/comment',array('id'=>$list.id))}">评价</a>
                                                         </p>
+                                                    {/if}
+                                                    {if condition="($list['shipping_status'] eq 2) and ($list['is_comment'] eq 1)"}
+                                                     交易完成
                                                     {/if}
                                                 </div>
                                             </td>
@@ -169,7 +176,6 @@
                                             <td class="sx2"><span>￥</span><span>{$goods.goods_price}</span></td>
                                             <td class="sx3">
                                                 <span>x{$goods.goods_number}</span>
-                                               
                                             </td>
                                         </tr>
                                     {/if}
@@ -201,7 +207,10 @@
                 $(this).toggleClass('sxbb')
             })
         })
+      
+
     })
+
     //取消订单
     function cancel_order(id){
         layer.confirm('确定取消订单?', {
@@ -239,7 +248,7 @@
         },function(){
             $.ajax({
                 type : 'post',
-                url : '/index.php?m=Home&c=Order&a=order_confirm',
+                url : '/index.php/index/Order/order_confirm',
                 data:{order_id:order_id},
                 dataType : 'json',
                 success : function(data){
@@ -271,52 +280,6 @@
 			content: $(obj).attr('data-url'),
 		});
 	}
-    $(document).on('click', '.buy_order', function() {
-        var order_id = $(this).data('order-id');
-        $.ajax({
-            type : "post",
-            url : "{:url('Home/Order/oneMore')}",
-            data:{order_id:order_id},
-            dataType : 'json',
-            success : function(data){
-                var err_html = '';
-                if(data.status == 1){
-                    if(data.result.error_list.length == 0){
-                        window.location.href = "{:url('Cart/index')}";
-                    }else{
-                        err_html = '以下商品加入购物车失败:<br/>';
-                        $.each(data.result, function (n, value) {
-                            err_html += value + '<br/>';
-                        });
-                        layer.open({
-                            title:'加入购物车',
-                            content: err_html,
-                            btn: ['前往购物车', '取消'],
-                            yes: function(index, layero){
-                                window.location.href = "{:url('Cart/index')}";
-                            },
-                            btn2: function(index, layero){
-                                layer.closeAll();
-                            },
-                            cancel: function(){
-                                layer.closeAll();
-                            }
-                        });
-                    }
-                }else{
-                    if(data.result.url != ''){
-                        window.location.href = data.result.url;
-                        return;
-                    }
-                    err_html = data.msg+':<br/>';
-                    $.each(data.result.error_list, function (n, value) {
-                        err_html += value + '<br/>';
-                    });
-                    layer.open({icon: 2, content: err_html});
-                }
-            }
-        })
-    })
 </script>
 </body>
 </html>

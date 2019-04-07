@@ -107,6 +107,7 @@ class Order extends Base {
 			Db::name('user_details')->where('user_Uid', '=', $uid)->setDec('user_money', $orderMoney);
 			/* 减掉商品库存 */
 			foreach ($goodList as $key => $value) {
+				Db::name('good')->where('id', '=', $value['goods_id'])->setInc('sales_sum', $value['goods_number']);
 				Db::name('good')->where('id', '=', $value['goods_id'])->setDec('goods_number', $value['goods_number']);
 				/* 如果item_id不为0 ，则需再减规格表的库存 */
 				if ($value['item_id'] !== 0) {
@@ -136,9 +137,14 @@ class Order extends Base {
 		}
 		if (input('type') == 'noFollow') {
 			$where['shipping_status'] = 0;
+			$where['pay_status'] = 1;
 		}
 		if (input('type') == 'follow') {
 			$where['shipping_status'] = 1;
+		}
+		if (input('type') == 'comment') {
+			$where['is_comment'] = 0;
+			$where['shipping_status'] = 2;
 		}
 		$count = Db::name('order')->where($where)->count();
 		$Page = new Page($count, 10);
@@ -197,6 +203,71 @@ class Order extends Base {
 		}
 		$this->assign('order', $order);
 		return $this->fetch();
+	}
+
+	/**
+	 * [order_confirm 确认收货]
+	 * @return [type] [description]
+	 */
+	public function order_confirm() {
+		$orderID = input('order_id');
+		$rst = Db::name('order')->where('id', '=', $orderID)->update(['shipping_status' => 2]);
+		if ($rst) {
+			$this->ajaxReturn(['status' => 1, 'msg' => '收货成功', 'url' => 'http://www.petmall.com/index/order/order_list.html']);
+		} else {
+			$this->ajaxReturn(['status' => 0, 'msg' => '网络失败，请刷新页面后重试', 'url' => '']);
+		}
+
+	}
+
+	/**
+	 * [comment 评论]
+	 * @return [type] [description]
+	 */
+	public function comment() {
+		$id = input('id');
+		$commentList = Db::view('order_good', 'order_id,is_comment,goods_id')
+			->view('order', 'acti,user_Uid,create_time,id', 'order_good.order_id=order.id')
+			->view('spec_goods_price', 'key_name', 'spec_goods_price.item_id=order_good.item_id')
+			->view('good', 'goods_name,goods_img', 'good.id=order_good.goods_id')
+			->where(['order.id' => $id, 'shipping_status' => 2])
+			->distinct(true)
+			->select();
+		$this->assign('comment_list', $commentList);
+		return $this->fetch();
+	}
+
+	public function addcomment() {
+		$data['order_id'] = input('id');
+		$data['comment_content'] = input('content');
+		$data['user_id'] = $_SESSION['uid'];
+		$data['comment_rank'] = input('num');
+		$data['good_id'] = input('goodID');
+		$data['comment_time'] = time();
+		// $rst = Db::name('comment')->insert($data);
+		// var_dump(Db::getlastsql());die;
+		Db::startTrans();
+		try {
+			/* 修改评论数 */
+			Db::name('good')->where('id', '=', $data['good_id'])->setInc('comment_count', 1);
+			/* 修改order_good 是否评论 */
+			Db::name('order_good')->where(['order_id' => $data['order_id'], 'goods_id' => $data['good_id']])->update(['is_comment' => 1]);
+			/* 如果订单内所有的商品都评论完了 就修改order表的is_comment */
+			$check = Db::name('order_good')->where(['order_id' => $data['order_id'], 'is_comment' => 0])->find();
+			if (!$check) {
+				Db::name('order')->where('id', '=', $data['order_id'])->update(['is_comment' => 1]);
+			}
+			/* 添加评论 */
+			$rst = Db::name('comment')->insert($data);
+			// 提交事务
+			Db::commit();
+			$this->ajaxReturn(['status' => 1, 'msg' => '评论成功']);
+		} catch (\Exception $e) {
+			// 回滚事务
+			Db::rollback();
+			$this->ajaxReturn(['status' => 0, 'msg' => '评论失败']);
+		}
+
 	}
 
 }

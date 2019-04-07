@@ -1,6 +1,7 @@
 <?php
 namespace app\index\controller;
 use app\common\logic\GoodsLogic;
+use think\AjaxPage;
 use think\Controller;
 use think\Db;
 use think\Page;
@@ -13,18 +14,28 @@ class Good extends Base {
 	 * 商品详情页
 	 */
 	public function goodsInfo() {
-		//C('TOKEN_ON',true);
+
 		$goodsLogic = new GoodsLogic();
 		$goods_id = input("id");
 		$Goods = new \app\common\model\Good();
 		$goods = $Goods::get($goods_id);
-		// var_dump($goods);die;
 		if (empty($goods) || ($goods['is_on_sale'] == 0)) {
 			$this->error('该商品已经下架', url('Index/index'));
 		}
 		$spec_goods_price = model('spec_goods_price')->where("goods_id", $goods_id)->column("key,item_id,price,store_count,market_price"); // 规格 对应 价格 库存表
 		$goods_images_list = model('GoodImages')->where("good_id", $goods_id)->column("image_url"); // 商品 图册
 		$filter_spec = $goodsLogic->get_spec($goods_id);
+		$map['good_id'] = ['=', $goods_id];
+		$map['comment_rank'] = ['>', 3];
+		$map1['good_id'] = ['=', $goods_id];
+		$map1['comment_rank'] = ['<=', 3];
+		$commentGoodComment = Db::name('comment')->where($map)->count();
+		$commentBadComment = Db::name('comment')->where($map1)->count();
+		$commentListSum = Db::name('comment')->where('good_id', '=', $goods_id)->count();
+
+		$this->assign('commentGoodComment', $commentGoodComment);
+		$this->assign('commentBadComment', $commentBadComment);
+		$this->assign('commentListSum', $commentListSum);
 		$this->assign('filter_spec', $filter_spec); //规格参数
 		$this->assign('spec_goods_price', json_encode($spec_goods_price, true)); // 规格 对应 价格 库存表
 		$this->assign("good_images_list", $goods_images_list);
@@ -35,14 +46,34 @@ class Good extends Base {
 		return $this->fetch();
 	}
 
+	public function ajaxComment() {
+		$goods_id = input("goods_id", '0');
+		$commentType = input('commentType', '1'); // 1 全部 2好评 3差评
+		$where = ['good_id' => $goods_id];
+
+		$typeArr = array('1' => '0,1,2,3,4,5', '2' => '4,5', '3' => '0,1,2,3');
+		$where['comment_rank'] = ['in', $typeArr[$commentType]];
+		$count = Db::name('comment')->where($where)->count();
+		$page = new AjaxPage($count, 10);
+		$show = $page->show();
+
+		$list = Db::name('comment')->where($where)->select();
+
+		$this->assign('commentlist', $list); // 商品评论
+		// var_dump($list);die;
+		// $this->assign('replyList', $replyList); // 管理员回复
+		$this->assign('page', $show); // 赋值分页输出
+		return $this->fetch();
+	}
+
 	public function activity() {
+		// var_dump('hello');die;
 		$goods_id = input('goods_id/d'); //商品id
 		$item_id = input('item_id/d'); //规格id
 		$goods_num = input('goods_num/d'); //欲购买的商品数量
 		$Goods = new \app\common\model\Good();
 		$goods = $Goods::get($goods_id);
 		$this->ajaxReturn(['status' => 1, 'msg' => '该商品没有参与活动', 'result' => ['goods' => $goods]]);
-		die;
 		$goodsPromFactory = new GoodsPromFactory();
 		if ($goodsPromFactory->checkPromType($goods['prom_type'])) {
 			//这里会自动更新商品活动状态，所以商品需要重新查询

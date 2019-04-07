@@ -1,0 +1,141 @@
+<div class="deta-ri-ma">
+    <div class="introduceshop">
+        <div id="datail-nav-top" class="datail-nav-top">
+            <ul>
+                <li class="red"><a href="javascript:void(0);">商品介绍</a></li>
+
+                <li><a href="javascript:void(0);">评价<em>({$commentListSum})</em></a></li>
+
+            </ul>
+        </div>
+        <!--<div class="he-nav"></div>-->
+        <div class="shop-describe shop-con-describe p">
+            <div class="deta-descri">
+                <p class="shopname_de"><span>商品名称：</span><span>{$goods.goods_name}</span></p>
+                <div class="ma-d-uli p">
+                    <ul>
+                        <li><span>货号：</span><span>{$goods.sn}</span></li>
+                    </ul>
+                </div>
+
+                <div class="moreparameter">
+                    <!--
+                    <a href="">跟多参数<em>>></em></a>
+                    -->
+                </div>
+            </div>
+            <div class="detail-img-b">
+                {$goods.goods_desc|htmlspecialchars_decode}
+            </div>
+        </div>
+
+        <div class="shop-con-describe p" style="display: none;">
+            <div class="shop-describe p">
+                <div class="comm_stsh ma-to-20">
+                    <div class="deta-descri">
+                        <h2>商品评价</h2>
+                    </div>
+                </div>
+                <div class="deta-descri p">
+                    <ul class="tebj">
+                        <li class="percen"><span>{$commentGoodComment/$commentListSum*100|round}%</span></li>
+                        <li class="co-cen">
+                            <div class="comm_gooba">
+                                <div class="gg_c">
+                                    <span class="hps">好评</span>
+                                    <span class="hp">（{$commentGoodComment/$commentListSum*100|round}%）</span>
+                                            <span class="zz_rg"><i
+                                                    style="width: {$commentGoodComment/$commentListSum*100|round}%;"></i></span>
+                                </div>
+                                <div class="gg_c">
+                                    <span class="hps">差评</span>
+                                    <span class="hp">（{$commentBadComment/$commentListSum*100|round}%）</span>
+                                            <span class="zz_rg"><i
+                                                    style="width: {$commentBadComment/$commentListSum*100|round}%;"></i></span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="tjd-sum">
+                            <!--<p class="tjd">推荐点：</p>-->
+                            <div class="tjd-a">
+                                买家评论事项：购买后有什么问题, 满意, 或者不不满, 都可以在这里评论出来, 这里评论全部源于真实的评论.
+                            </div>
+                        </li>
+                        <li class="te-cen">
+                            <div class="nchx_com">
+                                <p>您可以对已购的商品进行评价</p>
+                                <a class="jfnuv" href="{:url('Home/Order/comment')}">发表评论</a>
+                                <!--<p class="xja"><span>详见</span><a class="de_cb" href="">积分规则</a></p>-->
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                  <div class="deta-descri p">
+                    <div class="cte-deta">
+                        <ul id="fy-comment-list">
+                            <li data-t="1" class="red">
+                                <a href="javascript:void(0);"
+                                   class="selected">全部评论（{$commentListSum}）</a>
+                            </li>
+                            <li data-t="2">
+                                <a href="javascript:void(0);">好评（{$commentGoodComment}）</a>
+                            </li>
+
+                            <li data-t="4">
+                                <a href="javascript:void(0);">差评（{$commentBadComment}）</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+                <div class="line-co-sunall" id="ajax_comment_return">
+                </div>
+            </div>
+        </div>
+      
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        // verify();
+        ajaxComment(1, 1);
+    });
+    // 普通 图形验证码
+    function verify() {
+        $('#verify_code').attr('src', '/index.php?m=Home&c=User&a=verify&type=consult&r=' + Math.random());
+    }
+    //商品评价
+    function ajaxComment(commentType, page) {
+        $.ajax({
+            type: "GET",
+            url: "/index.php/index/good/ajaxComment/goods_id/{$goods['id']}/commentType/" + commentType + "/p/" + page,//+tab,
+            success: function (data) {
+                $("#ajax_comment_return").html('').append(data);
+            }
+        });
+    }
+    var consult = $('#consult-h');
+    consult.find('.consult-item').eq(0).addClass('consult-ac');
+    consult.find('.consult-menus>a').click(function () {
+        $(this).addClass('consult-ac').siblings().removeClass('consult-ac');
+        consult.find('.consult-item').eq($(this).index()).addClass('consult-ac').siblings().removeClass('consult-ac');
+        $('.check-consult-tpye').find('a').eq($(this).index())
+    });
+
+
+    //商品介绍、规格及包装选项卡切换
+    $("#datail-nav-top ul li").click(function () {
+        $("#datail-nav-top").css("position", "static");
+        // $("html,body").animate({scrollTop: $(".set-meal-nav").offset().top}, 300);
+        $(this).addClass('red').siblings().removeClass('red');
+        var er = $('.datail-nav-top ul li').index(this);
+        $('.shop-con-describe').eq(er).show().siblings('.shop-con-describe').hide();
+    })
+
+    // 好评差评 切换
+    $('.cte-deta ul li').click(function () {
+        $(this).addClass('red').siblings().removeClass('red');
+        commentType = $(this).data('t');// 评价类型   好评 中评  差评
+        ajaxComment(commentType, 1);
+    })
+</script>
