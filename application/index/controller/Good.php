@@ -35,7 +35,7 @@ class Good extends Base {
 
 		$this->assign('commentGoodComment', $commentGoodComment);
 		$this->assign('commentBadComment', $commentBadComment);
-		$this->assign('commentListSum', $commentListSum);
+		$this->assign('commentListSum', $commentListSum ? $commentListSum : 1);
 		$this->assign('filter_spec', $filter_spec); //规格参数
 		$this->assign('spec_goods_price', json_encode($spec_goods_price, true)); // 规格 对应 价格 库存表
 		$this->assign("good_images_list", $goods_images_list);
@@ -112,7 +112,6 @@ class Good extends Base {
 		if (!empty($html)) {
 			return $html;
 		}
-
 		$filter_param = array(); // 帅选数组
 		$id = input('id'); // 当前分类id
 		$brand_id = input('get.brand_id', 0);
@@ -127,7 +126,6 @@ class Good extends Base {
 			$price = $start_price . '-' . $end_price;
 		}
 		// 如果输入框有价钱 则使用输入框的价钱
-
 		$filter_param['id'] = $id; //加入帅选条件中
 		$brand_id && ($filter_param['brand_id'] = $brand_id); //加入帅选条件中
 		$spec && ($filter_param['spec'] = $spec); //加入帅选条件中
@@ -136,18 +134,11 @@ class Good extends Base {
 		$goodsLogic = new GoodsLogic(); // 前台商品操作逻辑类
 		// 分类菜单显示
 		$goodsCate = Db::name('good_type')->where("id", $id)->find(); // 当前分类
-
 		$goodsCate['level'] = count(explode('_', $goodsCate['parent_id_path'])) - 1;
-		// var_dump($goodsCate);die;
 		$cateArr = $goodsLogic->get_goods_cate($goodsCate);
 		$cat_id_arr = self::getCatGrandson($id);
-		// var_dump($cat_id_arr);die;
-
 		$goods_where = ['is_on_sale' => 1, 'type_id' => ['in', $cat_id_arr]];
 		$filter_goods_id = Db::name('good')->where($goods_where)->column("id");
-		// var_dump(Db::getLastSql());die;
-		// var_dump($filter_goods_id);die;
-		// dump(Db::getLastSql());die;
 		// 过滤帅选的结果集里面找商品
 		if ($brand_id || $price) // 品牌或者价格
 		{
@@ -299,4 +290,5 @@ class Good extends Base {
 		$html = $this->fetch();
 		return $html;
 	}
+
 }
