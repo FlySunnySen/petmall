@@ -73,7 +73,9 @@ class Good extends Base {
 		$goods_num = input('goods_num/d'); //欲购买的商品数量
 		$Goods = new \app\common\model\Good();
 		$goods = $Goods::get($goods_id);
+		// var_dump($goods);die;
 		$this->ajaxReturn(['status' => 1, 'msg' => '该商品没有参与活动', 'result' => ['goods' => $goods]]);
+		var_dump('hhh');die;
 		$goodsPromFactory = new GoodsPromFactory();
 		if ($goodsPromFactory->checkPromType($goods['prom_type'])) {
 			//这里会自动更新商品活动状态，所以商品需要重新查询

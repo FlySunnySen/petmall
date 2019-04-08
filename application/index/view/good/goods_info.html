@@ -83,60 +83,6 @@
                     </a>
                     <!--<a href="javascript:void(0);" id="collectLink"><i class="collect-ico collect-ico-ok"></i>已收藏<em class="J_FavCount">(20)</em></a>-->
                 </div>
-                <!-- 分享商品 -->
-                <div class="share">
-                    <div class="jiathis_style">
-                        <div class="bdsharebuttonbox">
-                            <a href="#" class="bds_more" data-cmd="more"></a>
-                            <a href="#" class="bds_qzone" data-cmd="qzone"></a>
-                            <a href="#" class="bds_tsina" data-cmd="tsina"></a>
-                            <a href="#" class="bds_tqq" data-cmd="tqq"></a>
-                            <a href="#" class="bds_renren" data-cmd="renren"></a>
-                            <a href="#" class="bds_weixin" data-cmd="weixin"></a>
-                        </div>
-                    </div>
-                    <script>
-                        var bd_url = "";
-                        var bd_pic = "";
-                        var bdText = "{$goods.goods_name}";
-                        var is_distribut = getCookie('is_distribut');
-                        var user_id = getCookie('user_id');
-                        // 如果已经登录了, 并且是分销商
-                        if (parseInt(is_distribut) == 1 && parseInt(user_id) > 0) {
-                            bd_url = bd_url + "&first_leader=" + user_id;
-                        }
-
-                        function setShareConfig(id, config) {
-                            config.bdUrl = bd_url;
-                            config.bdPic = bd_pic;
-                            config.bdText = bdText;
-                            return config;
-                        }
-
-                        window._bd_share_config = {
-                            "common": {
-                                onBeforeClick: setShareConfig,
-                                "bdSnsKey": {},
-                                "bdText": "",
-                                "bdMini": "2",
-                                "bdPic": "",
-                                "bdStyle": "0",
-                                "bdSize": "16"
-                            },
-                            "share": {},
-                            "image": {
-                                "viewList": ["qzone", "tsina", "tqq", "renren", "weixin"],
-                                "viewText": "分享到：",
-                                "viewSize": "16"
-                            },
-                            "selectShare": {
-                                "bdContainerClass": null,
-                                "bdSelectMiniList": ["qzone", "tsina", "tqq", "renren", "weixin"]
-                            }
-                        };
-                        with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];
-                    </script>
-                </div>
             </div>
         </div>
 
@@ -193,29 +139,6 @@
                         <div class="allcomm"><p>累计销量</p>
                             <p class="f_blue">{$goods['sales_sum']}</p></div>
                     </div>
-                </div>
-                <div class="standard p">
-                        <!-- 收货地址，物流运费 -start-->
-                        <ul class="list1">
-                            <li class="jaj"><span>配&nbsp;&nbsp;送：</span></li>
-                            <li class="summary-stock though-line">
-                                <div class="dd shd_address">
-                                    <!--<div class="addrID"><div></div><b></b></div>-->
-                                    <div class="store-selector add_cj_p">
-                                        <div class="text" style="width: 150px;">
-                                            <div></div>
-                                            <b></b></div>
-                                        <div onclick="$(this).parent().removeClass('hover')" class="close"></div>
-                                    </div>
-                                    <span id="dispatching_msg" style="display: none;">可配送</span>
-                                    <span id="dispatching_desc"
-                                          style="vertical-align: middle;position: relative;top: -4px;left: 9px;color: #666"></span>
-                                </div>
-                            </li>
-                        </ul>
-                        <script src="__PUBLIC__/js/locationJson.js"></script>
-                        <!-- <script src="__STATIC__/js/location.js"></script> -->
-                        <!-- 收货地址，物流运费 -end-->
                 </div>
 
                 <div class="standard p">
@@ -321,17 +244,6 @@
             </div>
         </form>
 
-        <!--看了又看-s-->
-        <div class="detail-ry p">
-            <div class="type_more">
-                <div class="type-top">
-                    <h2>看了又看<a class="update_h fr" href="javascript:;" onclick="replace_look();">换一换</a></h2>
-                </div>
-                <div id="see_and_see">
-                </div>
-            </div>
-        </div>
-        <!--看了又看-s-->
     </div>
 </div>
 <!--搭配购组合套餐 s-->
@@ -383,10 +295,7 @@
 <!--footer-s-->
 {include file="public/footer"/}
 {include file="public/sidebar_cart"/}
-<!--看了又看-s-->
-<div style="display: none" id="look_see">
 
-    <!--看了又看-s-->
 </div>
 <!--footer-e-->
 <script src="__STATIC__/js/lazyload.min.js" type="text/javascript" charset="utf-8"></script>
@@ -418,7 +327,6 @@
             preload: 1,
             lens: 1
         });
-        replace_look();
         initSpec();
         initGoodsPrice();
         changeImg();
@@ -542,20 +450,6 @@
         })
     }
 
-    //看了又看切换
-    var tmpindex = 0;
-    var look_see_length = $('#look_see').children().length;
-    function replace_look() {
-        var listr = '';
-        if (tmpindex * 2 >= look_see_length) tmpindex = 0;
-        $('#look_see').children().each(function (i, o) {
-            if ((i >= tmpindex * 2) && (i < (tmpindex + 1) * 2)) {
-                listr += '<div class="tjhot-shoplist type-bot">' + $(o).html() + '</div>';
-            }
-        });
-        tmpindex++;
-        $('#see_and_see').empty().append(listr);
-    }
 
     //缩略图切换
     $('.small-pic-li').mouseenter(function () {
@@ -666,16 +560,6 @@
             url: "{:url('index/Good/activity')}",
             success: function (data) {
                 if (data.status == 1) {
-                    $('input[name="goods_prom_type"]').attr('value', data.result.goods.prom_type);//商品活动类型
-                    $('input[name="shop_price"]').attr('value', data.result.goods.shop_price);//商品价格
-                    $('input[name="store_count"]').attr('value', data.result.goods.store_count);//商品库存
-                    $('input[name="market_price"]').attr('value', data.result.goods.market_price);//商品原价
-                    $('input[name="start_time"]').attr('value', data.result.goods.start_time);//活动开始时间
-                    $('input[name="end_time"]').attr('value', data.result.goods.end_time);//活动结束时间
-                    $('input[name="activity_title"]').attr('value', data.result.goods.activity_title);//活动标题
-                    $('input[name="prom_detail"]').attr('value', data.result.goods.prom_detail);//促销详情
-                    $('input[name="activity_is_on"]').attr('value', data.result.goods.activity_is_on);//活动是否正在进行中
-                    price_ladder = data.result.goods.price_ladder;
                     goods_activity_theme();
                     buy_button();
                 }
@@ -737,10 +621,10 @@
             var spec_key = goods_spec_arr.sort(sortNumber).join('_');  //排序后组合成 key
             goods_price = spec_goods_price[spec_key]['price']; // 找到对应规格的价格
             store_count = spec_goods_price[spec_key]['store_count']; // 找到对应规格的库存
-            market_price = spec_goods_price[spec_key]['market_price']; // 找到对应规格的市场价
+            market_price = parseFloat(spec_goods_price[spec_key]['price'])+20; // 找到对应规格的市场价
             $("input[name='shop_price']").attr('value', goods_price);
             $("input[name='store_count']").attr('value', store_count);
-            $("input[name='market_price']").attr('value', market_price);
+            $("input[name='market_price']").attr('value', parseFloat(market_price));
         } else {
             priceLadderShow();
         }
