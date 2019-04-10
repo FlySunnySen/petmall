@@ -99,14 +99,10 @@ class Base extends Controller {
 
 		$controller = request()->controller();
 		if (empty($_SESSION['user'])) {
-			$allowController = ['Index', 'User', 'Good'];
+			$allowController = ['Index', 'Login', 'Good'];
 			// die;
 			if (!in_array($controller, $allowController)) {
-				if (empty($_COOKIE['user_email']) || empty($_COOKIE['user_pwd'])) {
-					header("location:login.php?req_url=" . $_SERVER['REQUEST_URI']); //转到登录页面，记录请求的url，登录后跳转过去，用户体验好。
-					$url = $_SERVER['REQUEST_URI'];
-
-				} else {
+				if (isset($_COOKIE['user_email']) && isset($_COOKIE['user_pwd'])) {
 					$map['user_email'] = $_COOKIE['user_email'];
 					$map['user_pwd'] = md5($_COOKIE['user_pwd']);
 					$rst = Db::name('user')
@@ -119,12 +115,11 @@ class Base extends Controller {
 						$_SESSION['user'] = $rst['user_email'];
 						$_SESSION['uid'] = $rst['Uid'];
 						$this->success('登录成功', 'index/index');
-					} else {
-						$this->error('请先登录', 'user/login');
 					}
 				}
-			}
+				$this->error('请先登录', 'login/login');
 
+			}
 		}
 
 	}

@@ -681,7 +681,7 @@
 
     //收藏商品
     $('#collectLink').click(function () {
-        if (getCookie('user_id') == '') {
+        if (<?php if(isset($_SESSION['uid'])){echo $_SESSION['uid'];}else{echo "undefined";} ?> == undefined) {
             layer.msg('请先登录！', {icon: 1});
         } else {
             var goods_arr = new Array();
@@ -691,7 +691,7 @@
                 type: 'post',
                 dataType: 'json',
                 data: {goods_ids: goods_arr},
-                url: "{:url('Home/Goods/collect_goods')}",
+                url: "{:url('index/Good/collect_goods')}",
                 success: function (res) {
                     if (res.status == 1) {
                         layer.msg(res.msg, {icon: 1});

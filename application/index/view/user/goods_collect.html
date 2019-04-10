@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>我的收藏</title>
+    <link rel="stylesheet" type="text/css" href="__STATIC__/css/tpshop.css" />
+    <link rel="stylesheet" type="text/css" href="__STATIC__/css/myaccount.css" />
+    <script src="__STATIC__/js/jquery-1.11.3.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="__PUBLIC__/js/layer/layer.js" type="text/javascript"></script>
+    <script type="text/javascript" src="__ROOT__/public/static/js/layer/laydate/laydate.js"></script>
+</head>
+<style>
+    .navitems2 li .selected {color: #e23435;border-bottom-color: #e23435;}
+</style>
+<body class="bg-f5">
+{include file="public/sign-header"/}
+<div class="home-index-middle">
+    <div class="w1224">
+        <div class="g-crumbs">
+            <a href="{:url('index/User/index')}">我的商城</a>
+            <i class="litt-xyb"></i>
+            <span>我的收藏</span>
+        </div>
+        <div class="home-main">
+            {include file="user/menu"/}
+              <div class="ri-menu fr">
+                <div class="menumain p">
+                  
+                </div>
+
+                <div class="orderbook-list">
+                    <div class="book-tit">
+                        <ul>
+                            <li class="sx1">商品信息</i></li>
+                            <li class="sx2">价格</li>
+                            <li class="sx3">添加时间</li>
+                        </ul>
+                    </div>
+                </div>
+                  <div class="order-alone-li lastset_cm">
+                    {empty name="collectGood"}
+                        <div class="car-none-pl">
+                            <i class="account-acco1"></i>您还没有收藏的商品，<a href="/">快去逛逛吧~</a>
+                        </div>
+                        {else/}
+                            <table width="100%" border="" cellspacing="" cellpadding="">
+                                 {volist name="collectGood" id="list"}
+                                    <tr class="conten_or">
+                                        <td class="sx1">
+                                            <div class="shop-if-dif">
+                                                <div class="shop-difimg">
+                                                    <img src={$list.goods_img} width="60" height="60" />
+                                                </div>
+                                                <div class="shop_name">
+                                                    <a href="{:url('index/Good/goodsInfo',array('id'=>$list['id']))}">
+                                                        {$list.goods_name}
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="sx2"><span>￥</span><span>{$list.goods_price}</span></td>
+                                        <td class="sx1"><span>{$list.add_time|date="Y-m-d H:i:s",###}</span></td>
+                                    </tr>
+                                 {/volist}
+                            </table>
+                    {/empty}
+                </div>
+            </div>
+            <div class="operating fixed" id="bottom">
+                <div class="fn_page clearfix">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!--footer-s-->
+<div class="footer p">
+    {include file="public/footer" /}
+</div>
+<!--footer-e-->
+
+</body>
+</html>

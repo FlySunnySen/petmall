@@ -6,7 +6,7 @@
 		<meta charset="UTF-8">
 		<script type="text/javascript" src="__STATIC__/js/jquery.min.js"></script>
 		<title></title>
-		
+
 	</head>
 
 	<body>
@@ -15,17 +15,17 @@
 				<a href="{:url('index/index/index')}">
 						<img class="img1" src="__STATIC__/img/logo.gif" />
 				</a>
-			
+
 				<h1>用户登陆</h1>
 			</div>
 
 			<div class="login-content">
-				
+
                 <img src="__STATIC__/img/login/log_n.jpg" />
 
-				<form  method="post" action="{:url('index/user/login')}">
+				<form  method="post" action="{:url('index/login/login')}">
 
-				
+
 					<div class="login-window">
 						<div class="login-list">
 							<img src="__STATIC__/img/login/username.jpg">
@@ -44,8 +44,8 @@
 								<p>验证码：</p><input type="text" id="code" name="code" required/>
 
 							</div>
-							<img id="verifyimg" src="{:url('index/user/captcha')}" border="0"  width="105px" height="47px" />
-							<a id="clickCode" onclick="javascript:verifyimg.src='{:url('index/user/captcha')}?rand='+Math.random()" style="width: 88px;height: 50px;line-height: 47px;font-size: 15px;">换一换</a>
+							<img id="verifyimg" src="{:url('index/login/captcha')}" border="0"  width="105px" height="47px" />
+							<a id="clickCode" onclick="javascript:verifyimg.src='{:url('index/login/captcha')}?rand='+Math.random()" style="width: 88px;height: 50px;line-height: 47px;font-size: 15px;">换一换</a>
 						</div>
 						<div style="margin-top: 10px;margin-left:20px;width: 100%;text-align: left;font-size: 18px">
                                <input type="checkbox" name="holdStatus" value="1" name="自动登录"> 3天内自动登录
@@ -55,7 +55,7 @@
 						</div>
 
 						<div class="login-operate">
-							<a href="{:url('index/user/reg')}">免费注册</a>
+							<a href="{:url('index/login/reg')}">免费注册</a>
 							<span>丨</span>
 							<a href="#">忘记密码</a>
 						</div>
@@ -64,46 +64,46 @@
 						</div>
 
 					</div>
-					
+
 				</form>
 			</div>
 		</div>
 
 </body>
-	
+
     <script type="text/javascript">
     	  $('#code').bind('blur',function(){
 		        var codeNumber = $(this).val();
-		        if($(this).val().length ==0){   
-		          $("#login-mistake").addClass("login-mistake");      
+		        if($(this).val().length ==0){
+		          $("#login-mistake").addClass("login-mistake");
 		          $("#login-mistake").text("验证码不能为空！");
 		          return false;
 		        }else{
-		          $.post('{:url('index/user/checkCaptcha')}',{code:codeNumber},function(data){
+		          $.post('{:url('index/login/checkCaptcha')}',{code:codeNumber},function(data){
 		            if(data == true){
 		                $("#login-mistake").removeClass("login-mistake");
-						$("#login-mistake").text('');          
+						$("#login-mistake").text('');
 		                code = true;
 
 		            }else{
 		            	$("#login-mistake").addClass("login-mistake");
 						$("#login-mistake").text('验证码不正确！');
-		                $("#clickCode").click();  
+		                $("#clickCode").click();
 		            }
 		          })
 		        }
 		      })
 
     </script>
-	
+
 
 
 	<script type="text/javascript">
 		$(function() {
-	  
-		    
-           
-            //检查各个表单是否为空			
+
+
+
+            //检查各个表单是否为空
 			$("#login").bind('click',function() {
 				if($("#username").val() == "" || $("#password").val() == "") {
 					$("#login-mistake").addClass("login-mistake");
@@ -119,10 +119,10 @@
 
 					}
 				}
-				
-				
+
+
 			});
-				
+
 		})
 	</script>
 

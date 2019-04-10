@@ -4,16 +4,16 @@
       <div class="fl">
           {empty name="$_SESSION['uid']"}
              <div class="fl nologin">
-            <a class="red" href="{:url('index/user/login')}">登录</a>
-            <a href="{:url('index/user/reg')}">注册</a>
+            <a class="red" href="{:url('index/login/login')}">登录</a>
+            <a href="{:url('index/login/reg')}">注册</a>
           </div>
         {else /}
           <div class="fl islogin">
             <?php
                echo $_SESSION['alias']." 欢迎您";
             ?>
-            <a class="red userinfo" href="{:url('index/user/index')}"></a>
-            <a  href="{:url('index/user/logout')}"  title="退出" target="_self">安全退出</a>
+            <a class="red userinfo" href="{:url('index/login/index')}"></a>
+            <a  href="{:url('index/login/logout')}"  title="退出" target="_self">安全退出</a>
             </div>
         {/empty}
          
@@ -27,7 +27,7 @@
       <ul class="top-ri-header fr clearfix">
           <li><a target="_blank" href="{:url('index/Order/order_list')}">我的订单</a></li>
           <li class="spacer"></li>
-          <li><a target="_blank" href="{:url('Home/User/goods_collect')}">我的收藏</a></li>
+          <li><a target="_blank" href="{:url('index/User/goods_collect')}">我的收藏</a></li>
           <li class="spacer"></li>
           <li>客户服务</li>
           <li class="spacer"></li>

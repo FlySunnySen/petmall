@@ -36,6 +36,7 @@
                         <h2>商品评价</h2>
                     </div>
                 </div>
+                {empty name="commentListSum"}
                 <div class="deta-descri p">
                     <ul class="tebj">
                         <li class="percen"><span>{$commentGoodComment/$commentListSum*100|round}%</span></li>
@@ -87,9 +88,10 @@
 
                         </ul>
                     </div>
-                </div>
+                  </div>
                 <div class="line-co-sunall" id="ajax_comment_return">
                 </div>
+                {/empty}
             </div>
         </div>
       

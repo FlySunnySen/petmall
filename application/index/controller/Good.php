@@ -35,7 +35,7 @@ class Good extends Base {
 
 		$this->assign('commentGoodComment', $commentGoodComment);
 		$this->assign('commentBadComment', $commentBadComment);
-		$this->assign('commentListSum', $commentListSum ? $commentListSum : 1);
+		$this->assign('commentListSum', $commentListSum ? $commentListSum : 0);
 		$this->assign('filter_spec', $filter_spec); //规格参数
 		$this->assign('spec_goods_price', json_encode($spec_goods_price, true)); // 规格 对应 价格 库存表
 		$this->assign("good_images_list", $goods_images_list);
@@ -45,9 +45,33 @@ class Good extends Base {
 		$this->assign("goods", $goods);
 		return $this->fetch();
 	}
+	/**
+	 * [collect_goods 收藏商品]
+	 * @return [type] [description]
+	 */
+	public function collect_goods() {
+		$data['goods_id'] = input('post.goods_ids/a')[0];
+		$data['user_id'] = $_SESSION['uid'];
+		$find = Db::name('goods_collect')->where($data)->find();
+		if ($find) {
+			$this->ajaxReturn(['status' => 1, 'msg' => '已收藏']);
+		} else {
+			$data['add_time'] = time();
+			$rst = Db::name('goods_collect')->data($data)->insert();
+			if ($rst) {
+				$this->ajaxReturn(['status' => 1, 'msg' => '收藏成功']);
+			} else {
+				$this->ajaxReturn(['status' => 0, 'msg' => '系统繁忙，请稍后再试']);
+			}
+		}
 
+	}
+	/**
+	 * [ajaxComment 获取评论]
+	 * @return [type] [description]
+	 */
 	public function ajaxComment() {
-		$goods_id = input("goods_id", '0');
+		$goods_id = input("goods_id");
 		$commentType = input('commentType', '1'); // 1 全部 2好评 3差评
 		$where = ['good_id' => $goods_id];
 
@@ -58,7 +82,6 @@ class Good extends Base {
 		$show = $page->show();
 
 		$list = Db::name('comment')->where($where)->select();
-
 		$this->assign('commentlist', $list); // 商品评论
 		// var_dump($list);die;
 		// $this->assign('replyList', $replyList); // 管理员回复
