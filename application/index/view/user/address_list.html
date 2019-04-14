@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>地址管理</title>
+    <link rel="stylesheet" type="text/css" href="__STATIC__/css/tpshop.css" />
+    <link rel="stylesheet" type="text/css" href="__STATIC__/css/myaccount.css" />
+    <script src="__STATIC__/js/jquery-1.11.3.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="__PUBLIC__/js/layer/layer.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="__PUBLIC__/js/layui/css/layui.css">
+    <script src="__PUBLIC__/js/layui/layui.js"></script>
+    <script type="text/javascript" src="__ROOT__/public/static/js/layer/laydate/laydate.js"></script>
+</head>
+<body class="bg-f5">
+{include file="public/sign-header"/}
+<div class="home-index-middle">
+    <div class="w1224">
+        <div class="g-crumbs">
+            <a href="{:url('index/User/index')}">我的商城</a>
+            <i class="litt-xyb"></i>
+            <span>地址管理</span>
+        </div>
+        <div class="home-main">
+            {include file="user/menu"/}
+              <div class="ri-menu fr">
+                <div class="menumain p">
+                  <div  id="ajax_address">
+                      <i class="sprite_le_ri"></i>
+<div class="top_leg p">
+
+    <span class="paragraph fl"><i class="ddd"></i>收货人信息</span>
+    <a id="addNewAddress" class="newadd fr address_item" href="javascript:void(0);" data-address-id="0">新增收货地址</a>
+</div>
+<div class="consignee-list p">
+    <ul>
+        {volist name="address_list" id="address"}
+            <li class="addressItem {if condition='$address.is_default eq 1'}addressDefault{/if}" data-address-id="{$address.id}">
+                <div class="item_select_t fl"  data-province-id="{$address.address_province}" data-city-id="{$address.address_city}" data-district-id="{$address.address_county}">
+                    <span>{$address.name}&nbsp;{$regionList[$address.address_province]}</span>
+                    <b></b>
+                </div>
+                <div class="addrdetail fl">
+                    <span class="addr-name" title="{$address.name}">{$address.name}</span>
+                    <span class="addr-info" title="{$regionList[$address.address_province]} {$regionList[$address.address_city]} {$regionList[$address.address_county]}  {$address.address_info}">
+                        {$regionList[$address.address_province]} {$regionList[$address.address_city]} {$regionList[$address.address_county]}  {$address.address_info}
+                    </span>
+                    <span class="addr-default">默认地址</span>
+                </div>
+                <div class="opbtns_editdel">
+                    <a href="javascript:void(0);" class="ftx address_set_default" data-address-id="{$address.id}">设为默认地址</a>
+                    <a href="javascript:void(0);" data-address-id="{$address.id}" class="ftx address_item">编辑</a>
+                    <a href="javascript:void(0);" data-address-id="{$address.id}" class="ftx address_delete">删除</a>
+                </div>
+            </li>
+        {/volist}
+    </ul>
+</div>
+
+    <div class="addr-switch">
+        <span>更多地址</span>
+        <b></b>
+    </div>
+
+
+      </div>
+
+
+<!--编辑地址弹窗-s--->
+<div class="ui-dialog infom-dia" id="address_dialog" style="width: 700px">
+    <form id="address_form">
+        <input name="address_id" type="hidden" value="0">
+
+        <div class="ui-dialog-title">
+            <span>新增收货地址</span>
+            <a class="ui-dialog-close" id="address_dialog_close" title="关闭">
+                <span class="ui-icon ui-icon-delete"></span>
+            </a>
+        </div>
+        <div class="ui-dialog-content" style="height: 600px;width: 700px">
+            <div class="invoice-dialog">
+                <div class="zinvoice-tips">
+                    <!--<span class="tip-cont">错误信息</span>-->
+                </div>
+                <div class="ui-switchable-panel">
+                    <div class="invoice_title p">
+                        <span class="label"><span class="red">*</span>收货人：</span>
+
+                        <div class="fl">
+                            <input class="invoice_tt" name="consignee" type="text" value="" maxlength="12"/>
+                            <span class="err" id="err_name"></span>
+                        </div>
+                    </div>
+                    <div class="invoice_title p">
+                        <span class="label"><span class="red">*</span>手机或固定电话：</span>
+
+                        <div class="fl">
+                            <input class="invoice_tt" name="mobile" type="text" value=""
+                                   placeholder="固话号码格式:xx-xx(例如: 0755-86140485)" maxlength="15"/>
+                            <span class="err" id="err_phone"></span>
+                        </div>
+                    </div>
+                    <div class="invoice_title p">
+                        <span class="label"><span class="red">*</span>收货地址：</span>
+                        <span class="err" id="err_address_province"></span>
+                        <span class="err" id="err_address__city"></span>
+                        <span class="err" id="err_address_county"></span>
+                        <select class="di-bl fl seauii" name="province" id="province" onChange="get_city(this)">
+                            <option value="0">请选择</option>
+                        </select>
+                        <select class="di-bl fl seauii" name="city" id="city" onChange="get_area(this)">
+                            <option value="0">请选择</option>
+                        </select>
+
+                        <select class="di-bl fl seauii" name="district" id="district" onChange="">
+                            <option value="0">请选择</option>
+                        </select>
+
+                    </div>
+                    <div class="invoice_title p">
+                        <span class="label"><span class="red">*</span>详细地址：</span>
+                        <span class="err" id="err_address_info"></span>
+
+                        <div class="fl">
+                            <input class="invoice_tt" name="address" type="text" placeholder="详细地址" maxlength="100"/>
+                        </div>
+                    </div>
+                    <div class="invoice_title p">
+                        <span class="label">邮编：</span>
+
+                        <div class="fl">
+                            <input class="invoice_tt" name="zipcode" type="text" value=""
+                                   onKeyUp="this.value=this.value.replace(/[^\d]/g,'')" maxlength="10"/>
+                        </div>
+                    </div>
+                    <div class="invoice_title p">
+                        <span class="label">&nbsp;</span>
+
+                        <div class="fl">
+                            <div class="op-btns  invoice_sendwithgift">
+                                <a id="address_submit" class="btn-1">保存</a>
+                                <a onclick="$('#address_dialog_close').trigger('click');" class="btn-9">取消</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<!--编辑地址弹窗-e--->
+
+<script>
+    $(document).ready(function(){
+        address_default_init();
+         ajax_address();
+        get_province();
+    });
+    function address_default_init(){
+        var addressDefault = $('.addressDefault');
+        addressDefault.find('.item_select_t').addClass('curtr');
+        $('.addr-default').hide();
+        $('.address_set_default').show();
+        addressDefault.find('.addr-default').show();
+        addressDefault.find('.address_set_default').hide();
+    }
+    /**
+     * ajax 获取当前用户的收货地址列表
+     */
+    function ajax_address() {
+        $.ajax({
+            url: "{:url('index/Cart/ajaxAddress')}", //+tab,
+            success: function (data) {
+                $("#ajax_address").empty().append(data);
+                if (data != '') {
+                    initAddress();
+                }
+            }
+        });
+    }
+
+    //收货人信息
+    $(function () {
+        $(document).on("click", '.addr-switch', function (e) {
+            if ($(this).hasClass('switch-on')) {
+                $(this).removeClass('switch-on');
+                $(this).find('span').text('更多地址');
+                $('.consignee-list').css('height', '42px');
+                var addressItem = $('.consignee-list').find('.curtr').parents('.addressItem');
+                $('.consignee-list').find('ul').prepend(addressItem.clone(true));
+                addressItem.remove();
+            } else {
+                $(this).addClass('switch-on');
+                $(this).find('span').text('收起地址');
+                $('.consignee-list').css('height', 'inherit');
+            }
+        })
+    })
+
+     //设置收货地址
+    function initAddress() {
+        var address_item = $('.addressItem').find('.curtr').parents('.addressItem');
+        var address_id = address_item.attr('data-address-id');
+        var address_name = address_item.find('.addr-name').attr('title');
+        var address_tel = address_item.find('.addr-tel').attr('title');
+        console.log(address_name,address_tel);
+        $('#address_info').html(address_item.find('.addr-info').attr('title'));
+        if (address_name) {
+            $('#address_user').html(address_name);
+        }
+        $("input[name='address_id']").attr('value', address_id);
+        if (address_item.length == 0) {
+            $('#addNewAddress').trigger('click');
+        } else {
+            var address_item_select = address_item.find('.item_select_t');
+            var province_id = address_item_select.data('province-id');
+            var city_id = address_item_select.data('city-id');
+            var district_id = address_item_select.data('district-id');
+            var town_id = address_item_select.data('town-id');
+            var longitude = address_item_select.data('longitude');
+            var latitude = address_item_select.data('latitude');
+            last_select_address_arr = new last_select_address(province_id,city_id,district_id,town_id,address_name,address_tel,longitude,latitude);
+            
+        }
+    }
+ /**
+     * 存放最后一次选择的地址
+     */
+    function last_select_address(province_id, city_id, district_id, town_id, consignee, mobile, longitude, latitude) {
+        this.province_id = province_id;
+        this.city_id = city_id;
+        this.district_id = district_id;
+        this.town_id = town_id;
+        this.consignee = consignee;
+        this.mobile = mobile;
+        this.longitude = longitude;
+        this.latitude = latitude;
+    }
+     //获取省列表
+    function get_province() {
+        $.ajax({
+            type: "GET",
+            url: "{:url('index/Api/getProvince')}",
+            dataType: 'json',
+            success: function (data) {
+                if (data.status == 1) {
+                    var option_html = '<option value="0">请选择</option>';
+                    $.each(data.result, function (n, value) {
+                        option_html += '<option value="' + value.id + '">' + value.name + '</option>';
+                    });
+                    $('#province').html(option_html);
+                    $('#address_province').html(option_html);
+
+                } else {
+                    layer.msg(data.msg, {icon: 2});
+                }
+            }
+        });
+    }
+
+    /**
+ * 获取城市
+ * @param t  省份select对象
+ * @param city
+ * @param district
+ * @param twon
+ */
+function get_city(t,city,district,twon){
+    var parent_id = $(t).val();
+    if(!parent_id > 0){
+        return;
+    }
+    var city_id = 'city';
+    if(typeof(city) != 'undefined' && city != ''){
+        city_id = city;
+    }
+    var district_id = 'district';
+    if(typeof(district) != 'undefined' && district != ''){
+        district_id = district;
+    }
+    var twon_id = 'twon';
+    if(typeof(twon) != 'undefined' && twon != ''){
+        twon_id = twon;
+    }
+    $('#'+district_id).empty().css('display','none');
+    $('#'+twon_id).empty().css('display','none');
+    var url = '/index.php/index/Api/getRegion/level/2/parent_id/'+ parent_id;
+    $.ajax({
+        type : "GET",
+        url  : url,
+        error: function(request) {
+            alert("服务器繁忙, 请联系管理员!");
+            return;
+        },
+        success: function(v) {
+            v = '<option value="0">选择城市</option>'+ v;
+            $('#'+city_id).empty().html(v);
+        }
+    });
+}
+/**
+ * 获取地区
+ * @param t  城市select对象
+ * @param district
+ * @param twon
+ */
+function get_area(t,district,twon){
+    var parent_id = $(t).val();
+    if(!parent_id > 0){
+        return;
+    }
+    var district_id = 'district';
+    if(typeof(district) != 'undefined' && district != ''){
+        district_id = district;
+    }
+    var twon_id = 'twon';
+    if(typeof(twon) != 'undefined' && twon != ''){
+        twon_id = twon;
+    }
+    $('#'+district_id).empty().css('display','inline');
+    $('#'+twon_id).empty().css('display','none');
+    var url = '/index.php/index/Api/getRegion/level/3/parent_id/'+ parent_id;
+    $.ajax({
+        type : "GET",
+        url  : url,
+        error: function(request) {
+            alert("服务器繁忙, 请联系管理员!");
+            return;
+        },
+        success: function(v) {
+            v = '<option>选择区域</option>'+ v;
+            $('#'+district_id).empty().html(v);
+        }
+    });
+}
+
+
+
+     //新增编辑地址
+    $(function () {
+        //新增编辑弹窗事件
+        $(document).on("click", '.address_item', function (e) {
+            var dh = $(document).height();
+            var dw = $(document).width();
+            $('#address_dialog_mask').height(dh).width(dw).show();
+            $('#address_dialog').show();
+            var address_id = $(this).data('address-id');
+            if (address_id > 0) {
+                $("input[name='address_id']").val(address_id);
+                $.ajax({
+                    type: "POST",
+                    url: "{:url('index/User/address')}",
+                    data: {address_id: address_id},
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.status == 1) {
+                            $("input[name='consignee']").val(data.result.user_address.name);
+                            $("input[name='address']").val(data.result.user_address.address_info);
+                            $("input[name='mobile']").val(data.result.user_address.phone);
+                            $("input[name='zipcode']").val(data.result.user_address.address_zip);
+                            var city_list_option_html = '<option value="0">请选择</option>';
+                            var district_list_option_html = '<option value="0">请选择</option>';
+                            var twon_list_option_html = '<option value="0">请选择</option>';
+                            $.each(data.result.city_list, function (n, value) {
+                                city_list_option_html += '<option value="' + value.id + '">' + value.name + '</option>';
+                            });
+                            $('#city').html(city_list_option_html).val(data.result.user_address.address_city);
+                            $.each(data.result.district_list, function (n, value) {
+                                district_list_option_html += '<option value="' + value.id + '">' + value.name + '</option>';
+                            });
+                            $('#district').html(district_list_option_html).val(data.result.user_address.address_county);
+                            $.each(data.result.twon_list, function (n, value) {
+                                twon_list_option_html += '<option value="' + value.id + '">' + value.name + '</option>';
+                            });
+                            if (data.result.twon_list.length > 0) {
+                                $('#twon').html(twon_list_option_html).val(data.result.user_address.twon).show();
+                            }
+                            $("#province").val(data.result.user_address.address_province);
+                        } else {
+                            layer.open({icon: 2, content: data.msg, time: 1000});
+                        }
+                    }
+                });
+            } else {
+                $("input[name='address_id']").val(0);
+                $("input[name='consignee']").val('');
+                $("input[name='address']").val('');
+                $("input[name='mobile']").val('');
+                $("input[name='zipcode']").val('');
+                $("#province").val(0);
+                $("#city").empty().html('<option value="0">请选择</option>');
+                $("#district").empty().html('<option value="0">请选择</option>');
+                $("#twon").empty().html('<option value="0">请选择</option>').hide();
+            }
+        })
+        //关闭弹窗事件
+        $(document).on("click", '#address_dialog_close', function (e) {
+            $('#address_dialog_mask').hide();
+            $('#address_dialog').hide();
+            $('.err').hide();
+        })
+        //地址提交
+        $(document).on("click", '#address_submit', function (e) {
+            $.ajax({
+                type: "POST",
+                url: "{:url('index/User/addressSave')}",
+                data: $('#address_form').serialize(),
+                dataType: 'json',
+                success: function (data) {
+                    if (data.status == 1) {
+                        $('#address_dialog_close').trigger('click');
+                        ajax_address();
+                    } else {
+                        layer.open({
+                            icon: 2, content: data.msg, time: 1000, end: function () {
+                                $.each(data.result, function (index, item) {
+                                    $('#err_' + index).text(item).show();
+                                });
+                            }
+                        });
+                    }
+                }
+            });
+        })
+        //设置默认地址
+        $(document).on("click", '.address_set_default', function (e) {
+            var address_id = $(this).data('address-id');
+            $.ajax({
+                type: "POST",
+                url: "{:url('index/User/addressSetDefault')}",
+                data: {address_id: address_id},
+                dataType: 'json',
+                success: function (data) {
+                    if (data.status == 1) {
+                        location.reload();
+                    } else {
+                        layer.open({icon: 2, content: data.msg, time: 1000});
+                    }
+                }
+            });
+        })
+        //删除收货地址
+        $(document).on("click", '.address_delete', function (e) {
+            var address_id = $(this).data('address-id');
+            $.ajax({
+                type: "POST",
+                url: "{:url('index/User/addressDelete')}",
+                data: {address_id: address_id},
+                dataType: 'json',
+                success: function (data) {
+                    if (data.status == 1) {
+                        ajax_address();
+                    } else {
+                        layer.open({icon: 2, content: data.msg, time: 1000});
+                    }
+                }
+            });
+        })
+    })
+</script>
+                </div>
+
+
+        </div>
+            <div class="operating fixed" id="bottom">
+                <div class="fn_page clearfix">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!--footer-s-->
+<div class="footer p">
+    {include file="public/footer" /}
+</div>
+<!--footer-e-->
+
+</body>
+</html>

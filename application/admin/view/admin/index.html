@@ -1,0 +1,149 @@
+{extend name="Public:layout" /}
+{block name="toptitle"}
+<li class="active"><a href="__MODULE__/AdminUser/index">权限设置</a></li>
+<li class="active"><a href="__MODULE__/AdminUser/changepwd">管理员列表</a></li>
+{/block}
+{block name="main"}
+<div class="page-content" >
+	<div class="page-header">
+		<h1>
+			权限设置
+			<small> <i class="icon-double-angle-right"></i>
+				管理员列表
+			</small>
+		</h1>
+	<!-- 搜索条 -->
+	<div class="col-xs-4 col-sm-7"></div>
+		<form action="">
+			<div class="col-xs-4 col-sm-5 text-right" style="margin-bottom:10px">
+				<div class="input-group">
+					<input type="text" class="form-control search-query" placeholder="输入关键字" name="keywords">		
+					<span class="input-group-btn">
+						<button type="submit" class="btn btn-purple btn-sm">
+							搜索 <i class="icon-search icon-on-right bigger-110"></i>
+						</button>
+					</span>
+				</div>
+			</div>
+		</form>
+	</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-11">
+			<div class="table-responsive">
+				<table id="sample-table-1" class="table table-striped table-bordered table-hover">
+					<thead>
+						<tr>
+							<th class="center">
+								<label>
+									<input type="checkbox" class="ace" id="setall"/>
+									<span class="lbl"></span>
+								</label>
+							</th>
+							<th>用户名</th>
+							<th> <i class="icon-time bigger-110 hidden-480"></i>
+								添加管理员时间
+							</th>
+							<th>
+								<i class="icon-time bigger-110 hidden-480"></i>
+								最后登录时间
+							</th>
+						
+							<th>等级</th>
+							<th class="hidden-480">更多操作</th>
+						</tr>
+					</thead>
+					<form id="allform">
+					<tbody>
+						{foreach name="list" item="vo"}
+							<tr>
+								<td class="center">
+									<label>
+										<input type="checkbox" class="ace" set="id[]" name="id[]" value="{$vo.id}"/>
+										<span class="lbl"></span>
+									</label>
+								</td>
+								<td>
+									<a href="#">{$vo.admin_name}</a>
+								</td>
+								<td>{$vo.admin_addtime|date="Y-m-d H:i:s",###}</td>
+								<td>{$vo.admin_login|date="Y-m-d H:i:s",###}</td>
+							
+								<td>{$vo.level_name}</td>
+							<td>
+								<div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
+
+							<a class="btn btn-xs btn-info" title="修改" href="{:url('admin/save',array('id'=>$vo.id))}">
+								<i class="icon-edit bigger-120"></i>
+							</a>
+						
+							<a class="btn btn-xs btn-danger" del="{$vo.id}" title="删除">
+								<i class="icon-trash bigger-120"></i>
+							</a>
+
+							</div>
+						</td>
+
+
+
+					</tr>
+				{/foreach}
+					<tr>
+						<td class="center" colspan="9">
+							<div class="col-xs-4 text-left">
+								<input type="button" class="btn btn-xs btn-inverse" id="delall" value="批量删除">
+							</div>
+							<!-- 显示分页 -->
+							<div class="col-xs-8 text-right">{$page}</div>
+						</td>	
+					</tr>
+			</tbody>
+		</form>
+		</table>
+</div>
+</div>
+<!-- /.table-responsive -->
+</div>
+</div>
+
+<script>
+	$(function(){
+		$('a[del]').click(function(){
+			var id = 'id='+$(this).attr('del');
+			layer.confirm('您确定要删除吗？',function(){
+				$.post("{:url('admin/del')}",id,function(data){
+					if(data == 1){
+						layer.msg('删除成功！');
+							location.reload();
+					}else{
+						layer.msg('删除失败！');
+					}
+				})
+			})
+		})
+
+		// 全选
+		var bool = true;
+		$('#setall').click(function(){
+			$(':checkbox[set]').each(function(){
+				$(this).prop('checked',bool);
+			})
+			bool = !bool;
+		})
+		// 批量删除
+		$('#delall').click(function(){
+			var data = $('#allform').serialize();
+			$.post('__CONTROLLER__/delall',data,function(data){
+				if(data == 1){
+					layer.msg('批量删除成功！',1,function(){
+						location.reload(); //自动关闭后可做一些刷新页面等操作
+					});
+				}else{
+					layer.msg('批量删除失败！',2,3);
+				}
+			})
+		})
+	})
+	
+	</script>
+{/block}

@@ -943,33 +943,7 @@
             $('#door_to_door_modes').hide();
         }
     }
-    /**
-     * 获取自提点
-     */
-    function get_shop_list(province_id, city_id, district_id, shop_address, longitude, latitude) {
-        $.ajax({
-            type: "POST",
-            url: "{:url('index/Api/shop')}",
-            dataType: 'json',
-            data: {
-                province_id: province_id,
-                city_id: city_id,
-                district_id: district_id,
-                shop_address: shop_address,
-                longitude: longitude,
-                latitude: latitude
-            },
-            success: function (data) {
-                if(data.length > 0){
-                    shop_list_data = data;
-                    set_shop_list();
-                }else{
-                    shop_list_data = [];
-                }
-                door_to_door_hide_or_show();
-            }
-        });
-    }
+   
     function set_shop_list() {
         var shop_html = '';
         for (var i = 0; i < shop_list_data.length; i++) {
@@ -1183,7 +1157,7 @@
                 layer.open({icon:2,time:2000,content:"请填写地址或者店名"});
                 return;
             }
-            get_shop_list(province_id.val(), city_id.val(), district_id.val(), shop_address, last_select_address_arr.longitude, last_select_address_arr.latitude);
+          
         })
         //点击自提点
         $(document).on("click", ".business-list label", function (e) {

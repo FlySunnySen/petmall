@@ -1,0 +1,61 @@
+{extend name="Public:layout" /}
+{block name="toptitle"}
+<li class="active"><a href="__MODULE__/AdminUser/index">权限管理</a></li>
+<li class="active"><a href="__MODULE__/AdminUser/role">角色管理</a></li>
+{/block}
+{block name="main"}
+<div class="page-content">
+	<div class="page-header">
+		<h1 id="dianji">
+			管理员分配权限
+		</h1>
+	</div><!-- /.page-header -->
+	<form action="{:url('rule/edit')}" method="post">
+	<input type="hidden" name="id" value="{$Request.param.gid}">
+	<div class="col-xs-12 col-sm-12">
+		{foreach name="list" item="vo"}
+		<label class="col-xs-3 chk">
+			<input name="ids[]" class="ace ace-checkbox-2" type="checkbox" value="{$vo.id}" {$vo.chk}>
+			<span class="lbl"> {$vo.title} </span>
+		</label>
+		{/foreach}
+	</div>
+	<div class="col-xs-6 col-sm-12">
+		<button type="button" class="btn btn-sm btn-danger" id="slt">
+			<i class="icon-check bigger-110"></i>
+			全选
+		</button>
+		<button type="button" class="btn btn-sm btn-success" id="sltall">
+			<i class="icon-check-empty bigger-110"></i>
+			反选
+		</button>
+		<button type="submit" class="btn btn-sm btn-info">
+			<i class="icon-ok bigger-110"></i>
+			保存
+		</button>
+
+	</div>
+	</form>
+</div>
+<script src="__PUBLIC__/admin/js/jquery-2.0.3.min.js"></script>
+<script>
+	$(function(){
+		//全选
+		$('#slt').bind('click',function(){
+			$('input[name="ids[]"]').each(function(){
+				$(this).prop("checked", true);
+			})
+		})
+		//反选
+		$('#sltall').bind('click',function(){
+			$('input[name="ids[]"]').each(function(){
+				if($(this).prop("checked")){
+					$(this).prop('checked',false);
+				}else{
+					$(this).prop('checked',true);
+				}
+			})
+		})
+	})
+</script>
+{/block}

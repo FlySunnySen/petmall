@@ -3,8 +3,81 @@ namespace app\index\controller;
 use think\Controller;
 use think\Db;
 use think\Loader;
+use think\Page;
 
 class User extends Base {
+
+	/**
+	 * [info 个人信息]
+	 * @return [type] [description]
+	 */
+	public function info() {
+		$id = $_SESSION['uid'];
+		$info = Db::view('user', '*')
+			->view('user_details', 'user_alias,user_sex,user_phone', 'user.Uid=user_details.user_Uid')
+			->where('user_Uid', '=', $id)
+			->find();
+		$this->assign('info', $info);
+		return $this->fetch();
+	}
+	/**
+	 * [comment 我的评论]
+	 * @return [type] [description]
+	 */
+	public function comment() {
+		$where['user_id'] = $_SESSION['uid'];
+		$count = Db::name('comment')->where($where)->count();
+		$Page = new Page($count, 10);
+		$show = $Page->show();
+		$order_str = "comment_time DESC";
+		$comment_list = Db::view('comment')->view('good', 'goods_name,goods_price,goods_img', 'good.id=comment.good_id')->order($order_str)->where($where)->limit($Page->firstRow . ',' . $Page->listRows)->select();
+		// var_dump($order_list);die;
+		$this->assign('comment_list', $comment_list);
+		$this->assign('page', $show);
+		return $this->fetch();
+	}
+	/**
+	 * [saveInfo 修改个人信息]
+	 * @return [type] [description]
+	 */
+	public function saveInfo() {
+		$data = json_decode(input('post.data'), true);
+		$id = $_SESSION['uid'];
+		$rst = Db::name('user_details')->where('user_Uid', '=', $id)->update($data);
+		if ($rst) {
+			$this->ajaxReturn(['status' => 1, 'msg' => '保存成功']);
+		} else {
+			$this->ajaxReturn(['status' => 0, 'msg' => '系统繁忙，请稍后重试']);
+		}
+	}
+	/**
+	 * [address_list 地址列表]
+	 * @return [type] [description]
+	 */
+	public function address_list() {
+		$user_Uid = $_SESSION['uid'];
+		$address_list = Db::name('user_address')->where($user_Uid)->order('is_default desc')->select();
+		if ($address_list) {
+			$area_id = array();
+			foreach ($address_list as $val) {
+				$area_id[] = $val['address_province'];
+				$area_id[] = $val['address_city'];
+				$area_id[] = $val['address_county'];
+			}
+			$area_id = array_filter($area_id);
+			$area_id = implode(',', $area_id);
+			$regionList = Db::name('region')->where("id", "in", $area_id)->column('id,name');
+			$this->assign('regionList', $regionList);
+		}
+		$address_where['is_default'] = 1;
+		$c = Db::name('UserAddress')->where(['user_Uid' => $user_Uid, 'is_default' => 1])->count(); // 看看有没默认收货地址
+		if ((count($address_list) > 0) && ($c == 0)) // 如果没有设置默认收货地址, 则第一条设置为默认收货地址
+		{
+			$address_list[0]['is_default'] = 1;
+		}
+		$this->assign('address_list', $address_list);
+		return $this->fetch();
+	}
 
 	/**
 	 * [goods_collect 个人收藏]

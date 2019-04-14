@@ -187,7 +187,7 @@ class Order extends Base {
 	}
 
 	/*
-		     * 订单详情
+		* 订单详情
 	*/
 	public function order_detail() {
 		$id = input('id/d', 0);

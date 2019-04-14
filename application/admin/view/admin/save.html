@@ -1,0 +1,72 @@
+{extend name="Public:layout" /}
+{block name="toptitle"}
+<li class="active"><a href="__MODULE__/AdminUser/index">管理员管理</a></li>
+<li class="active"><a href="__MODULE__/AdminUser/index">管理员列表</a></li>
+<li class="active"><a href="#">编辑管理员</a></li>
+{/block}
+
+{block name="main"}
+
+	<div class="page-content">
+		<div class="page-header">
+			<h1>
+				编辑管理员
+				<small> <i class="icon-double-angle-right"></i>
+					请在下面编辑修改管理员信息
+				</small>
+			</h1>
+		</div>
+		<!-- /.page-header -->
+
+		<div class="row">
+			<div class="col-xs-12">
+				<!-- PAGE CONTENT BEGINS -->
+
+				<form id="allform" class="form-horizontal" role="form" method="post" action="{:url('admin/save_doit')}">
+				<input type="hidden" name="id" value="{$user.id}">
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="adname" >管理员名称：</label>
+						<div class="col-sm-9">
+							<input type="text" id="adname" class="col-xs-10 col-sm-5" name="admin_name" value="{$user.admin_name}" readonly />
+						</div>
+					</div>
+
+					<div class="space-4"></div>
+
+					<!-- 管理员等级 -->
+
+					<div class="form-group ">
+						<label for="form-field-select-1" class="col-sm-3 control-label no-padding-right" for="levels">管理员等级：</label>
+						<div class="col-sm-9">
+						<select class="col-xs-5" id="levels" name="admin_level" value="{$user.admin_level}">
+							<option value="" >--请选择--</option>
+							{foreach name="group" item="vg"}
+							<option value="{$vg.id}" {if condition="$user['admin_level'] eq $vg['id']"}selected{/if}>{$vg.title}</option>
+							{/foreach}
+						</select></div>
+					</div>
+
+					<!-- 管理员等级结束 -->
+
+					<div class="space-4"></div>
+
+					<div class="clearfix form-actions">
+						<div class="col-md-offset-3 col-md-9"> 
+							<input class="btn btn-info" type="submit" value="修改">
+							&nbsp; &nbsp; &nbsp;
+							<button class="btn" type="reset">
+								<i class="icon-undo bigger-110"></i>
+								Reset
+							</button>
+						</div>
+					</div>
+
+					
+				</form>
+				
+			</div>
+			<!-- PAGE CONTENT ENDS -->
+		</div>
+	</div>
+
+{/block}

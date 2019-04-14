@@ -1,0 +1,157 @@
+{extend name="Public:layout" /}
+{block name="toptitle"}
+<li class="active"><a href="__MODULE__/AdminUser/index">权限管理</a></li>
+<li class="active"><a href="__MODULE__/AdminUser/add">添加管理员</a></li>
+{/block}
+{block name="main"}
+
+	<div class="page-content">
+		<div class="page-header">
+			<h1>
+				添加管理员
+				<small> <i class="icon-double-angle-right"></i>
+					请在下面添加具体管理员信息
+				</small>
+			</h1>
+		</div>
+		<!-- /.page-header -->
+
+		<div class="row">
+			<div class="col-xs-12">
+				<!-- PAGE CONTENT BEGINS -->
+				<form id="allform" class="form-horizontal" role="form" method="post" action="__CONTROLLER__/insert">
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="adname">管理员名称：</label>
+						<div class="col-sm-9">
+							<span class="input-icon">
+								<input type="text" id="adname" name="admin_name" maxlength="16" /> <i class="icon-leaf blue"></i>
+							</span>
+							<span id="one_warning"></span>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="pwd">密码：</label>
+						<div class="col-sm-9">
+							<span class="input-icon">
+								<input type="password" id="pwd" name="admin_pwd" maxlength="16" /> <i class="icon-leaf blue"></i>
+							</span>
+							<span id="two_warning"></span>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-sm-3 control-label no-padding-right" for="repwd">确认密码：</label>
+						<div class="col-sm-9">
+							<span class="input-icon">
+								<input type="password" id="repwd" name="re_admin_pwd"/> <i class="icon-leaf blue"></i>
+							</span>
+							<span id="three_warning"></span>
+						</div>
+					</div>
+					
+					<div class="form-group ">
+						<label for="sel" class="col-sm-3 control-label no-padding-right">管理员等级：</label>
+						<div  class="col-sm-3">
+						<select id="sel" name="admin_level">
+							<option value="">--请选择--</option>
+							{foreach name="group" item="vo"}
+							<option value="{$vo.id}">{$vo.title}</option>
+							{/foreach}
+						</select></div>
+					</div>
+					<div class="col-md-offset-3 col-md-9">
+						<input id="sub" class="btn btn-info" type="button" value="添加">
+						<span id="lastwarning"></span>
+					</div>
+				</form>
+			</div>
+
+		</div>
+	</div>
+
+	<script>
+	$(function(){
+		var adname = false;
+		var pwd = false;
+		var repwd = false;
+
+		$('#adname').focus(function(){
+			$('#one_warning').html('请输入由英文、数字组成的5-16位管理员名称').css('color','#666');
+		});
+		$('#adname').blur(function(){
+			var data = $(this).val();
+			if(data.length<3 || data.length>16){
+				$('#one_warning').html('请输入由英文、数字组成的3-16位管理员名称').css('color','red');
+			}else{
+				var reg = /^([a-zA-Z1-9]){3,16}$/;
+				var result = reg.test(data);
+				if(!result){
+					$('#one_warning').html('管理员名称格式不正确！').css('color','red');
+				}else{
+
+					$.post("{:url('admin/checkname')}",{adname:data},function(data){
+						console.log(data);
+						if(data == 1){
+							$('#one_warning').html('此账号已存在！').css('color','red');
+						}else{
+							adname = true;
+							$('#one_warning').html('');
+						}
+					})
+				}
+
+			}
+		})
+
+		$('#pwd').focus(function(){
+			$('#two_warning').html('请输入6-16位的密码').css('color','#666');
+		})
+		$('#pwd').blur(function(){
+			var data = $(this).val();
+			if(data.length<6 || data.length>16){
+				$('#two_warning').html('请输入5-16位密码').css('color','red');
+			}else{
+				$('#two_warning').html('');
+				pwd = true;
+			}
+		})
+
+		$('#repwd').keyup(function(){
+			var data = $(this).val();
+			var datas = $('#pwd').val();
+			if(data != datas){
+				$('#three_warning').html('两次密码不一致').css('color','red');
+			}else if(data.length==0){
+				$('#three_warning').html('请再次确认密码').css('color','red');
+			}else{
+				$('#three_warning').html('');
+				repwd = true;
+			}
+		})
+
+		$('#sub').click(function(){
+			if($('#pwd').val() != $('#repwd').val()){
+				$('#three_warning').html('两次密码不一致').css('color','red');
+				return false;
+
+			}
+			if(adname && pwd && repwd){
+				var $allform = $('#allform').serialize();
+				$.post("{:url('admin/insert')}",$allform,function(data){
+					if(data==1){
+						$('#lastwarning').html('添加错误');
+						window.location.reload();
+					}else if(data==2){
+						layer.msg('恭喜添加管理员成功！');
+						window.location.href="{:url('admin/index')}";
+					}
+				})
+			}
+		})
+
+
+	})
+	</script>
+
+{/block}

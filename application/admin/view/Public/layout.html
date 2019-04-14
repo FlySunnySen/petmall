@@ -75,7 +75,6 @@
 	</head>
 
 	<body class="skin-2">
-		{$menuList}
 		<div class="navbar navbar-default" id="navbar">
 			<script type="text/javascript">
 				try{ace.settings.check('navbar' , 'fixed')}catch(e){}
@@ -451,7 +450,7 @@
 						</li>
 						<!-- 系统设置 结束 -->
 						<!-- 权限设置 -->
-						<li class="<eq name='admin' value='AdminUser'>active open</eq>">
+						<li class="{eq name='menu' value='admin'}active open{/eq}">
 							<a href="#" class="dropdown-toggle">
 								<i class="icon-lock"></i>
 								<span class="menu-text"> 权限设置 </span>
@@ -460,35 +459,35 @@
 							</a>
 
 							<ul class="submenu">
-								<li class="<eq name='adminList' value='AdminUserIndex'>active open</eq>">
-									<a href="/{:request()->module()}/AdminUser/index">
+								<li class="{eq name='adminList' value='AdminUserIndex'}active open{/eq}">
+									<a href="/{:request()->module()}/Admin/index">
 										<i class="icon-double-angle-right"></i>
 										管理员列表
 									</a>
 								</li>
 
-								<li class="<eq name='adminList' value='AdminUserAdd'>active open</eq>">
-									<a href="/{:request()->module()}/AdminUser/add">
+								<li class="{eq name='adminList' value='AdminUserAdd'}active open{/eq}">
+									<a href="/{:request()->module()}/Admin/add">
 										<i class="icon-double-angle-right"></i>
 										添加管理员
 									</a>
 								</li>
 
-								<li class="<eq name='adminList' value='AdminUserChangepwd'>active open</eq>">
-									<a href="/{:request()->module()}/AdminUser/changepwd">
+								<li class="{eq name='adminList' value='AdminUserChangepwd'}active open{/eq}">
+									<a href="/{:request()->module()}/Admin/changepwd">
 										<i class="icon-double-angle-right"></i>
 										修改密码
 									</a>
 								</li>
 
-								<li class="<eq name='adminList' value='AdminUsergroup'>active open</eq>">
+								<li class="{eq name='adminList' value='AdminUsergroup'}active open{/eq}">
 									<a href="/{:request()->module()}/Rule/group">
 										<i class="icon-double-angle-right"></i>
 										管理员组
 									</a>
 								</li>
 
-								<li class="<eq name='adminList' value='AdminUserrule'>active open</eq>">
+								<li class="{eq name='adminList' value='AdminUserrule'}active open{/eq}">
 									<a href="/{:request()->module()}/Rule/rule">
 										<i class="icon-double-angle-right"></i>
 										添加规则

@@ -33,9 +33,17 @@ class Good extends Base {
 		$commentBadComment = Db::name('comment')->where($map1)->count();
 		$commentListSum = Db::name('comment')->where('good_id', '=', $goods_id)->count();
 
+		if ($commentListSum) {
+			$this->assign('commentGood', $commentGoodComment / $commentListSum);
+			$this->assign('commentBad', $commentBadComment / $commentListSum);
+		} else {
+			$this->assign('commentGood', 0);
+			$this->assign('commentBad', 0);
+		}
 		$this->assign('commentGoodComment', $commentGoodComment);
 		$this->assign('commentBadComment', $commentBadComment);
-		$this->assign('commentListSum', $commentListSum ? $commentListSum : 0);
+		$this->assign('commentListSum', $commentListSum);
+
 		$this->assign('filter_spec', $filter_spec); //规格参数
 		$this->assign('spec_goods_price', json_encode($spec_goods_price, true)); // 规格 对应 价格 库存表
 		$this->assign("good_images_list", $goods_images_list);

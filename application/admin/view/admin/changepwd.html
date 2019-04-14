@@ -1,0 +1,130 @@
+<extend name="Public:layout" />
+<block name="toptitle">
+<li class="active"><a href="__MODULE__/AdminUser/index">权限设置</a></li>
+<li class="active"><a href="__MODULE__/AdminUser/changepwd">修改密码</a></li>
+</block>
+<block name="main">
+<!-- 添加文章分类 -->
+<div class="page-content">
+	<div class="page-header">
+		<h1>
+			权限设置
+			<small>
+				<i class="icon-double-angle-right"></i>
+				修改密码
+			</small>
+		</h1>
+	</div><!-- /.page-header -->
+	<div class="row">
+		<div class="col-xs-12">
+			<!-- PAGE CONTENT BEGINS -->
+			<form class="form-horizontal" action="__CONTROLLER__/changes" enctype="multipart/form-data" role="form" method="post" id="cha">
+				<div class="form-group">
+					<label class="col-sm-3 control-label no-padding-right" for="oldpwd"> 原密码</label>
+					<div class="col-sm-9">
+						<input type="password" id="oldpwd" placeholder="请输入您的原密码" class="col-xs-10 col-sm-5" />
+						<span class="help-inline col-xs-12 col-sm-7">
+							<span id="warning_one" class="middle"></span>
+						</span>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label no-padding-right" for="newpwd"> 新密码</label>
+
+					<div class="col-sm-9">
+						<input type="password" id="newpwd" placeholder="请输入您的新密码" class="col-xs-10 col-sm-5" />
+						<span class="help-inline col-xs-12 col-sm-7">
+							<span id="warning_two" class="middle"></span>
+						</span>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label no-padding-right" for="renewpwd"> 确认新密码</label>
+
+					<div class="col-sm-9">
+						<input type="password" id="renewpwd" placeholder="请再次确认您的新密码" class="col-xs-10 col-sm-5" />
+						<span class="help-inline col-xs-12 col-sm-7">
+							<span id="warning_three" class="middle"></span>
+						</span>
+					</div>
+				</div>
+				<div class="clearfix form-actions">
+					<div class="col-md-offset-3 col-md-9">
+						<button class="btn btn-info" type="button" id="saveit" >
+							<i class="icon-ok bigger-110"></i>
+							修&nbsp;改
+						</button>
+						<button class="btn" type="reset">
+							<i class="icon-undo bigger-110"></i>
+							重置
+						</button>
+					</div>
+				</div>
+			</form>
+		</div><!-- /.col -->
+	</div><!-- /.row -->
+	</div><!-- /.page-content -->
+	<script>
+	$(function(){
+		var oldpwd = false;
+		var newpwd = false;
+		var repwd  = false;
+		$('#oldpwd').focus();
+		$('#oldpwd').blur(function(){
+			var pwd = $(this).val();
+			if(pwd.length==0){
+				$('#warning_one').html('<img class="gou5" src="__PUBLIC__/home/images/gou5.gif">密码不能为空');
+			}else{
+				
+				$.post('__CONTROLLER__/changepwds',{userpwd:pwd},function(data){
+					if(data){
+						oldpwd = true;
+						$('#warning_one').html('<img src="__PUBLIC__/home/images/gou4.gif">');
+					}else{
+						$('#warning_one').html('<img class="gou5" src="__PUBLIC__/home/images/gou5.gif">密码不正确');
+					}
+				})
+			}
+		})
+
+		$('#newpwd').blur(function(){
+			var newpass = $(this).val();
+			if(newpass.length < 6 || newpass.length >16){
+				$('#warning_two').html('<img class="gou5" src="__PUBLIC__/home/images/gou5.gif">请输入6-16位密码');
+			}else{
+				newpwd = true;
+				$('#warning_two').html('<img src="__PUBLIC__/home/images/gou4.gif">');
+			}	
+		})
+		$('#renewpwd').blur(function(){
+			var renewpass = $(this).val();
+			var newpass = $('#newpwd').val();
+			if(renewpass != newpass){
+				$('#warning_three').html('<img class="gou5" src="__PUBLIC__/home/images/gou5.gif">两次密码不一致');
+				return;
+			}else{
+				repwd = true;
+				$('#warning_three').html('<img src="__PUBLIC__/home/images/gou4.gif">');
+
+			}
+		})
+
+		$('#saveit').bind('click',function(){
+
+			if(oldpwd && newpwd && repwd){
+				var newpass = $('#newpwd').val();
+				$.post('__CONTROLLER__/sureChange',{newpwd:newpass},function(data){
+					if(data){
+						layer.msg('修改成功',1,1);
+						window.location.href="__CONTROLLER__/index";
+					}else{
+						layer.msg('修改失败',1,2);
+					}
+				})
+			}
+		})
+	})
+</script>
+</block>

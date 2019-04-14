@@ -3,7 +3,6 @@
         <div id="datail-nav-top" class="datail-nav-top">
             <ul>
                 <li class="red"><a href="javascript:void(0);">商品介绍</a></li>
-
                 <li><a href="javascript:void(0);">评价<em>({$commentListSum})</em></a></li>
 
             </ul>
@@ -36,23 +35,25 @@
                         <h2>商品评价</h2>
                     </div>
                 </div>
-                {empty name="commentListSum"}
+               
                 <div class="deta-descri p">
                     <ul class="tebj">
-                        <li class="percen"><span>{$commentGoodComment/$commentListSum*100|round}%</span></li>
+                        <li class="percen">
+                        <span>{$commentGood*100|round}%</span></li>
+
                         <li class="co-cen">
                             <div class="comm_gooba">
                                 <div class="gg_c">
                                     <span class="hps">好评</span>
-                                    <span class="hp">（{$commentGoodComment/$commentListSum*100|round}%）</span>
+                                    <span class="hp">（{$commentGood*100|round}%）</span>
                                             <span class="zz_rg"><i
-                                                    style="width: {$commentGoodComment/$commentListSum*100|round}%;"></i></span>
+                                                    style="width: {$commentGood*100|round}%;"></i></span>
                                 </div>
                                 <div class="gg_c">
                                     <span class="hps">差评</span>
-                                    <span class="hp">（{$commentBadComment/$commentListSum*100|round}%）</span>
+                                    <span class="hp">（{$commentBad*100|round}%）</span>
                                             <span class="zz_rg"><i
-                                                    style="width: {$commentBadComment/$commentListSum*100|round}%;"></i></span>
+                                                    style="width: {$commentBad*100|round}%;"></i></span>
                                 </div>
                             </div>
                         </li>
@@ -65,7 +66,7 @@
                         <li class="te-cen">
                             <div class="nchx_com">
                                 <p>您可以对已购的商品进行评价</p>
-                                <a class="jfnuv" href="{:url('Home/Order/comment')}">发表评论</a>
+                                <a class="jfnuv" href="{:url('index/Order/order_list',array('type'=>'comment'))}">发表评论</a>
                                 <!--<p class="xja"><span>详见</span><a class="de_cb" href="">积分规则</a></p>-->
                             </div>
                         </li>
@@ -91,7 +92,7 @@
                   </div>
                 <div class="line-co-sunall" id="ajax_comment_return">
                 </div>
-                {/empty}
+                
             </div>
         </div>
       

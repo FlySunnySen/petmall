@@ -1,0 +1,213 @@
+{extend name="Public:layout" /}
+{block name="toptitle"}
+<li class="active"><a href="__MODULE__/AdminUser/index">权限管理</a></li>
+<li class="active"><a href="__MODULE__/ADminUser/group">管理员组</a></li>
+{/block}
+{block name="main"}
+<div class="page-content">
+	<div class="page-header">
+		<h1 id="dianji">
+			管理员组
+		</h1>
+	</div><!-- /.page-header -->
+	<!-- 搜索条 -->
+	<div class="col-xs-4 col-sm-7"></div>
+	<!--<form action="">
+	<div class="col-xs-4 col-sm-5 text-right" style="margin-bottom:10px">
+		<div class="input-group">
+			<input type="text" class="form-control search-query" placeholder="输入链接名字" name="keywords">
+			<span class="input-group-btn">
+			<button type="submit" class="btn btn-purple btn-sm">
+				搜索
+				<i class="icon-search icon-on-right bigger-110"></i>
+			</button>
+			</span>
+		</div>
+	</div>
+	</form>-->
+	<!-- 搜索条结束 -->
+	<div class="row">
+		<div class="col-xs-12">
+			<!-- PAGE CONTENT BEGINS -->
+
+			<div class="row">
+				<div class="col-xs-12">
+					<div class="table-responsive">
+						<table id="sample-table-1" class="table table-striped table-bordered table-hover">
+							<thead>
+								<tr>
+									<!-- <th class="center">
+										<label>
+											<input type="checkbox" class="ace" id="setall">
+											<span class="lbl"></span>
+										</label>
+									</th> -->
+									<th>序号</th>
+									<th>管理员组名字</th>
+									<th>状态</th>
+									<th>权限分配</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<form id="allform">
+							<tbody>
+							{foreach name="list" item="vo"}
+								<tr>
+									<!-- <td class="center">
+										<label>
+											<input type="checkbox" class="ace" set="id[]" name="id[]" value="{$vo.id}">
+											<span class="lbl"></span>
+										</label>
+									</td> -->
+									<td>{$vo.id}</td>
+									<td>{$vo.title}</td>
+									<td class="hidden-480">
+									{if condition="$vo.status eq 1"}
+										<span class="label label-sm label-success">启用</span>
+									{else/}
+										<span class="label label-sm label-warning">禁用</span>
+									{/if}
+									</td>
+									<td><a href="{:url('rule/role',array('gid'=>$vo.id))}">分配权限</a></td>
+									<td>
+										{if condition="$vo.id neq 1"}
+										<div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
+											<a class="btn btn-xs btn-danger" del="{$vo.id}">
+												<i class="icon-trash bigger-120"></i>
+											</a>
+										</div>
+										{/if}
+									</td>
+								</tr>
+								{/foreach}
+								<tr>
+									<td class="center" colspan="9">
+										<!-- 显示分页 -->
+
+									</td>
+								</tr>
+							</tbody>
+						</form>
+						</table>
+					</div><!-- /.table-responsive -->
+				</div><!-- /span -->
+			</div><!-- /row -->
+			<div class="hr hr-18 dotted hr-double"></div>
+
+			<h4 class="pink">
+				<i class="icon-hand-right icon-animated-hand-pointer blue"></i>
+				<a href="#modal-table" role="button" class="green" data-toggle="modal"> 添加管理员组 </a>
+			</h4>
+			<div class="hr hr-18 dotted hr-double"></div>
+
+			<div class="row">
+				
+			</div>
+
+			<div id="modal-table" class="modal fade" tabindex="-1">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header no-padding">
+							<div class="table-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+									<span class="white">×</span>
+								</button>
+								添加管理员组
+							</div>
+						</div>
+
+						<div class="modal-body no-padding">
+						<form class="form-horizontal" role="form" action="__CONTROLLER__/insert" method="post" id="addform">
+							<div class="form-group" style="margin-top:20px;">
+								<label class="col-sm-5 control-label no-padding-right" for="form-field-1" > 管理员组名字 </label>
+
+								<div class="col-sm-7">
+									<input type="text" id="form-field-1" placeholder="请输入管理员组名字。" class="col-xs-10 col-sm-5" name="title" required/><span class="text-danger" style="display:none">请输入管理员组名字！</span>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-5 control-label no-padding-right" for="form-field-2"> 是否启用 </label>
+								<div class="col-xs-7">
+									<div class="radio">
+										<label>
+										<input name="status" type="radio" class="ace" value="1" checked>
+										<span class="lbl">启用</span>
+										</label>
+										<label>
+										<input name="status" type="radio" class="ace" value="0">
+										<span class="lbl">禁用</span>
+										</label>
+									</div>
+								</div>
+							</div>
+							<div class="center" style="height:40px;">
+								<button type="button" class="btn btn-sm btn-success" id="addtype">
+									添加
+									<i class="icon-arrow-right icon-on-right bigger-110"></i>
+								</button> 
+							</div>
+						</form>
+						</div>
+
+						<div class="modal-footer no-margin-top">
+							<button class="btn btn-sm btn-danger pull-left" data-dismiss="modal">
+								<i class="icon-remove"></i>
+								Close
+							</button>
+						</div>
+					</div><!-- /.modal-content -->
+				</div><!-- /.modal-dialog -->
+			</div><!-- PAGE CONTENT ENDS -->
+		</div><!-- /.col -->
+	</div><!-- /.row -->
+</div>
+<script src="__PUBLIC__/admin/js/jquery-2.0.3.min.js"></script>
+<script>
+	$(function(){
+		// 弹出框添加数据
+		var title=false;
+		$('input[name="title"]').blur(function(){
+			if($(this).val() == ''){
+				title=false;
+				$(this).next().show();
+			}else{
+				title=true;
+				$(this).next().hide();
+			}
+		})
+		//删除单个
+		$('a[del]').click(function(){
+			var id = $(this).attr('del');
+			$.get("{:url('rule/delGroup')}",'id='+id,function(data){
+				if(data == 1){
+					layer.msg('删除成功！');
+					location.reload();
+				}else{
+					layer.msg('删除失败！');
+				}
+			})
+		})
+		$('#addtype').click(function(){
+			if($('input[name="title"]').val()==''){
+				title=false;
+				$('input[name="title"]').focus().next().show();
+			}
+			if(!title){
+				return false;
+			}
+			var data = $('#addform').serialize();
+			$.post("{:url('rule/insertGroup')}",data,function(data){
+				console.log(data);
+				if(data == 1){
+					console.log('hhh');
+					layer.msg('添加成功！');
+					location.reload(); //自动关闭后可做一些刷新页面等操作
+				}else{
+					layer.msg('添加失败！');
+				}
+			})
+		})
+	})
+</script>
+{/block}

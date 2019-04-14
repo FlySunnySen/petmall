@@ -1,0 +1,266 @@
+{extend name="Public:layout" /}
+{block name="toptitle"}
+<li class="active"><a href="__MODULE__/AdminUser/index">权限管理</a></li>
+<li class="active"><a href="__MODULE__/ADminUser/rule">浏览规则</a></li>
+{/block}
+{block name="main"}
+<div class="page-content">
+	<div class="page-header">
+		<h1 id="dianji">
+			浏览规则
+		</h1>
+	</div><!-- /.page-header -->
+	<!-- 搜索条 -->
+	<div class="col-xs-4 col-sm-7"></div>
+	<form action="">
+	<div class="col-xs-4 col-sm-5 text-right" style="margin-bottom:10px">
+		<div class="input-group">
+			<input type="text" class="form-control search-query" placeholder="输入链接名字" name="keywords">
+			<span class="input-group-btn">
+			<button type="submit" class="btn btn-purple btn-sm">
+				搜索
+				<i class="icon-search icon-on-right bigger-110"></i>
+			</button>
+			</span>
+		</div>
+	</div>
+	</form>
+	<!-- 搜索条结束 -->
+	<div class="row">
+		<div class="col-xs-12">
+			<!-- PAGE CONTENT BEGINS -->
+
+			<div class="row">
+				<div class="col-xs-12">
+					<div class="table-responsive">
+						<table id="sample-table-1" class="table table-striped table-bordered table-hover">
+							<thead>
+								<tr>
+									<th class="center">
+										<label>
+											<input type="checkbox" class="ace" id="setall">
+											<span class="lbl"></span>
+										</label>
+									</th>
+									<th>序号</th>
+									<th>规则功能名称</th>
+									<th>规则内容</th>
+									<th>状态</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<form id="allform">
+							<tbody>
+							{foreach name="list" item="vo"}
+								<tr>
+									<td class="center">
+										<label>
+											<input type="checkbox" class="ace" set="id[]" name="id[]" value="{$vo.id}">
+											<span class="lbl"></span>
+										</label>
+									</td>
+									<td>{$vo.id}</td>
+									<td>{$vo.title}</td>
+									<td>{$vo.name}</td>
+									<td class="hidden-480">
+									{if condition="$vo.status eq 1"}
+										<span class="label label-sm label-success">启用</span>
+									{else/}
+										<span class="label label-sm label-warning">禁用</span>
+									{/if}
+									</td>
+									<td>
+										<div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
+											<a class="btn btn-xs btn-info" href="{:url('rule/editRule',array('id'=>$vo.id))}">
+												<i class="icon-edit bigger-120"></i>
+											</a>
+											<a class="btn btn-xs btn-danger" del="{$vo.id}">
+												<i class="icon-trash bigger-120"></i>
+											</a>
+										</div>
+									</td>
+								</tr>
+								{/foreach}
+								<tr>
+									<td class="center" colspan="9">
+										<div class="col-xs-4 text-left">
+											<input type="button" class="btn btn-xs btn-inverse" id="delall" value="批量删除">
+										</div>
+										<!-- 显示分页 -->
+										<div class="col-xs-8 text-right">{$page}</div>
+									</td>	
+								</tr>
+							</tbody>
+						</form>
+						</table>
+					</div><!-- /.table-responsive -->
+				</div><!-- /span -->
+			</div><!-- /row -->
+
+			<div class="hr hr-18 dotted hr-double"></div>
+
+			<h4 class="pink">
+				<i class="icon-hand-right icon-animated-hand-pointer blue"></i>
+				<a href="#modal-table" role="button" class="green" data-toggle="modal"> 添加规则 </a>
+			</h4>
+
+			<div class="hr hr-18 dotted hr-double"></div>
+
+			<div class="row">
+				
+			</div>
+
+			<div id="modal-table" class="modal fade" tabindex="-1">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header no-padding">
+							<div class="table-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+									<span class="white">×</span>
+								</button>
+								添加规则
+							</div>
+						</div>
+
+						<div class="modal-body no-padding">
+						<form class="form-horizontal" role="form" action="__CONTROLLER__/insert" method="post" id="addform">
+							<div class="form-group" style="margin-top:20px;">
+								<label class="col-sm-5 control-label no-padding-right" for="form-field-1" > 规则功能名称 </label>
+
+								<div class="col-sm-7">
+									<input type="text" id="form-field-1" placeholder="请输入规则功能名称。" class="col-xs-10 col-sm-5" name="title" required/><span class="text-danger" style="display:none">请输入正确的名称！</span>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-5 control-label no-padding-right" for="form-field-1" > 控制器名 </label>
+
+								<div class="col-sm-7">
+									<input type="text" id="form-field-1" placeholder="控制器名。" class="col-xs-10 col-sm-5" name="controller"/><span class="text-danger" style="display:none">请输入正确的控制器名！</span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-5 control-label no-padding-right" for="form-field-1" > 方法名 </label>
+
+								<div class="col-sm-7">
+									<input type="text" id="form-field-1" placeholder="方法名。" class="col-xs-10 col-sm-5" name="action"/><span class="text-danger" style="display:none">请输入正确的方法名！</span>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-5 control-label no-padding-right" for="form-field-2"> 是否可用 </label>
+								<div class="col-xs-7">
+									<div class="radio">
+										<label>
+										<input name="status" type="radio" class="ace" value="1" checked>
+										<span class="lbl">启用</span>
+										</label>
+										<label>
+										<input name="status" type="radio" class="ace" value="0">
+										<span class="lbl">禁用</span>
+										</label>
+									</div>
+								</div>
+							</div>
+							<div class="center" style="height:40px;">
+								<button type="button" class="btn btn-sm btn-success" id="addtype">
+									添加
+									<i class="icon-arrow-right icon-on-right bigger-110"></i>
+								</button> 
+							</div>
+						</form>
+						</div>
+
+						<div class="modal-footer no-margin-top">
+							
+						</div>
+					</div><!-- /.modal-content -->
+				</div><!-- /.modal-dialog -->
+			</div><!-- PAGE CONTENT ENDS -->
+		</div><!-- /.col -->
+	</div><!-- /.row -->
+</div>
+<script src="__PUBLIC__/admin/js/jquery-2.0.3.min.js"></script>
+<script>
+	$(function(){
+		//判断表单
+		var title=false,controller=false,action=false;
+		$('input[name="title"]').blur(function(){
+			if($(this).val()==''){
+				$(this).focus().next().show();
+				title=false;
+			}else{
+				$(this).next().hide();
+				title=true;
+			}
+		})
+		$('input[name="controller"]').blur(function(){
+			if($(this).val()==''){
+				$(this).focus().next().show();
+				controller=false;
+			}else{
+				$(this).next().hide();
+				controller=true;
+			}
+		})
+		$('input[name="action"]').blur(function(){
+			if($(this).val()==''){
+				$(this).focus().next().show();
+				action=false;
+			}else{
+				$(this).next().hide();
+				action=true;
+			}
+		})
+		// 弹出框添加数据
+		$('#addtype').click(function(){
+			if(title && controller && action){
+			var data = $('#addform').serialize();
+			$.post("{:url('rule/insert')}",data,function(dat){
+
+				if(dat == 1){
+					layer.msg('添加成功');
+					location.reload(); //自动关闭后可做一些刷新页面等操作
+				}else{
+					layer.msg('添加成功');
+				}
+			})
+		}
+		})
+		// 单个删除按钮删除数据
+		$('a[del]').click(function(){
+			var id = 'id='+$(this).attr('del');
+			layer.confirm('确定删除吗？',function(){
+				$.post("{:url('rule/delRule')}",id,function(data){
+					if(data == 1){
+						layer.msg('删除成功！');
+						location.reload(); //自动关闭后可做一些刷新页面等操作
+					}else{
+						layer.msg('删除失败！');
+					}
+				});
+			});
+		})
+		// 全选
+		var bool = true;
+		$('#setall').click(function(){
+			$(':checkbox[set]').each(function(){
+				$(this).prop('checked',bool);
+			})
+			bool = !bool;
+		})
+		// 批量删除
+		$('#delall').click(function(){
+			var data = $('#allform').serialize();
+			$.post("{:url('rule/delRuleAll')}",data,function(data){
+				if(data == 1){
+					layer.msg('批量删除成功！');
+					location.reload(); //自动关闭后可做一些刷新页面等操作
+				}else{
+					layer.msg('批量删除失败！');
+				}
+			})
+		})
+	})
+</script>
+{/block}
