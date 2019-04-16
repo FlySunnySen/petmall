@@ -3,7 +3,6 @@
 namespace app\admin\controller;
 use app\admin\logic\GoodsLogic;
 use app\admin\model\Good as GoodModel;
-use think\AjaxPage;
 use think\Controller;
 use think\Db;
 use think\Page;
@@ -210,8 +209,8 @@ class Good extends Common {
 		$count = $model->count();
 		$Page = $pager = new Page($count, 14);
 		$show = $Page->show();
-		$goodsTypeList = $model->order("id desc")->limit($Page->firstRow . ',' . $Page->listRows)->select();
-		$this->assign('pager', $pager);
+		$goodsTypeList = $model->limit($Page->firstRow . ',' . $Page->listRows)->select();
+		$this->assign('page', $pager);
 		$this->assign('show', $show);
 		$this->assign('goodsTypeList', $goodsTypeList);
 		// var_dump($goodsTypeList);die;
@@ -222,41 +221,84 @@ class Good extends Common {
 	 * 商品规格列表
 	 */
 	public function specList() {
-		$goodsTypeList = model("GoodsType")->select();
-		var_dump($goodsTypeList);die;
+		if (input('action')) {
+			$id = input('id');
+			$data['name'] = input('content');
+			$rst = Db::name('spec')->where('id', '=', $id)->update($data);
+			if ($rst) {
+				$this->ajaxReturn(['stauts' => 1, 'msg' => '修改成功']);
+			} else {
+				$this->ajaxReturn(['stauts' => 0, 'msg' => '修改失败']);
+			}
+		}
+		$typeID = input('id');
+		$goodsTypeList = model("spec")->where('type_id', '=', $typeID)->select();
 		$this->assign('goodsTypeList', $goodsTypeList);
 		return $this->fetch('specList');
 	}
 
 	/**
-	 *  商品规格列表
+	 * [editSpec 修改规格]
+	 * @return [type] [description]
 	 */
-	public function ajaxSpecList() {
-		//ob_start('ob_gzhandler'); // 页面压缩输出
-		$where = ' 1 = 1 '; // 搜索条件
-		input('type_id') && $where = "$where and type_id = " . input('type_id');
-		// 关键词搜索
-		$model = model('spec');
-		$count = $model->where($where)->count();
-		$Page = new AjaxPage($count, 13);
-		$show = $Page->show();
-		$specList = $model->where($where)->order('type_id desc')->limit($Page->firstRow . ',' . $Page->listRows)->select();
-		$GoodsLogic = new GoodsLogic();
-		foreach ($specList as $k => $v) {
-			// 获取规格项
-			$arr = $GoodsLogic->getSpecItem($v['id']);
-			$specList[$k]['spec_item'] = implode(' , ', $arr);
+	public function editSpec() {
+		if (input('action')) {
+			$data['item'] = input('content');
+			$id = input('id');
+			$rst = Db::name('spec_item')->where('id', '=', $id)->update($data);
+			if ($rst) {
+				$this->ajaxReturn(['stauts' => 1, 'msg' => '修改成功']);
+			} else {
+				$this->ajaxReturn(['stauts' => 0, 'msg' => '修改失败']);
+			}
+			die;
 		}
-
-		$this->assign('specList', $specList);
-		$this->assign('page', $show); // 赋值分页输出
-		$goodsTypeList = model("GoodsType")->select(); // 规格分类
-		$goodsTypeList = self::convert_arr_key($goodsTypeList, 'id');
-		$this->assign('goodsTypeList', $goodsTypeList);
-		// var_dump($goodsTypeList);die;
-		return $this->fetch('ajaxSpecList');
+		$id = input('id');
+		$rst = Db::name('spec_item')->where('spec_id', '=', $id)->select();
+		$this->assign('spec_item', $rst);
+		return $this->fetch();
 	}
-
+	/**
+	 * [delItem 删除规格]
+	 * @return [type] [description]
+	 */
+	public function delItem() {
+		$id = input('id');
+		$rst = Db::name('spec')->where('id', '=', $id)->delete();
+		$rst1 = Db::name('spec_item')->where('spec_id', '=', $id)->delete();
+		if ($rst) {
+			$this->ajaxReturn(['stauts' => 1, 'msg' => '删除成功']);
+		} else {
+			$this->ajaxReturn(['stauts' => 0, 'msg' => '删除失败']);
+		}
+	}
+	/**
+	 * [additem 增加规格]
+	 * @return [type] [description]
+	 */
+	public function additem() {
+		$data['type_id'] = input('id');
+		$data['name'] = input('content');
+		$rst = Db::name('spec')->insert($data);
+		if ($rst) {
+			$this->ajaxReturn(['stauts' => 1, 'msg' => '添加成功']);
+		} else {
+			$this->ajaxReturn(['stauts' => 0, 'msg' => '添加失败']);
+		}
+	}
+	/**
+	 * [addItemAttr 添加规格属性]
+	 */
+	public function addItemAttr() {
+		$data['spec_id'] = input('id');
+		$data['item'] = input('content');
+		$rst = Db::name('spec_item')->insert($data);
+		if ($rst) {
+			$this->ajaxReturn(['stauts' => 1, 'msg' => '添加成功']);
+		} else {
+			$this->ajaxReturn(['stauts' => 0, 'msg' => '添加失败']);
+		}
+	}
 	/**
 	 * 动态获取商品规格选择框 根据不同的数据返回不同的选择框
 	 */

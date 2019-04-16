@@ -1,7 +1,7 @@
 <?php
 /*
  *	权限管理
- *	$author 蒋永忠
+ *
  */
 namespace app\Admin\Controller;
 use think\Db;
@@ -18,7 +18,7 @@ class Rule extends Common {
 	*/
 	public function rule() {
 		// 分配左侧菜单样式变量
-		$this->assign('adminList', 'AdminUserrule');
+		$this->assign('menuList', 'AdminUserrule');
 		// 搜索条件
 		if (input('get.keywords')) {
 			$keyword = input('get.keywords');
@@ -65,7 +65,7 @@ class Rule extends Common {
 	public function group() {
 		// 分配左侧菜单样式变量
 		$this->assign('admin', 'AdminUser');
-		$this->assign('adminList', 'AdminUsergroup');
+		$this->assign('menuList', 'AdminUsergroup');
 
 		//用户管理员组
 		$group = Db::name('auth_group')->select();
@@ -188,7 +188,7 @@ class Rule extends Common {
 		*	编辑规则
 	*/
 	public function editRule() {
-		$this->assign('adminList', 'AdminUserrule');
+		$this->assign('menuList', 'AdminUserrule');
 		$id = input('id');
 		if ($id) {
 			$rule = Db::name('auth_rule')->where('id=' . $id)->find();

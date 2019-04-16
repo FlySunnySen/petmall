@@ -54,19 +54,16 @@
 					<div class="col-xs-12">
 						<ul id='order'>
                             <li>
-                                <a href="{:url('Order/index')}" class="{if condition="$Request.param.type eq ''"}selected{/if}">全部订单</a>
+                                <a href="{:url('order/comment')}" class="{if condition="$Request.param.type eq ''"}selected{/if}">全部评论</a>
                             </li>
                             <li>
-                                <a href="{:url('Order/index',array('type'=>'noPay'))}" class="{if condition="$Request.param.type eq 'noPay'"}selected{/if}">待付款</a>
+                                <a href="{:url('order/comment',array('type'=>'noReply'))}" class="{if condition="$Request.param.type eq 'noReply'"}selected{/if}">待回复</a>
                             </li>
                             <li>
-                                <a href="{:url('Order/index',array('type'=>'noFollow'))}" class="{if condition="$Request.param.type eq 'noFollow'"}selected{/if}">待发货</a>
+                                <a href="{:url('Order/comment',array('type'=>'good'))}" class="{if condition="$Request.param.type eq 'good'"}selected{/if}">好评</a>
                             </li>
                             <li>
-                                <a href="{:url('Order/index',array('type'=>'follow'))}" class="{if condition="$Request.param.type eq 'follow'"}selected{/if}">待收货</a>
-                            </li>
-                            <li>
-                                <a href="{:url('Order/index',array('type'=>'del'))}" class="{if condition="$Request.param.type eq 'del'"}selected{/if}">已删除</a>
+                                <a href="{:url('Order/comment',array('type'=>'bad'))}" class="{if condition="$Request.param.type eq 'bad'"}selected{/if}">差评</a>
                             </li>
 
                 		</ul>
@@ -89,19 +86,19 @@
 										</th>
 										<th>acti交易号</th>
 										<th>用户id</th>
-										<th>订单状态</th>
-										<th>付款状态</th>
-										<th>订单创建时间</th>
+										<th>商品</th>
+										<th>评论时间</th>
+										<th>买家评分</th>
 										<th>买家留言</th>
-										<th>快递类型</th>
-										<th>快递单号</th>
+										<th>是否回复</th>
+										<th>回复内容</th>
 										<!-- <th>付款方式</th> -->
 										<th>操作</th>
 									</tr>
 								</thead>
 								<form id="allform">
 									<tbody>
-										{foreach name="order_data" item="vo"}
+										{foreach name="comment_list" item="vo"}
 											<tr>
 												<td class="center">
 													<label>
@@ -115,52 +112,39 @@
 
 												</td>
 												<td>
-													<span class="lbl">{$vo.user_Uid}</span>
+													<span class="lbl">{$vo.user_id}</span>
 												</td>
 												<td>
 													<span class="lbl">
-														{if condition="$vo['is_delete'] eq '1'"}
-														已删除
-														{elseif condition="$vo['shipping_status'] eq '0'"}
-															未发货
-														{elseif condition="$vo['shipping_status'] eq '1'"}
-															已发货
-														{else/}
-															已收货
-														{/if}
+														{$vo.goods_name}
+														<img src={$vo.goods_img} width="50" height="50">
 													</span>
 												</td>
+
+												<td class="hidden-480">{$vo.comment_time|date="Y-m-d H:i:s",###}</td>
+												<td>
+													{for start="0" end="$vo.comment_rank"}
+													<span class="glyphicon glyphicon-star"></span>
+													{/for}
+													{for start="0" end="5-$vo['comment_rank']"}
+													<span class="glyphicon glyphicon-star-empty"></span>
+													{/for}
+												</td>
 												<td class="hidden-480">
-													{if condition="$vo['pay_status'] eq '0'"}
-														未付款
+													<span>{$vo.comment_content}</span>
+												</td>
+												<td>
+													{if condition="$vo.is_reply eq 0"}
+													<span style="color:red">未回复</span>
 													{else/}
-														已付款
+													<span style="color:green">已回复</span>
 													{/if}
 												</td>
-												<td class="hidden-480">{$vo.create_time}</td>
+												<td>{$vo.reply_content}</td>
 												<td class="hidden-480">
-													<span>{$vo.order_message}</span>
-												</td>
-												<td>
-													<span class="lbl">{$vo.express_type}</span>
-												</td>
-												<td>
-													<span class="lbl">{$vo.express_number}</span>
-												</td>
-											<!-- 	<td>
-													<span class="lbl">{$vo.pay_id}</span>
-												</td> -->
-
-
-												<td>
-													{if condition="$vo.shipping_status eq '0' and $vo.is_delete eq 0 and $vo.pay_status eq 1"}
-													<a class="send" value="{$vo.id}" href="javascript:void(0)">发货</a>
+													<a class="reply" value="{$vo.id}" href="javascript:void(0)" >回复</a>
 													|
-													{/if}
-													<a class="goodList" value="{$vo.id}" href="javascript:void(0)">查看商品</a>
-
-													|
-													<a class="delOrder"  value="{$vo.id}"  href="javascript:void(0)">删除</a>
+													<a class="del" value="{$vo.id}" href="javascript:void(0)">删除</a>
 												</td>
 											</tr>
 										{/foreach}
@@ -174,7 +158,9 @@
 													<input class="btn btn-xs btn-inverse" id="delall" value="批量删除" type="button"></div>
 
 												<!-- 显示分页 -->
-												<div class="col-xs-9 text-right"></div>
+												<div class="col-xs-9 text-right">
+													{$page}
+												</div>
 											</td>
 										</tr>
 									</tbody>
@@ -197,7 +183,6 @@
 				})
 				bool = !bool;
 			})
-
 			//反选
 			$('#against').bind('click',function() {
 				$('input[name="id[]"]').each(function() {
@@ -219,43 +204,19 @@
 					}
 				})
 			})
-
-			/* 发货 */
-			$('.send').bind('click',function() {
-				var data = $(this).attr('value');
-				layer.prompt({
-				  formType: 0,
-				  value: '',
-				  title: '请输入快递单号',
-				}, function(value, index, elem){
-				  $.ajax({
-				  	 type:'post',
-				  	 data:'num='+value+'&id='+data,
-				  	 url:"{:url('order/send')}",
-				  	 dataType:'json',
-				  	 success:function(data){
-				  	 	layer.msg(data.msg);
-				  	 	layer.close(index);
-				  	 	window.location.reload();
-				  	 }
-				  });
-
-				});
-			})
-
-			/* 删除订单 */
-			$('.delOrder').bind('click',function() {
+			/* 回复 */
+			$('.reply').bind('click',function() {
 				var data = $(this).attr('value');
 				layer.prompt({
 				  formType: 2,
+				  area: ['400px', '250px'],
 				  value: '',
-				  title: '请输入原因',
-				  area: ['400px', '250px']
+				  title: '请输入回复内容',
 				}, function(value, index, elem){
 				  $.ajax({
 				  	 type:'post',
 				  	 data:'num='+value+'&id='+data,
-				  	 url:"{:url('order/delOrder')}",
+				  	 url:"{:url('order/reply')}",
 				  	 dataType:'json',
 				  	 success:function(data){
 				  	 	layer.msg(data.msg);
@@ -267,16 +228,25 @@
 				});
 			})
 
-			/* 商品列表 */
-			$('.goodList').bind('click',function() {
-				var data = $(this).attr('value');
-				layer.open({
-				  type: 2,
-				  area: ['400px', '260px'],
-				  shadeClose: true, //点击遮罩关闭
-				  content: "/admin/order/goodList/id/"+data
-				});
-			})
+			$('.del').bind('click',function(){
+					var id = $(this).attr('value');
+					layer.confirm('是否删除评论', {icon: 3, title:'提示'}, function(index){
+						layer.msg('hhh');
+	                    $.ajax({
+					     	type:'post',
+					     	url:"{:url('order/delComment')}",
+					     	data:'id='+id,
+					     	dataType:'json',
+					     	success:function(data){
+		                        layer.msg(data.msg);
+		                        layer.close(index);
+		                        location.reload();
+		                    }
+						});
+						// layer.close(index);
+					});
+
+			});
 
 
 		})

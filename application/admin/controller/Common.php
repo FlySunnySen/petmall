@@ -1,10 +1,38 @@
 <?php
 namespace app\admin\controller;
+use think\Auth;
 use think\Controller;
 use think\Page;
 use think\Request;
+use think\Session;
 
 class Common extends Controller {
+
+	/**
+	 * [_initialize 自动调用方法，判断用户是否登陆，权限，登录超时等]
+	 * @return [type] [description]
+	 */
+	public function _initialize() {
+		session_start();
+		$admin = session('admin');
+		if ($admin == false) {
+			$this->redirect('Login/index');
+			exit;
+		}
+
+		//auth权限验证
+		// $uid = $_SESSION['admin']['id'];
+		$uid = Session::get('admin.id');
+		$rule = CONTROLLER_NAME . '/' . ACTION_NAME;
+		static $auth;
+		if (!$auth) {
+			$auth = new Auth();
+		}
+		//判断权限
+		// if (!$auth->check($rule, $uid)) {
+		// 	$this->error('对不起，你没有权限！');
+		// }
+	}
 
 	public function myUpload(Request $request) {
 		//获取当前控制器的名字

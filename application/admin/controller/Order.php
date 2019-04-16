@@ -2,6 +2,7 @@
 namespace app\admin\controller;
 use think\Controller;
 use think\Db;
+use think\Page;
 use think\Request;
 
 // use app\admin\model\GoodType as category;
@@ -16,14 +17,21 @@ class Order extends Common {
 
 	public function index() {
 		$where = [];
+		// $where['is_delete'] = 0;
 		if (input('type') == 'noPay') {
 			$where['pay_status'] = 0;
+			$where['is_delete'] = 0;
 		}
 		if (input('type') == 'noFollow') {
 			$where['shipping_status'] = 0;
+			$where['is_delete'] = 0;
 		}
 		if (input('type') == 'follow') {
 			$where['shipping_status'] = 1;
+			$where['is_delete'] = 0;
+		}
+		if (input('type') == 'del') {
+			$where['is_delete'] = 1;
 		}
 		$order_data = Db::name('order')->where($where)->select();
 		// var_dump($order_data);die;
@@ -74,6 +82,76 @@ class Order extends Common {
 		}
 		$this->assign('goodList', $good);
 		return $this->fetch();
+	}
+	/**
+	 * [comment 评论列表]
+	 */
+	public function comment() {
+		$where = null;
+		if (input('type') == 'noReply') {
+			$where['is_reply'] = 0;
+		}
+		if (input('type') == 'good') {
+			$where['comment_rank'] = ['in', '4,5'];
+		}
+		if (input('type') == 'bad') {
+			$where['comment_rank'] = ['in', '1,2,3'];
+		}
+		$count = Db::name('comment')->where($where)->count();
+		$Page = new Page($count, 10);
+		$show = $Page->show();
+		$order_str = "comment_time DESC";
+		$comment_list = Db::view('comment')->view('good', 'goods_name,goods_price,goods_img', 'good.id=comment.good_id')->order($order_str)->where($where)->limit($Page->firstRow . ',' . $Page->listRows)->select();
+		$this->assign('comment_list', $comment_list);
+		$this->assign('page', $show);
+		// var_dump($comment_list);die;
+		return $this->fetch();
+	}
+	/**
+	 * [reply 回复评论]
+	 * @return [type] [description]
+	 */
+	public function reply() {
+
+		$data['reply_content'] = input('num');
+		$data['reply_time'] = time();
+		$data['is_reply'] = 1;
+		$rst = Db::name('comment')->where('id', '=', input('id'))->update($data);
+		if ($rst) {
+			$this->ajaxReturn(['status' => 1, 'msg' => '回复成功']);
+		} else {
+			$this->ajaxReturn(['status' => 0, 'msg' => '回复失败']);
+		}
+	}
+
+	/**
+	 * [delComment 删除评论]
+	 * @return [type] [description]
+	 */
+	public function delComment() {
+
+		$rst = Db::name('comment')->where('id', '=', input('id'))->delete();
+		if ($rst) {
+			$this->ajaxReturn(['status' => 1, 'msg' => '删除成功']);
+		} else {
+			$this->ajaxReturn(['status' => 0, 'msg' => '删除失败']);
+		}
+	}
+
+	/**
+	 * [delOrder 删除订单]
+	 * @return [type] [description]
+	 */
+	public function delOrder() {
+		$id = input('id');
+		$data['comeback_reason'] = input('num');
+		$data['is_delete'] = 1;
+		$rst = Db::name('order')->where('id', '=', $id)->update($data);
+		if ($rst) {
+			$this->ajaxReturn(['status' => 1, 'msg' => '删除成功']);
+		} else {
+			$this->ajaxReturn(['status' => 0, 'msg' => '删除失败']);
+		}
 	}
 
 }

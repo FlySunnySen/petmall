@@ -198,35 +198,12 @@
 
 					<!-- 左侧导航栏开始 -->
 					<ul class="nav nav-list">
-						<li class="active">
+						<li>
 							<a href="/{:request()->module()}/Index">
 								<i class="icon-home"></i>
 								<span class="menu-text"> 后台首页 </span>
 							</a>
 						</li>
-						<!-- 
-						<li class="<eq name='userz' value='User'>active open</eq>">
-							<a href="#" class="dropdown-toggle">
-								<i class="icon-user"></i>
-								<span class="menu-text">会员管理</span>
-								<b class="arrow icon-angle-down"></b>
-							</a>
-							<ul class="submenu">
-								<li class="<eq name='userList' value='UserIndex'>active open</eq>">
-									<a href="/{:request()->module()}/User/index">
-										<i class="icon-double-angle-right"></i>
-										会员列表
-									</a>
-								</li>
-								<li class="<eq name='userList' value='UserAdd'>active open</eq>">
-									<a href="/{:request()->module()}/User/add">
-										<i class="icon-double-angle-right"></i>
-										添加会员
-									</a>
-								</li>
-							</ul>
-						</li>
-						 -->
 						<li class="{eq name='menu' value='Goods'}active open{/eq}">
 							<a href="#" class="dropdown-toggle">
 								<i class="icon-text-width"></i>
@@ -278,12 +255,7 @@
 										商品模型
 									</a>
 								</li>
-								<li class="<eq name='menuList' value='Comment-index'>active open</eq>">
-									<a href="/{:request()->module()}/Comment/index">
-										<i class="icon-double-angle-right"></i>
-										评论列表
-									</a>
-								</li>
+								
 								<li class="<eq name='menuList' value='Good-recycle'>active open</eq>">
 									<a href="/{:request()->module()}/Good/recycle">
 										<i class="icon-double-angle-right"></i>
@@ -314,30 +286,23 @@
 					
 
 						<!-- 订单管理 -->
-						<li class="<eq name='menu' value='Order'>active open</eq>">
+						<li class="{eq name='menu' value='Order'}active open{/eq}">
 							<a href="#" class="dropdown-toggle">
 								<i class="icon-group"></i>
 								<span class="menu-text"> 订单管理 </span>
 								<b class="arrow icon-angle-down"></b>
 							</a>
 							<ul class="submenu">
-								<li class="<eq name='menuList' value='Orderindex'>active open</eq>">
+								<li class="{eq name='menuList' value='Order-index'}active open{/eq}">
 									<a href="/{:request()->module()}/Order/index">
 										<i class="icon-double-angle-right"></i>
 										订单列表
 									</a>
 								</li>
-								
-								<li class="<eq name='menuList' value='Ordercancel'>active open</eq>">
-									<a href="/{:request()->module()}/Order/cancel">
+								<li class="{eq name='menuList' value='Order-comment'}active open{/eq}">
+									<a href="/{:request()->module()}/order/comment">
 										<i class="icon-double-angle-right"></i>
-										已删除订单
-									</a>
-								</li>
-								<li class="<eq name='menuList' value='Orderbook'>active open</eq>">
-									<a href="/{:request()->module()}/Order/book">
-										<i class="icon-double-angle-right"></i>
-										缺货登记
+										评论列表
 									</a>
 								</li>
 							</ul>
@@ -357,12 +322,7 @@
 										会员列表
 									</a>
 								</li>
-								<li class="<eq name='userList' value='UserAdd'>active open</eq>">
-									<a href="/{:request()->module()}/User/add">
-										<i class="icon-double-angle-right"></i>
-										添加会员
-									</a>
-								</li>
+							
 									<li class="<eq name='userList' value='User-blackList'>active open</eq>">
 									<a href="/{:request()->module()}/User/blackList">
 										<i class="icon-double-angle-right"></i>
@@ -459,35 +419,29 @@
 							</a>
 
 							<ul class="submenu">
-								<li class="{eq name='adminList' value='AdminUserIndex'}active open{/eq}">
+								<li class="{eq name='menuList' value='AdminUserIndex'}active open{/eq}">
 									<a href="/{:request()->module()}/Admin/index">
 										<i class="icon-double-angle-right"></i>
 										管理员列表
 									</a>
 								</li>
 
-								<li class="{eq name='adminList' value='AdminUserAdd'}active open{/eq}">
+								<li class="{eq name='menuList' value='AdminUserAdd'}active open{/eq}">
 									<a href="/{:request()->module()}/Admin/add">
 										<i class="icon-double-angle-right"></i>
 										添加管理员
 									</a>
 								</li>
 
-								<li class="{eq name='adminList' value='AdminUserChangepwd'}active open{/eq}">
-									<a href="/{:request()->module()}/Admin/changepwd">
-										<i class="icon-double-angle-right"></i>
-										修改密码
-									</a>
-								</li>
 
-								<li class="{eq name='adminList' value='AdminUsergroup'}active open{/eq}">
+								<li class="{eq name='menuList' value='AdminUsergroup'}active open{/eq}">
 									<a href="/{:request()->module()}/Rule/group">
 										<i class="icon-double-angle-right"></i>
 										管理员组
 									</a>
 								</li>
 
-								<li class="{eq name='adminList' value='AdminUserrule'}active open{/eq}">
+								<li class="{eq name='menuList' value='AdminUserrule'}active open{/eq}">
 									<a href="/{:request()->module()}/Rule/rule">
 										<i class="icon-double-angle-right"></i>
 										添加规则

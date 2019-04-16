@@ -51,6 +51,20 @@ class Order extends Base {
 			$this->ajaxReturn($error);
 		}
 	}
+	/**
+	 * [cancel_order 取消订单]
+	 * @return [type] [description]
+	 */
+	public function cancel_order() {
+		$data['is_delete'] = 1;
+		$data['comeback_reason'] = "用户自己取消";
+		$rst = Db::name('order')->where('id', '=', input('id'))->update($data);
+		if ($rst) {
+			$this->ajaxReturn(['status' => 1, 'msg' => '取消成功']);
+		} else {
+			$this->ajaxReturn(['status' => 0, 'msg' => '系统繁忙，请稍后再试']);
+		}
+	}
 
 	/**
 	 * [pay 支付页面]
@@ -146,6 +160,10 @@ class Order extends Base {
 			$where['is_comment'] = 0;
 			$where['shipping_status'] = 2;
 		}
+		if (input('type') == 'del') {
+			$where['is_delete'] = 1;
+		}
+
 		$count = Db::name('order')->where($where)->count();
 		$Page = new Page($count, 10);
 		$show = $Page->show();
@@ -244,6 +262,7 @@ class Order extends Base {
 		$data['comment_rank'] = input('num');
 		$data['good_id'] = input('goodID');
 		$data['comment_time'] = time();
+		$data['acti'] = Db::name('order')->where('id', '=', $data['order_id'])->value('acti');
 		// $rst = Db::name('comment')->insert($data);
 		// var_dump(Db::getlastsql());die;
 		Db::startTrans();
@@ -265,6 +284,7 @@ class Order extends Base {
 		} catch (\Exception $e) {
 			// 回滚事务
 			Db::rollback();
+			// var_dump(Db::getlastsql());die;
 			$this->ajaxReturn(['status' => 0, 'msg' => '评论失败']);
 		}
 

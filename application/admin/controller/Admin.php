@@ -1,21 +1,5 @@
 <?php
 
-/*
- *   后台管理员部分，继承common类
- *   AdminUser/index        管理员列表
- *   AdminUser/add          添加管理员
- *   AdminUser/insert       执行添加管理员
- *   AdminUser/checkName    检查管理员是否已存在
- *   AdminUser/save     	   管理员编辑
- *   AdminUser/save_doit    执行修改管理员信息
- *   AdminUser/del          删除单条管理员
- *   AdminUser/delAll       多条删除管理员
- *   AdminUser/changePwd    修改管理员密码
- *   AdminUser/changePwds   验证旧密码是否正确
- *   AdminUser/sureChange   执行修改管理员密码
- *   @author                王雪
-
- */
 namespace app\admin\controller;
 
 use think\Controller;
@@ -54,7 +38,7 @@ class Admin extends Common {
 		$this->assign('page', $show); // 赋值分页输出
 
 		$this->assign('admin', 'AdminUser');
-		$this->assign('adminList', 'AdminUserIndex');
+		$this->assign('menuList', 'AdminUserIndex');
 		return $this->fetch();
 	}
 
@@ -62,7 +46,7 @@ class Admin extends Common {
 	public function add() {
 		// 分配左侧菜单样式变量
 		$this->assign('admin', 'AdminUser');
-		$this->assign('adminList', 'AdminUserAdd');
+		$this->assign('menuList', 'AdminUserAdd');
 		//遍历出管理员组
 		// $g = M('auth_group');
 		$group = Db::name('auth_group')->field('id,title')->select();
@@ -112,7 +96,7 @@ class Admin extends Common {
 		$group = Db::name('auth_group')->field('id,title')->select();
 		$this->assign('group', $group);
 		$this->assign('admin', 'AdminUser');
-		$this->assign('adminList', 'AdminUserIndex');
+		$this->assign('menuList', 'AdminUserIndex');
 		return $this->fetch();
 	}
 
@@ -135,6 +119,21 @@ class Admin extends Common {
 		$this->success('修改成功');
 
 	}
+	/**
+	 * [editPwd 修改密码]
+	 * @return [type] [description]
+	 */
+	public function editPwd() {
+		if (request()->isAjax()) {
+			$rst = Db::name('admin')->where('id', '=', input('id'))->update(['pwd' => md5(md5(input('pwd')))]);
+			if ($rst) {
+				$this->ajaxReturn(['status' => 1, 'msg' => '修改成功']);
+			} else {
+				$this->ajaxReturn(['status' => 0, 'msg' => '修改失败']);
+			}
+		}
+
+	}
 
 	// 执行删除
 	public function del() {
@@ -148,55 +147,4 @@ class Admin extends Common {
 		}
 	}
 
-	// 执行批量删除
-	public function delAll() {
-		if (IS_AJAX) {
-			$ids = I('post.id');
-			$ids = implode(',', $ids);
-			$m = M(CONTROLLER_NAME);
-			if ($m->delete($ids)) {
-				echo 1;
-			} else {
-				echo 0;
-			}
-		}
-	}
-
-	// 修改密码
-	public function changePwd() {
-		$this->assign('admin', 'AdminUser');
-		$this->assign('adminList', 'AdminUserchangepwd');
-		$this->display();
-	}
-
-	// 验证旧密码是否正确
-	public function changePwds() {
-		$pwd = md5($_POST['userpwd']);
-		$admin = M('admin_user');
-		$id = $_SESSION['admin']['id'];
-		$admin_user = $admin->find($id);
-
-		if ($admin_user['admin_pwd'] == $pwd) {
-			$this->ajaxReturn(true);
-		} else {
-			$this->ajaxReturn(false);
-		}
-
-	}
-
-	// 执行修改密码
-	public function sureChange() {
-		$admin = M('admin_user');
-		$pwd = $_POST['newpwd'];
-		$id = $_SESSION['admin']['id'];
-		$where['id'] = $id;
-		$adminpwd['admin_pwd'] = md5($pwd);
-		$admins = $admin->where($where)->save($adminpwd);
-		if ($admins) {
-			$this->ajaxReturn(true);
-		} else {
-			$this->ajaxReturn(false);
-		}
-
-	}
 }

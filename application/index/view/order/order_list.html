@@ -42,6 +42,9 @@
                             <li>
                                 <a href="{:url('Order/order_list',array('type'=>'comment'))}" class="{if condition="$Request.param.type eq 'comment'"}selected{/if}">待评论</a>
                             </li>
+                            <li>
+                                <a href="{:url('Order/order_list',array('type'=>'del'))}" class="{if condition="$Request.param.type eq 'del'"}selected{/if}">已删除</a>
+                            </li>
                             <!--<li>-->
                             <!--<a href="javascript:void(0);" class="">预售订单</a>-->
                             <!--</li>-->
@@ -63,12 +66,11 @@
                     <div class="hid-derei">
                         <ul>
                             <li><a href="{:url('Order/order_list')}">全部订单</a></li>
-                            <li><a href="{:url('Order/order_list',array('pay_status'=>'0'))}">待付款</a></li>
-                            <li><a href="{:url('Order/order_list',array('shipping_status'=>'0'))}">待发货</a></li>
+                            <li><a href="{:url('Order/order_list',array('type'=>'noPay'))}">待付款</a></li>
+                            <li><a href="{:url('Order/order_list',array('type'=>'follow'))}">待发货</a></li>
                             <li><a href="{:url('Order/order_list',array('shipping_status'=>'1'))}">待收货</a></li>
-                            <li><a href="{:url('Order/comment',array('status'=>'0'))}">待评论</a></li>
-                            <li><a href="{:url('Order/order_list',array('type'=>'FINISH'))}">已完成</a></li>
-				    		<li><a href="{:url('Order/order_list',array('type'=>'CANCEL'))}">已取消</a></li>
+                            <li><a href="{:url('Order/order_list',array('type'=>'comment'))}">待评论</a></li>
+				    		<li><a href="{:url('Order/order_list',array('type'=>'del'))}">已取消</a></li>
                             <!--<li><a href="">预售订单</a></li>-->
                         </ul>
                     </div>
@@ -87,18 +89,20 @@
                                             <span class="time-num">下单时间{$list['create_time']}：<em class="num">{$list.create_time|date='Y-m-d H:i:s',###}</em></span>
                                             <span class="time-num">订单编号：<em class="num">{$list.acti}</em></span>
                                             <div class="paysoon">
-                                                {if condition="$list.pay_status eq 0"}
-                                                    <a class="ps_lj" href="{:url('index/order/pay',array('id'=>$list.id))}"  target="_blank">立即支付</a>
-                                                {/if}
-                                                {if condition="$list.shipping_status eq 1"}
-                                                    <a class="ps_lj" href="javascript:;" onclick="order_confirm({$list.id});">确认收货</a>{/if}
-                                                {if condition="$list.pay_status eq 0"}
+                                                {if condition="$list.is_delete eq 1"}
+                                                          交易关闭
+                                                {elseif condition="$list.pay_status eq 0"}
+                                                     <a class="ps_lj" href="{:url('index/order/pay',array('id'=>$list.id))}"  target="_blank">立即支付</a>
                                                     <a class="consoorder" href="javascript:void(0);" onClick="cancel_order({$list.id})" >取消订单</a>
+                                                {elseif condition="$list.shipping_status eq 0"}
+                                                待发货
+                                                {elseif condition="$list.shipping_status eq 1"}
+                                                    <a class="ps_lj" href="javascript:;" onclick="order_confirm({$list.id});">确认收货</a>
+                                                {elseif condition="$list.is_comment eq 0"}
+                                                    待评价
+                                                {else /}
+                                                     交易完成
                                                 {/if}
-                                                {if condition="($list['shipping_status'] eq 2) and ($list['is_comment'] eq 0)"}
-                                                     待评价
-                                                {/if}
-                                                
                                                 <!--<div class="dele"></div>-->
                                             </div>
                                         </div>
@@ -145,14 +149,15 @@
                                             <td class="sx6" rowspan="{$list.goods_list|count}">
                                                 <div class="rbac">
                                                     <br/>
-                                                    {if condition="$list['shipping_status'] eq 0"}待发货{/if}
-                                                    {if condition="$list['shipping_status'] eq 1"}已发货{/if}
-                                                    {if condition="($list['shipping_status'] eq 2) and ($list['is_comment'] eq 0)"}
+                                                    {if condition="$list['is_delete'] eq 1"}删除原因：{$list.comeback_reason}
+                                                    {elseif condition="$list['shipping_status'] eq 0"}待发货
+
+                                                    {elseif condition="$list['shipping_status'] eq 1"}已发货
+                                                    {elseif condition="($list['shipping_status'] eq 2) and ($list['is_comment'] eq 0)"}
                                                         <p class="inspect">
                                                             <a class="comment" href="{:url('order/comment',array('id'=>$list.id))}">评价</a>
                                                         </p>
-                                                    {/if}
-                                                    {if condition="($list['shipping_status'] eq 2) and ($list['is_comment'] eq 1)"}
+                                                    {else/}
                                                      交易完成
                                                     {/if}
                                                 </div>
@@ -207,8 +212,6 @@
                 $(this).toggleClass('sxbb')
             })
         })
-      
-
     })
 
     //取消订单
@@ -217,14 +220,14 @@
                 btn: ['确定','取消'] //按钮
             }, function(){
             $.ajax({
-                url:"{:url('Home/Order/cancel_order')}",
+                url:"{:url('index/Order/cancel_order')}",
                 type:'POST',
                 dataType:'JSON',
                 data:{id:id},
                 success:function(data){
                     if(data.status == 1){
                         layer.alert(data.msg, {icon: 1},function(){
-                            location.href ='';
+                            location.reload();
                         })
                     }else{
                         layer.alert(data.msg, {icon: 2});
