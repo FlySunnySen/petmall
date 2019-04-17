@@ -35,7 +35,6 @@
 					购物车空空的哦~，去看看心仪的商品吧~
 				</li>
 				<li class="mt10" style="padding-left: 100px;">
-					<a href="{:url('index/User/login')}" class="btn-1 login-btn nologin">登录</a>&nbsp;&nbsp;&nbsp;&nbsp;
 					<a href="/" class="btn-1 login-btn islogin">去购物</a>
 				</li>
 			</ul>
@@ -129,7 +128,7 @@
 										<a href="javascript:void(0);" class="deleteGoods deleteItem" data-goodsid="{$cart.goods_id}" data-cart-id="{$cart.id}">
 											删除</a>
 									</p>
-									<p><a class="moveCollect collectItem" data-id="{$cart.goods_id}">移到我的收藏</a></p>
+									
 								</div>
 							</div>
 						</div>
@@ -154,7 +153,6 @@
 							<i class="checkall checkFull"></i>
 							全选
 							<a class="mal18 deleteGoods deleteAll" href="javascript:void(0);">删除选中的商品</a>
-							<a class="mal18 moveCollect collectAll">移到我的收藏</a>
 						</div>
 					</div>
 					<div class="row_foot_last">
@@ -211,7 +209,6 @@
         $(document).ready(function(){
             initDecrement();
             initCheckBox();
-            getStoreCoupon();
         });
 	</script>
 	</div>
@@ -223,7 +220,6 @@
 <script type="text/javascript">
     $(document).ready(function(){
         my_collect();
-        history_log();
         AsyncUpdateCart();
     });
     //购物车对象
@@ -284,92 +280,6 @@
             }
         });
     }
-
-    //关闭优惠券展开状态
-    function close_coupon(){
-        var coupon = $('.img_coupon');
-        coupon.removeClass('img_coupon_show');
-        coupon.siblings('.coupon_whether').fadeOut(300);
-    }
-    //关闭更多促销展开状态
-    function close_promption(){
-        var promption = $('.promptions_in .cx');
-        promption.find('em').html('更多促销');
-        promption.removeClass('cx-add');
-        promption.siblings('.promotion-cont').fadeOut(100);
-    }
-    //更多促销点击事件
-    $(function(){
-        $('.promptions_in .cx').click(function(e){
-            e.stopImmediatePropagation();
-            $(this).toggleClass('cx-add');
-            $(this).siblings('.promotion-cont').fadeToggle(300);
-            $(this).parents('.shoplist_detail_a').siblings().find('.cx').removeClass('cx-add').siblings().fadeOut();
-            close_coupon();
-            if($(this).hasClass('cx-add')){
-                $(this).find('em').html('促销信息');
-            }else{
-                $(this).find('em').html('更多促销');
-            }
-        })
-        $('.promptions_in').click(function(e){
-            e.stopImmediatePropagation();
-        })
-    })
-    //优惠券点击事件
-    $(function(){
-        $('.img_coupon').click(function(e){
-            if(getCookie('user_id') == ''){
-                pop_login();
-                return;
-            }
-            e.stopImmediatePropagation();
-            close_promption();
-            $(this).toggleClass('img_coupon_show');
-            $(this).siblings('.coupon_whether').fadeToggle(300);
-            $(this).parents('.shoplist_detail_a').siblings().find('.img_coupon').removeClass('img_coupon_show').siblings().hide();
-        })
-        $('.boximg_coupon').click(function(e){
-            e.stopImmediatePropagation();
-        })
-    })
-
-    //猜你喜欢导航滑过状态
-    $(function(){
-        $('.folahov ul li').hover(function(){
-            $(this).addClass('current').siblings().removeClass('current');
-            var id = $(this).data('id');
-            $('.switchable-panel').hide();
-            $('#' + id).show();
-        })
-    })
-    //猜你喜欢点击事件
-    $(function(){
-        $(document).on("click",'.c-page-acar a',function(){
-            var gp = $(this).parents('.s-panel-main').find('.goods-panel');
-            var nxt = $(this).parents('.s-panel-main').find('.jsaddsucc');
-            var gp_r = $(this).parents('.switchable-panel').find('a');
-            var nxt_r = $(this).parents('.switchable-panel').find('.curr');
-            //上一页
-            if($(this).hasClass('c-prev')){
-                nxt.prev().addClass('jsaddsucc').siblings().removeClass('jsaddsucc');
-                nxt_r.prev().addClass('curr').siblings().removeClass('curr');
-                if($('.hidden').hasClass('jsaddsucc')){
-                    gp.eq(gp.length - 1).addClass('jsaddsucc').siblings().removeClass('jsaddsucc');
-                    gp_r.eq(gp.length - 1).addClass('curr').siblings().removeClass('curr');
-                }
-            }
-            //下一页
-            if($(this).hasClass('c-next')){
-                nxt.next().addClass('jsaddsucc').siblings().removeClass('jsaddsucc');
-                nxt_r.next().addClass('curr').siblings().removeClass('curr');
-                if($(this).parent().hasClass('jsaddsucc')){
-                    gp.eq(0).addClass('jsaddsucc').siblings().removeClass('jsaddsucc');
-                    gp_r.eq(0).addClass('curr').siblings().removeClass('curr');
-                }
-            }
-        })
-    })
 
     //减购买数量事件
     $(function () {
@@ -495,7 +405,6 @@
                     data: {cart_ids: cart_ids},
                     success: function(data){
                         layer.close(index);
-
                         $('#edge_' + cart_ids).remove();
                         $('.edge_' + cart_ids).remove();
                         layer.msg('删除成功', {
@@ -664,65 +573,10 @@
 
     //结算
     $('.paytotal').click(function(){
-       
         window.location.href = $(this).attr('data-url');
     })
-    //移到我的收藏
-    $(function () {
-        $(document).on("click", '.moveCollect', function (e) {
-            if(getCookie('user_id') == ''){
-                pop_login();
-                return;
-            }
-            var goods_arr = new Array();
-            if($(this).hasClass('collectItem')){
-                //单个收藏
-                goods_arr.push($(this).data('id'));
-            }else{
-                //多个收藏
-                $(".checkItem").each(function(i,o){
-                    if($(this).hasClass('checkall-true')){
-                        if($(this).attr('data-type') == 7){
-                            var c = $(this).parents('.meal-conts-name').next().find('.w1224').children();
-                            c.each(function (ii,oo) {
-                                goods_arr.push($(this).attr('data-goods-id'));
-                            })
-						}else{
-                            goods_arr.push($(this).data('goods-id'));
 
-                        }
 
-                    }
-                })
-            }
-            $.ajax({
-                type: "POST",
-                url: "{:url('index/Good/collect_goods')}",//+tab,
-                data: {goods_ids: goods_arr},//+tab,
-                dataType: 'json',
-                success: function (data) {
-                    if (data.status == 1) {
-                        layer.msg(data.msg, {icon: 1});
-                    } else {
-                        layer.msg('操作失败', {icon: 2});
-                    }
-                }
-            });
-            $('.ui-dialog-close').trigger('click');
-        })
-    })
-    //登录页面
-    function pop_login(){
-        layer.open({
-            type: 2,
-            title: '<b>登陆TPshop网</b>',
-            skin: 'layui-layer-rim',
-            shadeClose: true,
-            shade: 0.5,
-            area: ['490px', '460px'],
-            content: "{:url('index/User/pop_login')}",
-        });
-    }
     //我的收藏
     function my_collect()
     {
@@ -773,126 +627,9 @@
             });
         }
     }
-    //最近浏览
-    function history_log()
-    {
-        var uname = getCookie('uname');
-        if (uname == '') {
-            $('#history-products .s-panel-main').html('<p class="wefoc"><a href="{:url('User/login')}">登录</a>后将显示您之前浏览的商品</p>');
-        } else {
-            $.ajax({
-                type : "get",
-                url:"{:url('index/User/historyLog')}",//+tab,
-                dataType:'json',
-                success: function(data){
-                    if(data.status == 1){
-                        var products_html = '';
-                        var tab_html = '';
-                        for(var i = 0; i < data.result.length; i++){
-                            if(i%4 == 0){
-                                if(i == 0){
-                                    tab_html += '<a class="s-item curr" href="#none"> </a>';
-                                    products_html += '<div class="goods-panel jsaddsucc p"><ul>';
-                                }else{
-                                    tab_html += '<a class="s-item" href="#none"> </a>';
-                                    products_html += '<div class="goods-panel p"><ul>';
-                                }
-                            }
-                            products_html += '<li><div class="itemgoodbox"><div class="p-img" ><a target="_blank" href="'+data.result[i].url+'">' +
-                                '<img src="'+data.result[i].imgUrl+'"></a></div><div class="p-name"><a target="_blank" href="'+data.result[i].url+'">' +
-                                ''+data.result[i].goods[0].goods_name+'</a></div><div class="p-price"><strong><em>￥</em><i>'+data.result[i].goods[0].shop_price+'</i></strong></div><div class="p-btn-adc">';
-                            if(data.result[i].goods[0].is_virtual != 1){
-                                products_html +=  '<a onclick="javascript:AjaxAddCart('+data.result[i].goods_id+',1);" class="btn-append"><b></b>加入购物车</a>';
-                            }else{
-                                products_html +=  '<a href="/index.php/home/Goods/goodsInfo/id/'+data.result[i].goods_id+'" class="btn-append"><b></b>加入购物车</a>';
-                            }
-                            products_html += '</div></div></li>';
-                            if(i%4 == 3){
-                                products_html += '</ul></div>';
-                            }
-                        }
-                        if(data.result.length > 4){
-                            products_html += '<div class="c-page-acar"><a href="javascript:void(0)" class="c-prev">&lt;</a><a href="javascript:void(0)" class="c-next">&gt;</a></div>';
-                        }
-                        $('#history-products .s-panel-main').html(products_html);
-                        $('#history-products .goods-list-tab').html(tab_html);
-                    }else{
-                        $('#history-products .s-panel-main').html('<p class="wefoc">暂无结果</p>');
-                    }
-                }
-            });
-        }
-    }
-    //获取店铺优惠券
-    function getStoreCoupon(){
-        var store_ids = new Array();
-        var goods_ids = new Array();
-        var goods_category_ids = new Array();
-        $('.shoplist_detail_a').each(function(i,o){
-            store_ids.push($(this).attr('data-store-id'));
-        })
-        //checkItem
-        $('.checkItem').each(function(i,o){
-            goods_category_ids.push($(this).attr('data-goods-cat-id3'));
-            goods_ids.push($(this).attr('data-goods-id'));
-        })
-        $.ajax({
-            type : "POST",
-            url:"{:url('index/Cart/getStoreCoupon')}",//+tab,
-            dataType:'json',
-            data:{'store_ids':store_ids,goods_ids:goods_ids,goods_category_ids:goods_category_ids},
-            success: function(data){
-                var newDate = new Date();
-                if(data.status == 1){
-                    $('.coupon_whether').each(function(i,o){
-                        var store_id = $(this).attr('data-store-id');
-                        var coupon_html = '';
-                        var send_start_time = '';
-                        var send_end_time = '';
-                        for(var j = 0;j < data.result.length;j++){
-                            newDate.setTime(parseInt(data.result[j].send_start_time)*1000)
-                            send_start_time =newDate.toLocaleDateString();
-                            newDate.setTime(parseInt(data.result[j].send_end_time)*1000)
-                            send_end_time = newDate.toLocaleDateString();
-                            if(data.result[j]['store_id'] == store_id) {
-                                if (data.result[j]['is_get'] == 0) {
-                                    coupon_html += '<div class="al_co3"><div class="co_pri"><span>￥' + data.result[j].money + '</span></div>' +
-                                        '<div class="co_des"><span class="sc_coup">商券,满￥' + data.result[j].condition + '减￥' + data.result[j].money + '</span><span class="sc_date">' + send_start_time + '-' + send_end_time + ' </span> </div><div class="co_get"> <a  href="javascript:;" data-coupon-id="' + data.result[j]['id'] + '" onclick="getCoupon(this);" class="coupon_btn">领取</a> </div> </div>';
-                                }
-                            }
-                        }
-                        if(coupon_html == ''){
-                            $(this).empty().html('<span>没有可领取的优惠券</span>');
-                        }else{
-                            $(this).empty().html(coupon_html);
-                        }
-                    })
-                }else{
-                    $('.coupon_whether').each(function(i,o){
-                        $(this).empty().html('<span>没有可领取的优惠券</span>');
-                    })
-                }
-            }
-        });
-    }
-    //领取优惠券
-    function getCoupon(obj){
-        var coupon_id = $(obj).attr('data-coupon-id');
-        $.ajax({
-            type : "POST",
-            url:"{:url('index/User/getCoupon')}",
-            dataType:'json',
-            data: {coupon_id: coupon_id},
-            success: function(data){
-                if(data.status == 1){
-                    $(obj).removeClass('coupon_btn').removeAttr('data-coupon-id').html('已领取');
-                    $(obj).removeClass('coupon_btn').removeAttr('data-coupon-id').css('background-color','#999');
-                }else{
-                    layer.msg(data.msg,{icon:2});
-                }
-            }
-        });
-    }
+
+
+
 </script>
 </body>
 

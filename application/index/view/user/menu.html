@@ -1,3 +1,4 @@
+<script src="__PUBLIC__/js/md5.js"></script>
 <div class="le-menu fl">
 	<div class="menu-ul">
 		<ul>
@@ -10,7 +11,7 @@
 			<li class="ma"><i class="account-acc2"></i>资产中心</li>
 			<!-- <li><a href="{:url('Home/User/coupon')}">我的优惠券</a></li> -->
 			<!--<li><a href="">我的购物卡</a></li>-->
-			<li><a href="{:url('Home/User/recharge')}">账户余额</a></li>
+			<li><a href="{:url('index/User/money')}">账户余额</a></li>
 			<!-- <li><a href="{:url('Home/User/account')}">我的积分</a></li> -->
 			<!--<li><a href="">积分换券明细</a></li>-->
 		</ul>
@@ -22,7 +23,107 @@
 			<li class="ma"><i class="account-acc4"></i>个人中心</li>
 			<li><a href="{:url('index/User/info')}">个人信息</a></li>
 			<li><a href="{:url('index/User/address_list')}">地址管理</a></li>
-			<li><a href="{:url('index/User/safety_settings')}">安全设置</a></li>
+			<li><a id="changePwd" href="javascript:void(0)">修改登陆密码</a></li>
+			<li><a id="changePayPwd" href="javascript:void(0)">修改支付密码</a></li>
 		</ul>
 	</div>
+	<!-- 修改登录密码 -->
+	<script type="text/javascript">
+		$(function(){
+			$('#changePwd').click(function(){
+				layer.prompt({
+				  formType: 1,
+				  value: '',
+				  title: '请输入原密码',
+				}, function(value, index, elem){
+					$.ajax({
+						type : 'post',
+						dataType : 'json',
+						data : 'pwd='+hex_md5(hex_md5(value))+"&type=check",
+						url : "{:url('user/changePwd')}",
+						success:function(data){
+							if(data.status == 1){
+
+								layer.prompt({
+								  formType: 1,
+								  value: '',
+								  title: '请输入新密码',
+								}, function(value, index, elem){
+									$.ajax({
+										type : 'post',
+										dataType : 'json',
+										data : 'pwd='+hex_md5(hex_md5(value)),
+										url : "{:url('user/changePwd')}",
+										success:function(data){
+											if(data.status == 1){
+												layer.closeAll();
+												layer.open({
+												  title: '提示'
+												  ,content: data.msg
+												});
+											}else{
+												layer.msg(data.msg);
+											}
+										}
+									});
+								});
+							}else{
+								layer.msg(data.msg);
+							}
+						}
+					});
+				});
+			})
+		})
+	</script>
+	<!-- 修改支付密码 -->
+	<script type="text/javascript">
+		$(function(){
+			$('#changePayPwd').click(function(){
+				layer.prompt({
+				  formType: 1,
+				  value: '',
+				  maxlength:6,
+				  title: '请输入原支付密码',
+				}, function(value, index, elem){
+					$.ajax({
+						type : 'post',
+						dataType : 'json',
+						data : 'pwd='+hex_md5(hex_md5(value))+"&type=check",
+						url : "{:url('user/changePayPwd')}",
+						success:function(data){
+							if(data.status == 1){
+								layer.prompt({
+								  formType: 1,
+								  value: '',
+								  maxlength:6,
+								  title: '请输入新支付密码',
+								}, function(value, index, elem){
+									$.ajax({
+										type : 'post',
+										dataType : 'json',
+										data : 'pwd='+hex_md5(hex_md5(value)),
+										url : "{:url('user/changePayPwd')}",
+										success:function(data){
+											if(data.status == 1){
+												layer.closeAll();
+												layer.open({
+												  title: '提示'
+												  ,content: data.msg
+												});
+											}else{
+												layer.msg(data.msg);
+											}
+										}
+									});
+								});
+							}else{
+								layer.msg(data.msg);
+							}
+						}
+					});
+				});
+			})
+		})
+	</script>
 </div>

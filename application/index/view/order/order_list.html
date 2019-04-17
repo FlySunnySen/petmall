@@ -17,7 +17,7 @@
 <div class="home-index-middle">
     <div class="w1224">
         <div class="g-crumbs">
-            <a href="{:url('Home/User/index')}">我的商城</a>
+            <a href="{:url('index/index/index')}">商城</a>
             <i class="litt-xyb"></i>
             <span>我的订单</span>
         </div>
@@ -141,7 +141,11 @@
                                                 <div class="detail_or">
                                                     <p>
 
-                                                            <a href="{:url('Order/virtual_order',array('order_id'=>$list['id']))}">查看详情</a>
+                                                            <a class="info" value="{$list.id}" href="javascript:void(0)">查看详情</a>
+                                                            <br>
+                                                            {if condition="$list['shipping_status'] eq 1 or $list['shipping_status'] eq 2"}
+                                                            <a class="wuliu" value="{$list.express_number}" href="javascript:void(0)">查看物流</a>
+                                                            {/if}
 
                                                     </p>
                                                 </div>
@@ -211,6 +215,26 @@
             $(this).animate({opacity:"1"},200,function(){
                 $(this).toggleClass('sxbb')
             })
+        })
+        $('.info').click(function(){
+            var id = $(this).attr('value');
+           layer.open({
+              type: 2,
+              content: '/index.php/index/order/info/id/'+id
+           });
+        })
+
+        $('.wuliu').click(function(){
+            var id = $(this).attr('value');
+            if(!id){
+                layer.msg('待发货');return false;
+            }else{
+                layer.open({
+                  type: 2,
+                  area: ['500px', '500px'],
+                  content: '/index.php/index/order/wuliu/id/'+id
+               });
+            }
         })
     })
 

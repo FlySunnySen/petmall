@@ -51,6 +51,62 @@ class User extends Base {
 		}
 	}
 	/**
+	 * [changePwd 修改登陆密码]
+	 * @return [type] [description]
+	 */
+	public function changePwd() {
+		$data['user_pwd'] = input('pwd');
+		$data['Uid'] = $_SESSION['uid'];
+		if (input('type') == "check") {
+			$rst = Db::name('user')->where($data)->find();
+			if ($rst) {
+				$this->ajaxReturn(['status' => 1, 'msg' => '密码正确']);
+			} else {
+				$this->ajaxReturn(['status' => 0, 'msg' => '密码错误']);
+			}
+		} else {
+			$rst = Db::name('user')->where('Uid', '=', $data['Uid'])->update(['user_pwd' => $data['user_pwd']]);
+			if ($rst) {
+				$this->ajaxReturn(['status' => 1, 'msg' => '修改成功']);
+			} else {
+				$this->ajaxReturn(['status' => 0, 'msg' => '系统繁忙，请稍后重试']);
+			}
+		}
+	}
+	/**
+	 * [changePayPwd 修改支付密码]
+	 * @return [type] [description]
+	 */
+	public function changePayPwd() {
+		$data['user_pay_pwd'] = input('pwd');
+		$data['user_Uid'] = $_SESSION['uid'];
+		if (input('type') == "check") {
+			$rst = Db::name('user_details')->where($data)->find();
+			if ($rst) {
+				$this->ajaxReturn(['status' => 1, 'msg' => '密码正确']);
+			} else {
+				$this->ajaxReturn(['status' => 0, 'msg' => '密码错误']);
+			}
+		} else {
+			$rst = Db::name('user_details')->where('user_Uid', '=', $data['user_Uid'])->update(['user_pay_pwd' => $data['user_pay_pwd']]);
+			if ($rst) {
+				$this->ajaxReturn(['status' => 1, 'msg' => '修改成功']);
+			} else {
+				$this->ajaxReturn(['status' => 0, 'msg' => '系统繁忙，请稍后重试']);
+			}
+		}
+	}
+	/**
+	 * [money 我的余额]
+	 * @return [type] [description]
+	 */
+	public function money() {
+		$id = $_SESSION['uid'];
+		$money = Db::name('user_details')->where('user_Uid', '=', $id)->value('user_money');
+		$this->assign('money', $money);
+		return $this->fetch();
+	}
+	/**
 	 * [address_list 地址列表]
 	 * @return [type] [description]
 	 */

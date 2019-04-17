@@ -68,6 +68,7 @@ class Cart extends Base {
 	 */
 	public function delete() {
 		$cart_ids = input('cart_ids/a', []);
+		var_dump($cart_ids);die;
 		foreach ($cart_ids as $key => $value) {
 			# code...
 			$result = Db::name('cart')->where('id', $value)->delete();
@@ -77,30 +78,6 @@ class Cart extends Base {
 		} else {
 			$this->ajaxReturn(['status' => 0, 'msg' => '删除失败', 'result' => $result]);
 		}
-	}
-
-	/**
-	 * 购物车优惠券领取列表
-	 */
-	public function getStoreCoupon() {
-		$goods_ids = input('goods_ids/a', []);
-		$goods_category_ids = input('goods_category_ids/a', []);
-		if (empty($goods_ids) && empty($goods_category_ids)) {
-			$this->ajaxReturn(['status' => 0, 'msg' => '获取失败', 'result' => '']);
-		}
-		$CouponLogic = new CouponLogic();
-		$newStoreCoupon = $CouponLogic->getStoreGoodsCoupon($goods_ids, $goods_category_ids);
-		if ($newStoreCoupon) {
-			$user_coupon = Db::name('coupon_list')->where('uid', $this->user_id)->getField('cid', true);
-			foreach ($newStoreCoupon as $key => $val) {
-				if (in_array($newStoreCoupon[$key]['id'], $user_coupon)) {
-					$newStoreCoupon[$key]['is_get'] = 1; //已领取
-				} else {
-					$newStoreCoupon[$key]['is_get'] = 0; //未领取
-				}
-			}
-		}
-		$this->ajaxReturn(['status' => 1, 'msg' => '获取成功', 'result' => $newStoreCoupon]);
 	}
 
 	/**
@@ -150,30 +127,6 @@ class Cart extends Base {
 			} else {
 				$this->ajaxReturn(['status' => 0, 'msg' => '加入购物车失败']);
 			}
-		} catch (TpshopException $t) {
-			$error = $t->getErrorArr();
-			$this->ajaxReturn($error);
-		}
-	}
-
-	/**
-	 * ajax 将搭配购商品加入购物车
-	 */
-	public function addCombination() {
-		$combination_id = input('combination_id/d'); //搭配购id
-		$num = input('num/d'); //套餐数量
-		$combination_goods = input('combination_goods/a'); //套餐里的商品
-		if (empty($combination_id)) {
-			$this->ajaxReturn(['status' => 0, 'msg' => '参数错误']);
-		}
-		$cartLogic = new CartLogic();
-		$combination = Combination::get(['combination_id' => $combination_id]);
-		$cartLogic->setUserId($this->user_id);
-		$cartLogic->setCombination($combination);
-		$cartLogic->setGoodsBuyNum($num);
-		try {
-			$cartLogic->addCombinationToCart($combination_goods);
-			$this->ajaxReturn(['status' => 1, 'msg' => '成功加入购物车']);
 		} catch (TpshopException $t) {
 			$error = $t->getErrorArr();
 			$this->ajaxReturn($error);

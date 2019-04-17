@@ -154,7 +154,6 @@
     <span class="paragraph "><i class="ddd"></i> 配送方式</span>
     <ul class="z-parkage-pc-ul p">
         <li class="fl z-parkage-li" id="express_delivery">快递配送<span></span></li>
-        <li class="fl" id="door_to_door" style="display: none">上门自提<span></span></li>
     </ul>
     <div class="dis-modes-li p" id="express_delivery_modes">
         <div class="shipment">
@@ -564,7 +563,6 @@
     $(document).ready(function () {
         ajax_address();
         get_province();
-        self_motion_load();
     });
     ;
     (function ($) {
@@ -595,76 +593,6 @@
             }
         });
     })(jQuery);
-    //积分选项框点击事件
-    $(function () {
-        $(document).on("click", '#pay_points_checkbox', function (e) {
-            if ($(this).is(':checked')) {
-                var input = $(this).parent().find("input[type='text']");
-                input.removeAttr('disabled');
-                $("input[name='pay_points']").attr('value', input.val());
-                if (input.val() != '') {
-                    ajax_order_price();
-                }
-            } else {
-                $(this).parent().find("input[type='text']").attr('disabled', 'disabled');
-            }
-        })
-        $(document).on("click", '#user_money_checkbox', function (e) {
-            if ($(this).is(':checked')) {
-                var input = $(this).parent().find("input[type='text']");
-                input.removeAttr('disabled');
-                $("input[name='user_money']").attr('value', input.val());
-                if (input.val() != '') {
-                    ajax_order_price();
-                }
-            } else {
-                $(this).parent().find("input[type='text']").attr('disabled', 'disabled');
-            }
-        })
-        //优惠券选项框选中事件
-        $(document).on("click", '#coupon_code_checkbox', function (e) {
-            if ($(this).is(':checked')) {
-                $(this).parent().find("input[type='text']").removeAttr('disabled');
-            } else {
-                $(this).parent().find("input[type='text']").attr('disabled', 'disabled');
-            }
-        })
-    })
-    //积分输入框keyUp事件
-    $(function () {
-        $('#pay_points').donetyping(function () {
-            if ($(this).parent().find("input[type='checkbox']").is(':checked')) {
-                $("input[name='pay_points']").attr('value', $(this).val());
-                ajax_order_price();
-            }
-        }, 500);
-        $('#user_money').donetyping(function () {
-            if ($(this).parent().find("input[type='checkbox']").is(':checked')) {
-                $("input[name='user_money']").attr('value', $(this).val());
-                ajax_order_price();
-            }
-        }, 500);
-        $(document).on("click", '#coupon_exchange', function (e) {
-            if ($('#coupon_code_checkbox').is(':checked')) {
-                var coupon_code = $('#coupon_code').val();
-                if (coupon_code != '') {
-                    $.ajax({
-                        type: "POST",
-                        url: "{:url('index/Cart/cartCouponExchange')}",
-                        dataType: 'json',
-                        data: {coupon_code: coupon_code},
-                        success: function (data) {
-                            if (data.status == 1) {
-                                window.location.reload();
-                            } else {
-                                layer.msg(data.msg, {icon: 2});
-                            }
-                        }
-                    });
-                }
-            }
-        })
-    })
     //点击收货地址
     $(function () {
         $(document).on("click", '.addressItem .item_select_t', function (e) {
@@ -687,20 +615,7 @@
             last_select_address_arr.mobile = $(this).parent().find('.addr-tel').attr('title');
         })
     })
-    //支付方式更多
-    $(function () {
-        $('.lastist').click(function () {
-            if ($(this).hasClass('addlastist')) {
-                $(this).removeClass('addlastist');
-                $(this).find('span').text('更多');
-                $(this).parents('.payment-list').find('.solwpah').removeClass('moreshow');
-            } else {
-                $(this).addClass('addlastist');
-                $(this).find('span').text('收起');
-                $(this).parents('.payment-list').find('.solwpah').addClass('moreshow');
-            }
-        })
-    })
+
 
     //对应商品
     $(function () {
@@ -733,23 +648,7 @@
             save_invoice() && $('#invoice_dialog_close').trigger('click');
         });
     })
-    //使用优惠券导航切换
-    $(function () {
-        $('.usewhilejs').click(function () {
-            $('.step-cont-virtual').toggle();
-            $(this).toggleClass('edg180');
-            if ($(this).hasClass('edg180')) {
-                $('.hehr').hide();
-            } else {
-                $('.hehr').show();
-            }
-        })
-        $('.order-virtual-tabs li').click(function () {
-            $(this).addClass('curr').siblings().removeClass('curr');
-            var le = $('.order-virtual-tabs li').index(this);
-            $('.contac-virtuar').eq(le).show().siblings('.contac-virtuar').hide();
-        })
-    })
+
 
     /**
      * ajax 获取当前用户的收货地址列表
@@ -788,7 +687,6 @@
             var longitude = address_item_select.data('longitude');
             var latitude = address_item_select.data('latitude');
             last_select_address_arr = new last_select_address(province_id,city_id,district_id,town_id,address_name,address_tel,longitude,latitude);
-            get_shop_list(province_id, city_id, district_id, '', longitude, latitude);
         }
     }
 
@@ -833,75 +731,10 @@
             }
         });
     }
-    //发票弹窗
-    function invoice_dialog() {
-        var dh = $(document).height();
-        var dw = $(document).width();
-        $('#invoice_mask').height(dh).width(dw);
-        $('#invoice_dialog').show();
-        $('#invoice_mask').show();
-        self_motion_load();
 
-    }
 
-    function self_motion_load() {
-        $.get("{:url('Cart/invoice')}", function (json) {
-            var data = eval("(" + json + ")");
-            if (data.status > 0) {
-                if (data.result.invoice_title != "个人") {
-                    $('#order_invoice_title').val(data.result.invoice_title);
-                    $("#order_taxpayer").val(data.result.taxpayer);
-                    $('#invoice_title').val(data.result.invoice_title);
-                    $("#invoice_desc").val(data.result.invoice_desc);
-                    $("#taxpayer").val(data.result.taxpayer);
-                    $('#adddiv').show();
-                    $("#ratepaying").show();
-                }
-                if (data.result.invoice_desc == "不开发票") {
-                    $('#order_invoice_title').val("");
-                    $("#order_taxpayer").val("");
-                    $("#span1,#span2,#span3").hide();
-                    $("#span4").show();
-                } else {
-                    if (data.result.invoice_title != "") {
-                        $('#order_invoice_title').val(data.result.invoice_title);
-                        $("#order_taxpayer").val(data.result.taxpayer);
-                        $('#invoice_desc').val(data.result.invoice_desc);
-                        $('#span2').text(data.result.invoice_title);
-                        $('#span3').text(data.result.invoice_desc);
-                        $("#span4").hide();
-                        $("#span1,#span2,#span3").show();
-                    }
-                    $("#invoice_title").css({"border": "2px solid #e4393c"});
-                    $("#personage").css({"border": ""});
-                    $("#no_invoice").attr("class", "item_select_t");
-                    $("#detail_invoice").attr("class", "item_select_t curtr");
-                }
-                if (!$('#adddiv').is(":hidden")) {
-                    $("#addinvoice").hide();
-                } else {
-                    $("#addinvoice").show();
-                }
-            } else {
-                $('#order_invoice_title').val("");
-                $("#order_taxpayer").val("");
-                $("#span1,#span2,#span3").hide();
-                $("#span4").show();
-            }
-        });
-    }
 
-    //关闭发票弹窗
-    $(function () {
-        $('#invoice_dialog_close').click(function () {
-            $('#invoice_dialog').hide();
-            $('#invoice_mask').hide()
-        })
-    })
-    $(document).on('keyup', '#payPwd', function () {
-        var payPwd = md5($("input[name='auth_code']").val() + this.value);
-        $('input[name="payPwd"]').val(payPwd);
-    })
+
     //设置商品有货无货
     function goods_shipping(goods_id, is_have) {
         if (is_have == true) {

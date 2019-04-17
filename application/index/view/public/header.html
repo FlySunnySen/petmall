@@ -6,9 +6,8 @@
 			<div class="fl">
 			    <if condition="strtolower(ACTION_NAME) neq 'goodsinfo' ">
                       <link rel="stylesheet" href="__STATIC__/css/location.css" type="text/css"><!-- 收货地址，物流运费 -->
-                      <div class="sendaddress pr fl">
+<!--                       <div class="sendaddress pr fl">
                           <span>送货至：</span>
-                          <!-- <span>深圳<i class="share-a_a1"></i></span>-->
                           <span>
                               <ul class="list1">
                                   <li class="summary-stock though-line">
@@ -21,7 +20,7 @@
                                   </li>
                               </ul>
                           </span>
-                      </div>
+                      </div> -->
 					<script src="__PUBLIC__/js/locationJson.js"></script>
 				  	<script src="__STATIC__/js/location.js"></script>
 					<script>doInitRegion();</script>
@@ -48,29 +47,7 @@
 				<li><a target="_blank" href="{:url('index/Order/order_list')}">我的订单</a></li>
 				<li class="spacer"></li>
 				<li><a target="_blank" href="{:url('index/User/goods_collect')}">我的收藏</a></li>
-				<li class="spacer"></li>
-				<li><a target="_blank" href="http://help.tp-shop.cn/Index/Help/channel/cat_id/5.html">帮助中心</a></li>
-				<li class="spacer"></li>
-				<li class="hover-ba-navdh">
-					<div class="nav-dh">
-						<span>网站导航</span>
-						<i class="share-a_a1"></i>
-					</div>
-					<ul class="conta-hv-nav clearfix">
-                        <li>
-                            <a href="{:url('index/Activity/promoteList')}">优惠活动</a>
-                        </li>
-                        <li>
-                            <a href="{:url('index/Activity/pre_sell_list')}">预售活动</a>
-                        </li>
-                        <!--<li>
-                            <a href="{:url('index/Goods/integralMall')}">拍卖活动</a>
-                        </li>-->
-                        <li>
-                            <a href="{:url('index/Goods/integralMall')}">兑换中心</a>
-                        </li>
-					</ul>
-				</li>
+
 			</ul>
 		</div>
 	</div>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>我的订单</title>
+    <link rel="stylesheet" type="text/css" href="__STATIC__/css/tpshop.css" />
+    <link rel="stylesheet" type="text/css" href="__STATIC__/css/myaccount.css" />
+    <script src="__STATIC__/js/jquery-1.11.3.min.js" type="text/javascript" charset="utf-8"></script>
+
+    <script src="/static/js/layui/layui.js"></script>
+	<link rel="stylesheet" href="/static/js/layui/css/layui.css">
+	<style type="text/css">
+		.txt{
+			margin:10px;
+		}
+	</style>
+</head>
+<body class="bg-f5">
+<div class="">
+     <p class="txt"><span>联系人:</span>{$address.name}</p>
+     <p class="txt"><span>电话号码:</span>{$address.phone}</p>
+     <p class="txt"><span>收货地址:</span>{$address.address_province} {$address.address_city} {$address.address_county} {$address.address_info}</p>
+     <p class="txt"><span>快递单号:</span>{$express_number}</p>
+
+</div>
+</body>

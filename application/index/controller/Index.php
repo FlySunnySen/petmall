@@ -14,32 +14,25 @@ class Index extends Common {
 			$index_hot_goods = Db::query($sql); //首页热卖商品
 
 		}
-
 		if ($index_hot_goods) {
 			foreach ($index_hot_goods as $val) {
 				$cat_path = explode('_', $val['parent_id_path']);
 				$hot_goods[$cat_path[1]][] = $val;
 			}
 		}
-
 		$recommend_goods = $hot_goods; //首页推荐商品
-
 		$hot_category = Db::name('good_type')->where("is_show=1")->select(); //热门三级分类
-
 		foreach ($hot_category as $v) {
 			$cat_path = explode('_', $v['parent_id_path']);
 			$hot_cate[$cat_path[1]][] = $v;
 		}
-
 		$data = self::always_category();
 		foreach ($data as $k => $v) {
 			$n = $k;
 			$k = $v['id'];
 			$data[$k] = $v;
 			unset($data[$n]);
-
 		}
-
 		foreach ($data as $k => $v) {
 			if ($v['is_show'] == 1) {
 				$n = $v['id'];

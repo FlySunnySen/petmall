@@ -65,7 +65,60 @@ class Order extends Base {
 			$this->ajaxReturn(['status' => 0, 'msg' => '系统繁忙，请稍后再试']);
 		}
 	}
-
+	/**
+	 * [wuliu 物流信息]
+	 * @return [type] [description]
+	 */
+	public function wuliu() {
+		$id = input('id');
+		$this->assign('id', $id);
+		return $this->fetch();
+	}
+	public function wuliuInfo() {
+		$id = input('id');
+		$host = "https://wuliu.market.alicloudapi.com"; //api访问链接
+		$path = "/kdi"; //API访问后缀
+		$method = "GET";
+		$appcode = "229439ea1896413b831e4c26c32b3f28"; //替换成自己的阿里云appcode
+		$headers = array();
+		array_push($headers, "Authorization:APPCODE " . $appcode);
+		$querys = "no=" . $id; //参数写在这里
+		$bodys = "";
+		$url = $host . $path . "?" . $querys; //url拼接
+		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
+		curl_setopt($curl, CURLOPT_URL, $url);
+		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+		curl_setopt($curl, CURLOPT_FAILONERROR, false);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, CURLOPT_HEADER, false);
+		// curl_setopt($curl, CURLOPT_HEADER, true);
+		// 如不输出json, 请打开这行代码，打印调试头部状态码。
+		//状态码: 200 正常；400 URL无效；401 appCode错误； 403 次数用完； 500 API网管错误
+		if (1 == strpos("$" . $host, "https://")) {
+			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+			curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+		}
+		$data = json_decode(curl_exec($curl));
+		$this->ajaxReturn($data);
+	}
+	/**
+	 * [info 订单详情]
+	 * @return [type] [description]
+	 */
+	public function info() {
+		$id = input('id');
+		$address_id = Db::name('order')->where('id', '=', $id)->value('address_id');
+		$express_number = Db::name('order')->where('id', '=', $id)->value('express_number');
+		$address = Db::name('user_address')->where('id', '=', $address_id)->find();
+		$address['address_province'] = Db::name('region')->where('id', '=', $address['address_province'])->value('name');
+		$address['address_city'] = Db::name('region')->where('id', '=', $address['address_city'])->value('name');
+		$address['address_county'] = Db::name('region')->where('id', '=', $address['address_county'])->value('name');
+		$this->assign('address', $address);
+		$this->assign('express_number', $express_number);
+		// var_dump($address);die;
+		return $this->fetch();
+	}
 	/**
 	 * [pay 支付页面]
 	 * @return [type] [description]
@@ -201,25 +254,6 @@ class Order extends Base {
 		$this->assign('lists', $order_list);
 		$this->assign('active', 'order_list');
 		$this->assign('active_status', input('type'));
-		return $this->fetch();
-	}
-
-	/*
-		* 订单详情
-	*/
-	public function order_detail() {
-		$id = input('id/d', 0);
-		$Order = new OrderModel();
-		$order = $Order::get(['order_id' => $id, 'user_id' => $this->user_id]);
-		if (!$order) {
-			$this->error('没有获取到订单信息');
-		}
-		//获取订单
-		if ($order['prom_type'] == 5) {
-			//虚拟订单
-			$this->redirect(U('virtual/virtual_order', ['order_id' => $id]));
-		}
-		$this->assign('order', $order);
 		return $this->fetch();
 	}
 

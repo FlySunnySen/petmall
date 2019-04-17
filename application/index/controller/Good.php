@@ -19,7 +19,7 @@ class Good extends Base {
 		$goods_id = input("id");
 		$Goods = new \app\common\model\Good();
 		$goods = $Goods::get($goods_id);
-		if (empty($goods) || ($goods['is_on_sale'] == 0)) {
+		if (empty($goods) || ($goods['is_on_sale'] == 0 || ($goods['is_delete'] == 1))) {
 			$this->error('该商品已经下架', url('Index/index'));
 		}
 		$spec_goods_price = model('spec_goods_price')->where("goods_id", $goods_id)->column("key,item_id,price,store_count,market_price"); // 规格 对应 价格 库存表
