@@ -171,7 +171,7 @@
 			<div class="floor-recommend-wrap">
 				<div class="floor-recommend-list">
 					{foreach name="v['recommend_goods']" item="rg" key="gk"}
-					<a class="floor-recommend-item" href="{:url('Home/Goods/goodsInfo',array('id'=>$rg['id']))}">
+					<a class="floor-recommend-item" href="{:url('index/Good/goodsInfo',array('id'=>$rg['id']))}">
 						<div class="floor-recommend-pic">
 							<img class="w-100" src={$rg['goods_img']} alt="" />
 						</div>
@@ -184,7 +184,7 @@
 					{/foreach}
 				</div>
 			</div>
-			<a class="recommend-more-btn" href="{:url('Home/Goods/goodsList',array('id'=>$v['id']))}">更多 <i>></i></a>
+			<a class="recommend-more-btn" href="{:url('index/Good/goodsList',array('id'=>$v['id']))}">更多 <i>></i></a>
 		</div>
 	</div>
 </div>
@@ -200,23 +200,6 @@
 <!--楼层导航-e-->
 <!--侧边栏-s-->
 <div class="slidebar-right">
-	<a class="slidebar-item ico-slidebar1" target="_blank" href="tencent://message/?uin=&amp;Site=TPshop商城&amp;Menu=yes" >
-		<div class="sbar-hover-txt">客服服务</div>
-	</a>
-	<a class="slidebar-item ico-slidebar2" target="_blank" href="javascript:;" >
-		<div class="sbar-hover-txt">关注微信</div>
-		<div class="sbar-hover-pic">
-			<div class="qrcode-wrap"><img class="w-100" src="__STATIC__/images/qrcode.png" alt="" /></div>
-			<p class="qrcode-des">扫码关注官方微信,先人一步知晓促销活动</p>
-		</div>
-	</a>
-	<a class="slidebar-item ico-slidebar3" target="_blank" href="javascript:;" >
-		<div class="sbar-hover-txt">手机商城</div>
-		<div class="sbar-hover-pic">
-			<div class="qrcode-wrap"><img class="w-100" img-url="/index.php?m=Home&c=Index&a=qr_code&data=&head_pic=&back_img=" alt="" /></div>
-			<p class="qrcode-des">扫码下载手机商城,随时随地享受优惠购物</p>
-		</div>
-	</a>
 	<a class="slidebar-item ico-slidebar4 t-all" href="javascript:;" >
 		<div class="sbar-hover-txt">回到顶部</div>
 	</a>

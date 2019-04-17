@@ -25,6 +25,7 @@ class Good extends Base {
 		$spec_goods_price = model('spec_goods_price')->where("goods_id", $goods_id)->column("key,item_id,price,store_count,market_price"); // 规格 对应 价格 库存表
 		$goods_images_list = model('GoodImages')->where("good_id", $goods_id)->column("image_url"); // 商品 图册
 		$filter_spec = $goodsLogic->get_spec($goods_id);
+		/* 评价百分比 */
 		$map['good_id'] = ['=', $goods_id];
 		$map['comment_rank'] = ['>', 3];
 		$map1['good_id'] = ['=', $goods_id];
@@ -32,7 +33,6 @@ class Good extends Base {
 		$commentGoodComment = Db::name('comment')->where($map)->count();
 		$commentBadComment = Db::name('comment')->where($map1)->count();
 		$commentListSum = Db::name('comment')->where('good_id', '=', $goods_id)->count();
-
 		if ($commentListSum) {
 			$this->assign('commentGood', $commentGoodComment / $commentListSum);
 			$this->assign('commentBad', $commentBadComment / $commentListSum);
@@ -43,7 +43,9 @@ class Good extends Base {
 		$this->assign('commentGoodComment', $commentGoodComment);
 		$this->assign('commentBadComment', $commentBadComment);
 		$this->assign('commentListSum', $commentListSum);
-
+		/* 推荐热卖 */
+		$hotGoodList = Db::name('good')->order('sales_sum desc')->limit(5)->select();
+		$this->assign('hotGoodList', $hotGoodList);
 		$this->assign('filter_spec', $filter_spec); //规格参数
 		$this->assign('spec_goods_price', json_encode($spec_goods_price, true)); // 规格 对应 价格 库存表
 		$this->assign("good_images_list", $goods_images_list);
@@ -145,6 +147,9 @@ class Good extends Base {
 		if (!empty($html)) {
 			return $html;
 		}
+		/* 推荐热卖 */
+		$hotGoodList = Db::name('good')->order('sales_sum desc')->limit(5)->select();
+		$this->assign('hotGoodList', $hotGoodList);
 		$filter_param = array(); // 帅选数组
 		$id = input('id'); // 当前分类id
 		$brand_id = input('get.brand_id', 0);
@@ -317,6 +322,9 @@ class Good extends Base {
 			$goods_images = null;
 		}
 		$filter_param['key'] = $keyWord;
+		/* 推荐热卖 */
+		$hotGoodList = Db::name('good')->order('sales_sum desc')->limit(5)->select();
+		$this->assign('hotGoodList', $hotGoodList);
 		$this->assign('goods_list', $goods_list);
 		$this->assign('page', $page); // 赋值分页输出
 		$this->assign('filter_param', $filter_param);

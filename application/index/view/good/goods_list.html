@@ -76,6 +76,16 @@
 		<div class="tjhot fl">
 			<div class="sx_topb"><h3>推荐热卖</h3></div>
 			<div class="tjhot-shoplist" id="ajax_hot_goods">
+                {foreach name='hotGoodList' item='vo'}
+                        <div class="alone-shop">
+                            <a href="{:url('index/Good/goodsInfo',array('id'=>$vo.id))}"><img
+                                    src={$vo.goods_img} style="display: inline;width:180px;height:180px"></a>
+                            <p class="line-two-hidd"><a href="{:url('index/Good/goodsInfo',array('id'=>$vo.id))}">{$vo.goods_name|substr=0,30}</a>
+                            </p>
+                            <p class="price-tag"><span class="li_xfo">￥</span><span>{$vo.goods_price}</span></p>
+                            <!--<p class="store-alone"><a href="">恒要达食品专享店</a></p>-->
+                        </div>
+                {/foreach}
 			</div>
 		</div>
 		<div class="stsho fr">
