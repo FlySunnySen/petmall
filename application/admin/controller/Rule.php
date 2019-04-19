@@ -202,7 +202,7 @@ class Rule extends Common {
 		return $this->fetch();
 	}
 	/*
-		*	编辑规则
+		*	保存规则
 	*/
 	public function saveRule() {
 		$data = input('post.');

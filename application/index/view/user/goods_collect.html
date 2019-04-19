@@ -59,7 +59,12 @@
                                             </div>
                                         </td>
                                         <td class="sx2"><span>￥</span><span>{$list.goods_price}</span></td>
-                                        <td class="sx1"><span>{$list.add_time|date="Y-m-d H:i:s",###}</span></td>
+                                        <td class="sx1"><span>{$list.add_time|date="Y-m-d H:i:s",###}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <a href="javascript:void(0);" value="{$list.id}" class="noCollectLink"><i class="collect-ico collect-ico-null"></i>
+                                            <span class="collect-text" style="color:red">取消收藏</span>
+                                             <em class="J_FavCount"></em>
+                                        </a>
+                                        </td>
                                     </tr>
                                  {/volist}
                             </table>
@@ -80,6 +85,32 @@
     {include file="public/footer" /}
 </div>
 <!--footer-e-->
-
+<script type="text/javascript">
+    $(function(){
+        //取消收藏商品
+        $('.noCollectLink').click(function () {
+            if (<?php if(isset($_SESSION['uid'])){echo $_SESSION['uid'];}else{echo "undefined";} ?> == undefined) {
+                layer.msg('请先登录！', {icon: 1});
+            } else {
+                var goods_arr = $(this).attr('value');
+                //单个收藏
+                $.ajax({
+                    type: 'post',
+                    dataType: 'json',
+                    data: {goods_ids: goods_arr},
+                    url: "{:url('index/Good/noCollectLink')}",
+                    success: function (res) {
+                        if (res.status == 1) {
+                            layer.msg(res.msg, {icon: 1});
+                            location.reload();
+                        } else {
+                            layer.msg(res.msg, {icon: 3});
+                        }
+                    }
+                });
+            }
+        });
+    })
+</script>
 </body>
 </html>

@@ -6,6 +6,7 @@ use think\Db;
 class Login extends Base {
 	//登录
 	public function login() {
+
 		$redirst = input("redirst") ? input("redirst") : url("index/index/index");
 		if (request()->isPost()) {
 			$data = request()->param();
@@ -16,6 +17,9 @@ class Login extends Base {
 				->join('user_details b', 'a.Uid = b.user_Uid')
 				->where($map)
 				->find();
+			if (!$rst) {
+				$this->error('账号或密码错误');
+			}
 
 			if ($rst['is_delete'] == 1) {
 				$this->error('该用户已被禁用');
@@ -24,14 +28,11 @@ class Login extends Base {
 					//使用cookie实现自动登录
 					setcookie("user_email", $map['user_email'], time() + 3600, '/');
 					setcookie("user_pwd", md5($data['password']), time() + 3600, '/');
-
 				}
-
 				$_SESSION['alias'] = $rst['user_alias'];
 				$_SESSION['user'] = $rst['user_email'];
 				$_SESSION['uid'] = $rst['Uid'];
 				$this->success('登录成功', $data['redirst']);
-
 			} else {
 				$this->error('账号或密码错误');
 			}

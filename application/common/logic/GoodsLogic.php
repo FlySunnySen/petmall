@@ -223,11 +223,13 @@ class GoodsLogic extends Model {
 	public function get_spec($goods_id) {
 		//商品规格 价钱 库存表 找出 所有 规格项id
 		$keys = Db::name('SpecGoodsPrice')->where("goods_id", $goods_id)->column("GROUP_CONCAT(`key` ORDER BY store_count desc SEPARATOR '_') ");
+		// var_dump(Db::getlastsql());die;
 		$filter_spec = array();
-		if ($keys) {
+		// var_dump($keys);die;
+		if ($keys[0]) {
+			// return;
 			$keys = str_replace('_', ',', $keys);
 			$sql = "SELECT a.name,a.order,b.* FROM pet_spec AS a INNER JOIN pet_spec_item AS b ON a.id = b.spec_id WHERE b.id IN($keys[0]) ORDER BY b.id";
-
 			$filter_spec2 = \think\Db::query($sql);
 			foreach ($filter_spec2 as $key => $val) {
 				$filter_spec[$val['name']][] = array(

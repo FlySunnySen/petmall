@@ -26,7 +26,7 @@
 				 cart_num = parseInt(cart_quantity.html()) + parseInt($('input[name="goods_num"]').val());
 			 } else {
 				 if (data.status == -1) {
-					 location.href = "/index.php?m=Home&c=Goods&a=goodsInfo&id=" + goods_id;
+					 location.href = "/index.php?m=index&c=Good&a=goodsInfo&id=" + goods_id;
 					 return false;
 				 }
 				 cart_num = parseInt(cart_quantity.html()) + parseInt(num);

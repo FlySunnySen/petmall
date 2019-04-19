@@ -33,7 +33,7 @@ class Order extends Common {
 		if (input('type') == 'del') {
 			$where['is_delete'] = 1;
 		}
-		$order_data = Db::name('order')->where($where)->select();
+		$order_data = Db::name('order')->where($where)->order('create_time desc')->select();
 		// var_dump($order_data);die;
 		$this->assign('order_data', $order_data);
 		return $this->fetch('index');
@@ -63,8 +63,16 @@ class Order extends Common {
 	public function goodList() {
 		$id = input('id');
 		$good = [];
+		/* 订单地址 */
+		$address_id = Db::name('order')->where('id', '=', $id)->value('address_id');
+		$express_number = Db::name('order')->where('id', '=', $id)->value('express_number');
+		$address = Db::name('user_address')->where('id', '=', $address_id)->find();
+		$address['address_province'] = Db::name('region')->where('id', '=', $address['address_province'])->value('name');
+		$address['address_city'] = Db::name('region')->where('id', '=', $address['address_city'])->value('name');
+		$address['address_county'] = Db::name('region')->where('id', '=', $address['address_county'])->value('name');
+		$this->assign('address', $address);
+		/* 订单商品 */
 		$goods_list = Db::name('order_good')->where('order_id', '=', $id)->select();
-		// var_dump($goods_list);die;
 		foreach ($goods_list as $key => $value) {
 			$good[$key]['goods_name'] = Db::name('good')->where('id', '=', $value['goods_id'])->value('goods_name');
 			$good[$key]['img'] = Db::name('good')->where('id', '=', $value['goods_id'])->value('goods_img');

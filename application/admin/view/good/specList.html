@@ -148,7 +148,7 @@
               type:'post',
               data:"id="+id+"&action=1&content="+value,
               dataType:'json',
-              url:"{:url('good/editSpec')}",
+              url:"{:url('good/addSpec')}",
               success:function(data){
                   layer.msg(data.msg);
                   layer.close(index);

@@ -162,7 +162,7 @@ class Order extends Base {
 		$userMoney = Db::name('user_details')->where('user_Uid', '=', $uid)->value('user_money');
 		$orderMoney = Db::name('order')->where('id', '=', $orderID)->value('order_count');
 		if ($orderMoney > $userMoney) {
-			$this->ajaxReturn(['status' => 0, 'msg' => '用户余额不足']);
+			$this->ajaxReturn(['status' => 2, 'msg' => '用户余额不足']);
 			die;
 		}
 		/* 获取订单的商品 */
@@ -322,6 +322,61 @@ class Order extends Base {
 			$this->ajaxReturn(['status' => 0, 'msg' => '评论失败']);
 		}
 
+	}
+
+	/**
+	 * ajax 立即购买
+	 */
+	function ajaxAddCart() {
+
+		$data["good_id"] = input("goods_id/d"); // 商品id
+		$data["num"] = input("goods_num/d"); // 商品数量
+		$data["item_id"] = input("item_id/d") ? input("item_id/d") : 0; // 商品规格id
+		$data["user_Uid"] = $_SESSION['uid'];
+		$num["good_id"] = input("goods_id/d"); // 商品id
+		$num["item_id"] = input("item_id/d") ? input("item_id/d") : 0; // 商品规格id
+		$num["user_Uid"] = $_SESSION['uid'];
+		Db::name('cart')->where('user_Uid', '=', $num['user_Uid'])->update(['selected' => 0]); // 将cart商品状态变为0
+		if (empty($data["good_id"])) {
+			$this->ajaxReturn(['status' => 0, 'msg' => '请选择要购买的商品', 'result' => '']);
+		}
+		if (empty($data["num"])) {
+			$this->ajaxReturn(['status' => 0, 'msg' => '购买商品数量不能为0', 'result' => '']);
+		}
+		if ($data["num"] > 200) {
+			$this->ajaxReturn(['status' => 0, 'msg' => '购买商品数量大于200', 'result' => '']);
+		}
+		/* 获得该商品的库存 */
+		if ($data["item_id"] != 0) {
+			$store_count = Db::name("spec_goods_price")->where("item_id", $data["item_id"])->value('store_count');
+		} else {
+			$store_count = Db::name("good")->where("id", $data["good_id"])->value('goods_number');
+		}
+		$map = Db::name("cart")->where($num)->value('num');
+		try {
+			if (!$map) {
+				if ($data['num'] > $store_count) {
+					$this->ajaxReturn(['status' => 0, 'msg' => '已大于库存，加入购物车失败']);
+				}
+				$data['create_time'] = date('Y-m-d H:i:s', time());
+				// var_dump($data['create_time']);die;
+				$rst = Db::name("cart")->data($data)->insert();
+
+			} else {
+				if (($data['num']) > $store_count) {
+					$this->ajaxReturn(['status' => 0, 'msg' => '已大于库存，加入购物车失败']);
+				}
+				$rst = Db::name("cart")->where($num)->update(['num' => $data['num'], 'selected' => 1]);
+			}
+			if ($rst) {
+				$this->ajaxReturn(['status' => 1, 'msg' => '加入购物车成功']);
+			} else {
+				$this->ajaxReturn(['status' => 0, 'msg' => '加入购物车失败']);
+			}
+		} catch (TpshopException $t) {
+			$error = $t->getErrorArr();
+			$this->ajaxReturn($error);
+		}
 	}
 
 }

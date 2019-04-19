@@ -216,14 +216,18 @@
                 $(this).toggleClass('sxbb')
             })
         })
+
+        /* 订单详情 */
         $('.info').click(function(){
             var id = $(this).attr('value');
            layer.open({
               type: 2,
+              area: ['400px', '250px'],
               content: '/index.php/index/order/info/id/'+id
            });
         })
 
+        /* 物流信息 */
         $('.wuliu').click(function(){
             var id = $(this).attr('value');
             if(!id){

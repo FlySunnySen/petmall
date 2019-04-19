@@ -10,7 +10,7 @@
 
 
 <div class="page">
-    
+
     <!-- 操作说明 -->
     <div class="explanation" id="explanation">
         <div class="title" id="checkZoom"><i class="fa fa-lightbulb-o"></i>
@@ -23,9 +23,9 @@
     <!--表单数据-->
     <form method="post" id="addEditGoodsForm">
         <input type="hidden" name="goods_id" value="{$goods.id}">
-      
+
         <input type="hidden" value="{$goods['brand_id']|default = 0}" name="goods_brand_id" disabled="disabled"/>
-  
+
         <!-- 商品模型-->
 		<div class="ncap-form-default tab_div_3">
             <dl class="row">
@@ -49,20 +49,18 @@
                         <div id="ajax_spec_data" class="col-xs-8" ></div>
                         <div class="col-xs-4" >
                             <table class="table table-bordered" id="goods_attr_table">
-                                <tr>
-                                    <td><b>商品属性</b>：</td>
-                                </tr>
+                               
                             </table>
                         </div>
                     </div>
                 </div>
             </dl>
-        </div>   
+        </div>
         <!-- 商品模型-->
 
 
 		<div class="ncap-form-default">
-            <div class="bot">            
+            <div class="bot">
                 <a href="JavaScript:void(0);" id="submit" class="ncap-btn-big ncap-btn-green">确认提交</a>
                 <span class="err" id="err_goods_id"></span>
             </div>
@@ -172,7 +170,7 @@
         }
     }
 
-    
+
 
     // 属性输入框的加减事件
     function addAttr(a) {
@@ -198,9 +196,9 @@
     });
 
 
-  
 
-   
+
+
 
 </script>
 {/block}

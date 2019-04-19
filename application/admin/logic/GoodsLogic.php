@@ -285,7 +285,6 @@ class GoodsLogic extends Model {
 	 * @return string 返回表格字符串
 	 */
 	public function getSpecInput($goods_id, $spec_arr) {
-
 		// 排序
 		foreach ($spec_arr as $k => $v) {
 			$spec_arr_sort[$k] = count($v);

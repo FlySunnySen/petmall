@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>首页-</title>
+    <title>首页</title>
     <meta name="keywords" content=""/>
     <meta name="description" content=""/>
     <link rel="stylesheet" type="text/css" href="__STATIC__/css/base.css"/>
@@ -93,7 +93,7 @@
 					timer=setInterval(function() {
 						iNow++;
 						bannerRun();
-					},4000)
+					},2000)
 				}
 				bannerAutoRun();
 
@@ -138,7 +138,7 @@
 	</div>
 </div>
 
-<div class="adv3 w1224 clearfix" style="width:80%">
+<div class="adv3 w1224 clearfix" style="width:80%;margin-left:15%">
 
 </div>
 
@@ -155,12 +155,20 @@
 	</div>
 	<div class="floor-main">
 		<div class="floor-brand">
+			{foreach name="v['hot_goods']" item="g" key="gk"}
+			{if condition="$gk eq 0"}
 
+			<adv>
+			<a class="" style="display: block;width: 240px;height: 485px;overflow: hidden;
+margin-bottom: 13px;" href="{:url('Index/Good/goodsInfo',array('id'=>$g['id']))}"><img class="w-100" src="/upload/indexadv/left{$k+1}.jpg" alt="" /></a>
+		</adv>
+			{/if}
+			{/foreach}
 		</div>
 		<div class="floor-goods-list">
 			{foreach name="v['hot_goods']" item="g" key="gk"}
 			<a class="floor-goods-item" href="{:url('Index/Good/goodsInfo',array('id'=>$g['id']))}">
-				<div class="googs-title ellipsis-1">{$g['goods_name']|substr=0,20}</div>
+				<div class="googs-title ellipsis-1">{$g['goods_name']}</div>
 				<div class="googs-price ellipsis-1">￥{$g['goods_price']}</div>
 				<div class="goods-pic"><img class="w-100" src={$g['goods_img']} alt=""></div>
 			</a>
@@ -176,7 +184,7 @@
 							<img class="w-100" src={$rg['goods_img']} alt="" />
 						</div>
 						<div class="floor-recommend-cont">
-							<div class="recommend-goods-name ellipsis-1">{$rg['goods_name']|Substr=0,15}</div>
+							<div class="recommend-goods-name ellipsis-1">{$rg['goods_name']}</div>
 							<div class="recommend-goods-des ellipsis-1"></div>
 							<div class="recommend-goods-price  recommend-goods-des">￥ {$rg['goods_price']}</div>
 						</div>
@@ -214,28 +222,10 @@ function init(){  //初始化函数
     $('#floor-nav').css('margin-top',(-41*$('#floor-nav').find('li').length+1)/2);
 
     //推荐列表自动滚动
-    carouselList('.floor-recommend-wrap','.floor-recommend-list','.floor-recommend-item');
-
-    //右侧边栏
-    rightBar();
-
-    //楼层导航切换
-    sidebarRollChange();
+    // carouselList('.floor-recommend-wrap','.floor-recommend-list','.floor-recommend-item');
 }
 
-function rightBar(){  //右侧边栏
-    var $_slidebar4 = $('.ico-slidebar4');
-    $(window).scroll(function(){
-        if($(window).scrollTop()>100){
-            $_slidebar4.css('height',40);
-        }else{
-            $_slidebar4.css('height',0);
-        }
-    })
-    $_slidebar4.click(function () {
-        $('html,body').animate({'scrollTop':0},500)
-    });
-}
+
 function carouselList(wrap,list,item,timeWait,timeRun){ //推荐列表滚动
     /*
      * wrap：包裹容器
@@ -281,26 +271,7 @@ function carouselList(wrap,list,item,timeWait,timeRun){ //推荐列表滚动
         })
     });
 }
-function sidebarRollChange() {  //楼层切换
-    var $_floorList=$('.floor');
-    var $_sidebar=$('#floor-nav');
-    $_sidebar.find('li').click(function(){ //点击切换楼层
-        $('html,body').animate({'scrollTop':$_floorList.eq($(this).index()).offset().top},500)
-    });
-    $(window).scroll(function(){
-        var scrollTop=$(window).scrollTop();
-        if(scrollTop<$_floorList.eq(0).offset().top-$(window).height()/2){
-            $_sidebar.hide();
-            return;
-        }
-        $_sidebar.show();  //左边侧边栏显示
-        for(var j=0,k=$_floorList.length;j<k;j++){ /*滚动改变侧边栏的状态*/
-            if(scrollTop>$_floorList.eq(j).offset().top-$(window).height()/2){
-                $_sidebar.find('li').eq(j).addClass('floor-nav-ac').siblings().removeClass('floor-nav-ac');
-            }
-        }
-    })
-}
+
 
 init();
 </script>

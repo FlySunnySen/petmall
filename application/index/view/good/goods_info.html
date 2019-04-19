@@ -54,7 +54,7 @@
                     <!-- 商品大图介绍 start [[-->
                     <div class="product-img jqzoom">
                         <img id="zoomimg" src={$goods.goods_img}
-                             jqimg={$goods.goods_img}>
+                             jqimg={$goods.goods_img} style="width:396px;height: 396px">
                     </div>
                     <!-- 商品大图介绍 end ]]-->
                     <!-- 商品小图介绍 start [[-->
@@ -77,10 +77,17 @@
                 </div>
                 <!-- 收藏商品 start [[-->
                 <div class="collect">
+                    {if condition="$collectStatus eq 0"}
                     <a href="javascript:void(0);" id="collectLink"><i class="collect-ico collect-ico-null"></i>
                         <span class="collect-text">收藏商品</span>
                         <em class="J_FavCount"></em>
                     </a>
+                    {else/}
+                    <a href="javascript:void(0);" id="noCollectLink"><i class="collect-ico collect-ico-null"></i>
+                        <span class="collect-text">取消收藏</span>
+                         <em class="J_FavCount"></em>
+                    </a>
+                    {/if}
                     <!--<a href="javascript:void(0);" id="collectLink"><i class="collect-ico collect-ico-ok"></i>已收藏<em class="J_FavCount">(20)</em></a>-->
                 </div>
             </div>
@@ -382,12 +389,24 @@
         var goods_prom_type = $('input[name="goods_prom_type"]').attr('value');//活动商品
         var activity_is_on = $('input[name="activity_is_on"]').attr('value'); //活动是否进行中
         var form = $('#buy_goods_form');
-        //普通流程
-        if (goods_num <= store_count) {
-            form.attr('action', "{:url('index/Cart/cart2',['action'=>'buy_now'])}").submit();
-        } else {
-            layer.msg('购买数量超过此商品购买上限', {icon: 3});
-        }
+        if (form.length > 0) {
+            data = form.serialize();
+         } else {
+             data = {goods_id: goods_id, goods_num: num};
+         }
+         $.ajax({
+             type: "POST",
+             url: "/index.php/index/order/ajaxAddCart",
+             data: data,
+             dataType: 'json',
+             success: function (data) {
+                if(data.status == 1){
+                    form.attr('action', "{:url('index/Cart/cart2',['action'=>'buy_now'])}").submit();
+                }else{
+                    layer.msg('系统繁忙，请稍后重试', {icon: 3});
+                }
+             }
+         })
     })
     //加入购物车
     $(document).on('click', '#join_cart', function () {
@@ -705,6 +724,32 @@
                 success: function (res) {
                     if (res.status == 1) {
                         layer.msg(res.msg, {icon: 1});
+                        location.reload();
+                    } else {
+                        layer.msg(res.msg, {icon: 3});
+                    }
+                }
+            });
+        }
+    });
+
+    //取消收藏商品
+    $('#noCollectLink').click(function () {
+        if (<?php if(isset($_SESSION['uid'])){echo $_SESSION['uid'];}else{echo "undefined";} ?> == undefined) {
+            layer.msg('请先登录！', {icon: 1});
+        } else {
+            var goods_arr = new Array();
+            //单个收藏
+            goods_arr.push($('input[name="goods_id"]').val());
+            $.ajax({
+                type: 'post',
+                dataType: 'json',
+                data: {goods_ids: goods_arr},
+                url: "{:url('index/Good/noCollectLink')}",
+                success: function (res) {
+                    if (res.status == 1) {
+                        layer.msg(res.msg, {icon: 1});
+                        location.reload();
                     } else {
                         layer.msg(res.msg, {icon: 3});
                     }

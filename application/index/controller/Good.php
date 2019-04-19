@@ -25,6 +25,7 @@ class Good extends Base {
 		$spec_goods_price = model('spec_goods_price')->where("goods_id", $goods_id)->column("key,item_id,price,store_count,market_price"); // 规格 对应 价格 库存表
 		$goods_images_list = model('GoodImages')->where("good_id", $goods_id)->column("image_url"); // 商品 图册
 		$filter_spec = $goodsLogic->get_spec($goods_id);
+		// die;
 		/* 评价百分比 */
 		$map['good_id'] = ['=', $goods_id];
 		$map['comment_rank'] = ['>', 3];
@@ -43,15 +44,19 @@ class Good extends Base {
 		$this->assign('commentGoodComment', $commentGoodComment);
 		$this->assign('commentBadComment', $commentBadComment);
 		$this->assign('commentListSum', $commentListSum);
+		/* 是否收藏 */
+		$this->assign('collectStatus', 0);
+		if (isset($_SESSION['uid'])) {
+			$status = Db::name('goods_collect')->where(['user_id' => $_SESSION['uid'], 'goods_id' => $goods_id])->find();
+			$this->assign('collectStatus', $status);
+		}
 		/* 推荐热卖 */
 		$hotGoodList = Db::name('good')->order('sales_sum desc')->limit(5)->select();
 		$this->assign('hotGoodList', $hotGoodList);
 		$this->assign('filter_spec', $filter_spec); //规格参数
 		$this->assign('spec_goods_price', json_encode($spec_goods_price, true)); // 规格 对应 价格 库存表
 		$this->assign("good_images_list", $goods_images_list);
-		// var_dump($goods_images_list);die;
 		$this->assign('navigate_goods', navigate_goods($goods_id, 1)); // 面包屑导航
-		// var_dump($goods);die;
 		$this->assign("goods", $goods);
 		return $this->fetch();
 	}
@@ -73,6 +78,24 @@ class Good extends Base {
 			} else {
 				$this->ajaxReturn(['status' => 0, 'msg' => '系统繁忙，请稍后再试']);
 			}
+		}
+
+	}
+
+	/**
+	 * [noCollectLink 取消收藏商品]
+	 * @return [type] [description]
+	 */
+	public function noCollectLink() {
+		$data['goods_id'] = input('post.goods_ids/a')[0];
+		$data['user_id'] = $_SESSION['uid'];
+		$find = Db::name('goods_collect')->where($data)->delete();
+		if ($find) {
+			$this->ajaxReturn(['status' => 1, 'msg' => '已取消']);
+		} else {
+
+			$this->ajaxReturn(['status' => 0, 'msg' => '系统繁忙，请稍后再试']);
+
 		}
 
 	}

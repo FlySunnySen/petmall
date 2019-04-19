@@ -21,6 +21,7 @@ class Good extends Common {
 		$good_data = Db::view('good')
 			->view('good_type', 'type_name', 'good.type_id = good_type.id')
 			->view('brand', 'brand_name', 'brand.id=good.brand_id')
+			->order('goods_time desc')
 			->where($status)
 			->paginate(10);
 
@@ -189,9 +190,8 @@ class Good extends Common {
 		if (request()->isGet('id')) {
 			$id = request()->param('id');
 		}
-
+		Db::name('good_images')->where('good_id', '=', $id)->delete();
 		$count = model('good')->where('id', $id)->delete();
-
 		if ($count) {
 
 			return $this->success('删除成功');
@@ -257,6 +257,22 @@ class Good extends Common {
 		$rst = Db::name('spec_item')->where('spec_id', '=', $id)->select();
 		$this->assign('spec_item', $rst);
 		return $this->fetch();
+	}
+	/**
+	 * [addSpec 新增规格]
+	 */
+	public function addSpec() {
+		if (input('action')) {
+			$data['name'] = input('content');
+			$data['type_id'] = input('id');
+			$rst = Db::name('spec')->insert($data);
+			if ($rst) {
+				$this->ajaxReturn(['stauts' => 1, 'msg' => '新增成功']);
+			} else {
+				$this->ajaxReturn(['stauts' => 0, 'msg' => '系统繁忙']);
+			}
+			die;
+		}
 	}
 	/**
 	 * [delItem 删除规格]

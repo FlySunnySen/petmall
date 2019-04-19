@@ -15,6 +15,7 @@ class Common extends Controller {
 	public function _initialize() {
 		session_start();
 		$admin = session('admin');
+		// var_dump($admin);die;
 		if ($admin == false) {
 			$this->redirect('Login/index');
 			exit;
@@ -29,9 +30,9 @@ class Common extends Controller {
 			$auth = new Auth();
 		}
 		//判断权限
-		// if (!$auth->check($rule, $uid)) {
-		// 	$this->error('对不起，你没有权限！');
-		// }
+		if (!$auth->check($rule, $uid)) {
+			$this->error('对不起，你没有权限！');
+		}
 	}
 
 	public function myUpload(Request $request) {

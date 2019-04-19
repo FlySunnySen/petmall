@@ -68,7 +68,6 @@ class Cart extends Base {
 	 */
 	public function delete() {
 		$cart_ids = input('cart_ids/a', []);
-		var_dump($cart_ids);die;
 		foreach ($cart_ids as $key => $value) {
 			# code...
 			$result = Db::name('cart')->where('id', $value)->delete();
@@ -203,7 +202,7 @@ class Cart extends Base {
 	 */
 	public function ajaxAddress() {
 		$user_Uid = $_SESSION['uid'];
-		$address_list = Db::name('user_address')->where($user_Uid)->order('is_default desc')->select();
+		$address_list = Db::name('user_address')->where('user_Uid', '=', $user_Uid)->order('is_default desc')->select();
 		if ($address_list) {
 			$area_id = array();
 			foreach ($address_list as $val) {

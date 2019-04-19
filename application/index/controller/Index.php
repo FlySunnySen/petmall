@@ -12,6 +12,7 @@ class Index extends Common {
 		$index_hot_goods = cache('index_hot_goods');
 		if (empty($index_hot_goods)) {
 			$index_hot_goods = Db::query($sql); //首页热卖商品
+			// var_dump($index_hot_goods);die;
 
 		}
 		if ($index_hot_goods) {
@@ -19,6 +20,7 @@ class Index extends Common {
 				$cat_path = explode('_', $val['parent_id_path']);
 				$hot_goods[$cat_path[1]][] = $val;
 			}
+			// var_dump($hot_goods);die;
 		}
 		$recommend_goods = $hot_goods; //首页推荐商品
 		$hot_category = Db::name('good_type')->where("is_show=1")->select(); //热门三级分类
@@ -44,7 +46,7 @@ class Index extends Common {
 				$goods_category_tree[] = $v;
 			}
 		}
-
+		// var_dump($cateList);die;
 		$this->assign('cateList', $cateList);
 		$this->assign('goods_category_tree', $data);
 		return $this->fetch();

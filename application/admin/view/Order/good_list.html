@@ -1,3 +1,6 @@
+<style type="text/css">
+	.txt{margin:10px;margin-left: 15px}
+</style>
 <link href="/static/admin/css/bootstrap.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="/static/admin/css/font-awesome.min.css" />
 <link rel="stylesheet" href="/static/admin/css/ace.min.css" />
@@ -5,6 +8,11 @@
 <link rel="stylesheet" href="/static/admin/css/ace-skins.min.css" />
 <link rel="stylesheet" href="/static/admin/css/myace.css" />
 <link rel="stylesheet" type="text/css" href="/static/admin/jQuery-tck/css/common.css">
+<div class="row">
+	     <p class="txt"><span>联系人:</span>{$address.name}</p>
+     <p class="txt"><span>电话号码:</span>{$address.phone}</p>
+     <p class="txt"><span>收货地址:</span>{$address.address_province} {$address.address_city} {$address.address_county} {$address.address_info}</p>
+</div>
 <div class="row">
 	<div class="col-xs-12">
 		<div class="table-responsive">
@@ -14,7 +22,6 @@
 						<th>商品名</th>
 						<th>商品规格</th>
 						<th>商品数量</th>
-						<th>商品库存</th>
 						<!-- <th>付款方式</th> -->
 					</tr>
 				</thead>
@@ -25,7 +32,6 @@
 								<td>{$vo.goods_name}</td>
 								<td>{$vo.spec_key_name}</td>
 								<td>{$vo.goods_number}</td>
-								<td>{$vo.store_count}</td>
 							</tr>
 						{/foreach}
 					</tbody>

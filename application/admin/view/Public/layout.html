@@ -322,7 +322,6 @@
 										会员列表
 									</a>
 								</li>
-							
 									<li class="<eq name='userList' value='User-blackList'>active open</eq>">
 									<a href="/{:request()->module()}/User/blackList">
 										<i class="icon-double-angle-right"></i>
@@ -332,83 +331,6 @@
 							</ul>
 						</li>
 						<!-- 会员管理结束 -->
-						<!-- 促销管理 -->
-						<li class="<eq name='menu' value='sale'>active open</eq>">
-							<a href="#" class="dropdown-toggle">
-								<i class="icon-bullhorn"></i>
-								<span class="menu-text"> 促销管理 </span>
-
-								<b class="arrow icon-angle-down"></b>
-							</a>
-
-							<ul class="submenu">
-								<li class="<eq name='menuList' value='Gift-index'>active open</eq>">
-									<a href="/{:request()->module()}/Gift/index">
-										<i class="icon-double-angle-right"></i>
-										赠品列表
-									</a>
-								</li>
-								<li class="<eq name='menuList' value='Gift-add'>active open</eq>">
-									<a href="/{:request()->module()}/Gift/add">
-										<i class="icon-double-angle-right"></i>
-										添加赠品
-									</a>
-								</li>
-								<li class="<eq name='menuList' value='Sale-salelist'>active open</eq>">
-									<a href="/{:request()->module()}/Sale/salelist">
-										<i class="icon-double-angle-right"></i>
-										秒杀管理
-									</a>
-								</li>
-							</ul>
-						</li>
-						<!-- 促销管理结束 -->
-						
-						<!-- 系统设置 -->
-						<li class="<eq name='menu' value='ShopConfig'>active open</eq>">
-							<a href="#" class="dropdown-toggle">
-								<i class="icon-cogs"></i>
-								<span class="menu-text"> 系统设置 </span>
-
-								<b class="arrow icon-angle-down"></b>
-							</a>
-
-							<ul class="submenu">
-								<li class="<eq name='menuList' value='ShopConfigindex'>active open</eq>">
-									<a href="/{:request()->module()}/ShopConfig/index">
-										<i class="icon-double-angle-right"></i>
-										商店设置
-									</a>
-								</li>
-
-								<li class="<eq name='menuList' value='PayTypeindex'>active open</eq>">
-									<a href="/{:request()->module()}/PayType/index">
-										<i class="icon-double-angle-right"></i>
-										支付管理
-									</a>
-								</li>
-
-								<li class="<eq name='menuList' value='Shippingindex'>active open</eq>">
-									<a href="/{:request()->module()}/Shipping/index">
-										<i class="icon-double-angle-right"></i>
-										配送方式管理
-									</a>
-								</li>
-								<!-- <li class="<eq name='menuList' value='SetMailindex'>active open</eq>">
-									<a href="/{:request()->module()}/SetMail/index">
-										<i class="icon-double-angle-right"></i>
-										邮件设置
-									</a>
-								</li> -->
-								<li class="<eq name='menuList' value='Messageindex'>active open</eq>">
-									<a href="/{:request()->module()}/Message/index">
-										<i class="icon-double-angle-right"></i>
-										我的消息
-									</a>
-								</li>
-							</ul>
-						</li>
-						<!-- 系统设置 结束 -->
 						<!-- 权限设置 -->
 						<li class="{eq name='menu' value='admin'}active open{/eq}">
 							<a href="#" class="dropdown-toggle">
@@ -450,95 +372,8 @@
 							</ul>
 						</li>
 						<!-- 权限设置 结束-->
-						
-						<!-- 文章管理 -->
-						<li class="<eq name='menu' value='Article'>active open</eq>">
-							<a href="#" class="dropdown-toggle">
-								<i class="icon-text-width"></i>
-								<span class="menu-text"> 文章管理 </span>
-								<b class="arrow icon-angle-down"></b>
-							</a>
-							<ul class="submenu">
-								<li class="<eq name='menuList' value='Articleindex'>active open</eq>">
-									<a href="/{:request()->module()}/Article/index">
-										<i class="icon-double-angle-right"></i>
-										文章列表
-									</a>
-								</li>
-								<li class="<eq name='menuList' value='Articleadd'>active open</eq>">
-									<a href="/{:request()->module()}/Article/add">
-										<i class="icon-double-angle-right"></i>
-										添加文章
-									</a>
-								</li>
-								<li class="<eq name='menuList' value='ArticleTypeindex'>active open</eq>">
-									<a href="/{:request()->module()}/ArticleType/index">
-										<i class="icon-double-angle-right"></i>
-										文章分类
-									</a>
-								</li>
-								<li class="<eq name='menuList' value='ArticleTypeadd'>active open</eq>">
-									<a href="/{:request()->module()}/ArticleType/add">
-										<i class="icon-double-angle-right"></i>
-										添加文章分类
-									</a>
-								</li>
-							</ul>
-						</li>
-						<!-- 文章管理结束 -->
-						
-						<!-- 广告管理 开始 -->
-						<li class="{eq name='menu' value='Ad'}active open{/eq}">
-							<a href="#" class="dropdown-toggle">
-								<i class="icon-facetime-video"></i>
-								<span class="menu-text"> 广告管理 </span>
 
-								<b class="arrow icon-angle-down"></b>
-							</a>
 
-							<ul class="submenu">
-								<li class="{eq name='menuList' value='Adindex'}active open{/eq}">
-									<a href="/{:request()->module()}/Ad/index">
-										<i class="icon-double-angle-right"></i>
-										广告列表
-									</a>
-								</li>
-
-								<li class="{eq name='menuList' value='Adadd'}active open{/eq}">
-									<a href="/{:request()->module()}/Ad/add">
-										<i class="icon-double-angle-right"></i>
-										添加广告
-									</a>
-								</li>
-							</ul>
-						</li>
-						<!-- 广告管理结束 -->
-						<!-- 友情链接管理 -->
-						<li class="<eq name='menu' value='Flink'>active open</eq>">
-							<a href="#" class="dropdown-toggle">
-								<i class="icon-exchange"></i>
-								<span class="menu-text"> 友情链接 </span>
-
-								<b class="arrow icon-angle-down"></b>
-							</a>
-
-							<ul class="submenu">
-								<li class="<eq name='menuList' value='Flinkindex'>active open</eq>">
-									<a href="/{:request()->module()}/Flink/index">
-										<i class="icon-double-angle-right"></i>
-										友情链接列表
-									</a>
-								</li>
-
-								<li class="<eq name='menuList' value='Flinkadd'>active open</eq>">
-									<a href="/{:request()->module()}/Flink/add">
-										<i class="icon-double-angle-right"></i>
-										添加友情链接
-									</a>
-								</li>
-							</ul>
-						</li>
-						<!-- 友情链接结束 -->
 						<!-- <li>
 							<a href="gallery.html">
 								<i class="icon-picture"></i>

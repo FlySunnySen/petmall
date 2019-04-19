@@ -80,20 +80,13 @@
 							<table id="sample-table-1" class="table table-striped table-bordered table-hover">
 								<thead>
 									<tr>
-										<th class="center">
-											<label>
-												<!-- <input type="checkbox" class="ace" />
-												<span class="lbl"></span>
-												-->
-											</label>
-										</th>
+
 										<th>acti交易号</th>
 										<th>用户id</th>
 										<th>订单状态</th>
 										<th>付款状态</th>
 										<th>订单创建时间</th>
 										<th>买家留言</th>
-										<th>快递类型</th>
 										<th>快递单号</th>
 										<!-- <th>付款方式</th> -->
 										<th>操作</th>
@@ -103,13 +96,6 @@
 									<tbody>
 										{foreach name="order_data" item="vo"}
 											<tr>
-												<td class="center">
-													<label>
-														<input type="checkbox" class="ace" name="id[]" value="{$vo.id}"/>
-														<span class="lbl"></span>
-													</label>
-												</td>
-
 												<td>
 													<span class="lbl">{$vo.acti}</span>
 
@@ -137,12 +123,9 @@
 														已付款
 													{/if}
 												</td>
-												<td class="hidden-480">{$vo.create_time}</td>
+												<td class="hidden-480">{$vo.create_time|date='Y-m-d H:i',###}</td>
 												<td class="hidden-480">
 													<span>{$vo.order_message}</span>
-												</td>
-												<td>
-													<span class="lbl">{$vo.express_type}</span>
 												</td>
 												<td>
 													<span class="lbl">{$vo.express_number}</span>
@@ -157,7 +140,7 @@
 													<a class="send" value="{$vo.id}" href="javascript:void(0)">发货</a>
 													|
 													{/if}
-													<a class="goodList" value="{$vo.id}" href="javascript:void(0)">查看商品</a>
+													<a class="goodList" value="{$vo.id}" href="javascript:void(0)">查看详情</a>
 
 													|
 													<a class="delOrder"  value="{$vo.id}"  href="javascript:void(0)">删除</a>
@@ -166,12 +149,12 @@
 										{/foreach}
 										<tr>
 											<td class="center" colspan="11">
-												<div class="col-xs-1 text-left">
+								<!-- 				<div class="col-xs-1 text-left">
 													<input class="btn btn-xs btn-inverse" id="setall"  value=" 全 选 " type="button"></div>
 												<div class="col-xs-1 text-left">
 													<input class="btn btn-xs btn-inverse" id="against"  value=" 反 选 " type="button"></div>
 												<div class="col-xs-1 text-left">
-													<input class="btn btn-xs btn-inverse" id="delall" value="批量删除" type="button"></div>
+													<input class="btn btn-xs btn-inverse" id="delall" value="批量删除" type="button"></div> -->
 
 												<!-- 显示分页 -->
 												<div class="col-xs-9 text-right"></div>
@@ -272,7 +255,7 @@
 				var data = $(this).attr('value');
 				layer.open({
 				  type: 2,
-				  area: ['400px', '260px'],
+				  area: ['700px', '360px'],
 				  shadeClose: true, //点击遮罩关闭
 				  content: "/admin/order/goodList/id/"+data
 				});

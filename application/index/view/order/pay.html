@@ -54,7 +54,7 @@
             </div>
             <div class="ddxq-xiaq">
 
-                    <a href="{:url('Home/Order/order_detail')}">订单详情<i></i></a>
+                    <a href="{:url('index/Order/order_list')}">订单详情<i></i></a>
 
             </div>
             <form action="{:url('Home/Payment/getCode')}" method="post" name="cart4_form" id="cart4_form">
@@ -147,8 +147,9 @@
                                 dataType: "json",
                                 url:"{:url('index/order/payOrder')}",
                                 success: function(data){
+                                    console.log(data.status == 0);
                                     if(data.status == 0){
-                                        layer.msg(data.msg);
+                                         layer.msg(data.msg);
                                     }else{
                                         layer.msg(data.msg);
                                         window.location.href="{:url('order/order_list')}";
