@@ -142,6 +142,7 @@ class User extends Base {
 	public function goods_collect() {
 		$collectGood = Db::view('goods_collect', 'add_time')
 			->view('good', 'id,goods_name,goods_price,goods_img', 'good.id=goods_collect.goods_id')
+			->order('add_time desc')
 			->where('user_id', '=', $_SESSION['uid'])
 			->select();
 		$this->assign('collectGood', $collectGood);
@@ -254,6 +255,14 @@ class User extends Base {
 		} else {
 			$this->ajaxReturn(['status' => 0, 'msg' => '操作失败！']);
 		}
+	}
+	/**
+	 * [addMoney 充钱]
+	 */
+	public function addMoney() {
+		$id = $_SESSION['uid'];
+		$rst = Db::name('user_details')->where('user_Uid', '=', $id)->setInc('user_money', 10000);
+		$this->ajaxReturn(['status' => 1, 'msg' => '恭喜你，充值1万块成功！']);
 	}
 
 }

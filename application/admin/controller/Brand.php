@@ -16,7 +16,12 @@ class Brand extends Common {
 	}
 
 	public function index() {
-		$brand = Db::name('brand')->paginate(10);
+		$status = '';
+		if (input('keywords')) {
+			$keyword = input('keywords');
+			$status['brand_name'] = ['like', "%$keyword%"];
+		}
+		$brand = Db::name('brand')->where($status)->paginate(10);
 		$this->assign('brand', $brand);
 
 		return $this->fetch();

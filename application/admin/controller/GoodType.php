@@ -16,8 +16,13 @@ class GoodType extends Common {
 
 	public function index() {
 		$category = new category();
+		$status = '';
+		if (input('keywords')) {
+			$keyword = input('keywords');
+			$status['type_name'] = ['like', "%$keyword%"];
+		}
 		//获取商品分类
-		$data = Db::name('good_type')->paginate(10, false, ['query' => request()->param()])->each(function ($item) {
+		$data = Db::name('good_type')->where($status)->paginate(10, false, ['query' => request()->param()])->each(function ($item) {
 			//修改结果集
 			$pid = $item['pid'];
 			if ($item['pid'] == 0) {

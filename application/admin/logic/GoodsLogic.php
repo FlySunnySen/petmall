@@ -300,7 +300,7 @@ class GoodsLogic extends Model {
 
 		$spec = model('Spec')->column('id,name'); // 规格表
 		$specItem = model('SpecItem')->column('id,item,spec_id'); //规格项
-		$keySpecGoodsPrice = model('SpecGoodsPrice')->where('goods_id = ' . $goods_id)->column('key,key_name,price,store_count,bar_code,sku,market_price,cost_price,commission'); //规格项
+		$keySpecGoodsPrice = model('SpecGoodsPrice')->where('goods_id = ' . $goods_id)->column('key,key_name,price,store_count,bar_code,market_price,cost_price'); //规格项
 		// var_dump($specItem);die;
 		// var_dump($keySpecGoodsPrice);die;
 		$str = "<table class='table table-bordered' id='spec_input_tab'>";
@@ -315,18 +315,14 @@ class GoodsLogic extends Model {
 		$str .= "<td><b>购买价</b></td>
                <td><b>市场价</b></td>
                <td><b>成本价</b></td>
-               <td><b>佣金</b></td>
                <td><b>库存</b></td>
-               <td><b>SKU</b></td>
                <td><b>操作</b></td>
              </tr>";
 		if (count($spec_arr2) > 0) {
 			$str_fill .= '<td><input id="item_price" value="0" onkeyup="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onpaste="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)"></td>
                <td><input id="item_market_price" value="0" onkeyup="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onpaste="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)"></td>
                <td><input id="item_cost_price" value="0" onkeyup="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onpaste="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)"></td>
-               <td><input id="item_commission" value="0" onkeyup="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onpaste="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)"></td>
                <td><input id="item_store_count" value="0" onkeyup="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onpaste="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)"></td>
-               <td><input id="item_sku" value="" onkeyup="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onpaste="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)"></td>
                <td><button id="item_fill" type="button" class="btn btn-success">批量填充</button></td>
              </tr>';
 			$str .= $str_fill;
@@ -358,9 +354,7 @@ class GoodsLogic extends Model {
 			$str .= "<td><input type='hidden' name='item[$item_key][key_name]' value='$item_name' /><input name='item[$item_key][price]' value='{$keySpecGoodsPrice[$item_key]['price']}' onkeyup='this.value=this.value.replace(/[^\d.]/g,\"\")' onpaste='this.value=this.value.replace(/[^\d.]/g,\"\")' /></td>";
 			$str .= "<td><input name='item[$item_key][market_price]' value='{$keySpecGoodsPrice[$item_key]['market_price']}' onkeyup='this.value=this.value.replace(/[^\d.]/g,\"\")' onpaste='this.value=this.value.replace(/[^\d.]/g,\"\")' /></td>";
 			$str .= "<td><input name='item[$item_key][cost_price]' value='{$keySpecGoodsPrice[$item_key]['cost_price']}' onkeyup='this.value=this.value.replace(/[^\d.]/g,\"\")' onpaste='this.value=this.value.replace(/[^\d.]/g,\"\")' /></td>";
-			$str .= "<td><input name='item[$item_key][commission]' value='{$keySpecGoodsPrice[$item_key]['commission']}' onkeyup='this.value=this.value.replace(/[^\d.]/g,\"\")' onpaste='this.value=this.value.replace(/[^\d.]/g,\"\")' /></td>";
 			$str .= "<td><input name='item[$item_key][store_count]' value='{$keySpecGoodsPrice[$item_key]['store_count']}' onkeyup='this.value=this.value.replace(/[^\d.]/g,\"\")' onpaste='this.value=this.value.replace(/[^\d.]/g,\"\")'/></td>";
-			$str .= "<td><input name='item[$item_key][sku]' value='{$keySpecGoodsPrice[$item_key]['sku']}' />";
 			$str .= "<td><button type='button' class='btn btn-default delete_item'>无效</button></td>";
 			$str .= "</tr>";
 		}
@@ -732,17 +726,14 @@ class GoodsLogic extends Model {
 				// 批量添加数据
 				$v['price'] = trim($v['price']);
 				$v['store_count'] = trim($v['store_count']); // 记录商品总库存
-				$v['sku'] = trim($v['sku']);
 				$data = [
 					'goods_id' => $goods_id,
 					'key' => $k,
 					'key_name' => $v['key_name'],
 					'price' => $v['price'],
 					'store_count' => $v['store_count'],
-					'sku' => $v['sku'],
 					'market_price' => $v['market_price'],
 					'cost_price' => $v['cost_price'],
-					'commission' => $v['commission'],
 				];
 				$specGoodsPrice = Db::name('spec_goods_price')->where(['goods_id' => $data['goods_id'], 'key' => $data['key']])->find();
 				if ($specGoodsPrice) {

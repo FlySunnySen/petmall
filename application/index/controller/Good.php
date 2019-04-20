@@ -24,8 +24,9 @@ class Good extends Base {
 		}
 		$spec_goods_price = model('spec_goods_price')->where("goods_id", $goods_id)->column("key,item_id,price,store_count,market_price"); // 规格 对应 价格 库存表
 		$goods_images_list = model('GoodImages')->where("good_id", $goods_id)->column("image_url"); // 商品 图册
+		/* 获取规格 */
 		$filter_spec = $goodsLogic->get_spec($goods_id);
-		// die;
+
 		/* 评价百分比 */
 		$map['good_id'] = ['=', $goods_id];
 		$map['comment_rank'] = ['>', 3];
@@ -114,7 +115,7 @@ class Good extends Base {
 		$page = new AjaxPage($count, 10);
 		$show = $page->show();
 
-		$list = Db::name('comment')->where($where)->select();
+		$list = Db::name('comment')->order('comment_time desc')->where($where)->select();
 		$this->assign('commentlist', $list); // 商品评论
 		// var_dump($list);die;
 		// $this->assign('replyList', $replyList); // 管理员回复
@@ -131,34 +132,7 @@ class Good extends Base {
 		$goods = $Goods::get($goods_id);
 		// var_dump($goods);die;
 		$this->ajaxReturn(['status' => 1, 'msg' => '该商品没有参与活动', 'result' => ['goods' => $goods]]);
-		var_dump('hhh');die;
-		$goodsPromFactory = new GoodsPromFactory();
-		if ($goodsPromFactory->checkPromType($goods['prom_type'])) {
-			//这里会自动更新商品活动状态，所以商品需要重新查询
-			if ($item_id) {
-				$specGoodsPrice = SpecGoodsPrice::get($item_id);
-				$goodsPromLogic = $goodsPromFactory->makeModule($goods, $specGoodsPrice);
-			} else {
-				$goodsPromLogic = $goodsPromFactory->makeModule($goods, null);
-			}
-			if ($goodsPromLogic->checkActivityIsAble()) {
-				$goods = $goodsPromLogic->getActivityGoodsInfo();
-				$goods['activity_is_on'] = 1;
-				$this->ajaxReturn(['status' => 1, 'msg' => '该商品参与活动', 'result' => ['goods' => $goods]]);
-			} else {
-				if (!empty($goods['price_ladder'])) {
-					$goodsLogic = new GoodsLogic();
-					$goods->shop_price = $goodsLogic->getGoodsPriceByLadder($goods_num, $goods['shop_price'], $goods['price_ladder']);
-				}
-				$goods['activity_is_on'] = 0;
-				$this->ajaxReturn(['status' => 1, 'msg' => '该商品没有参与活动', 'result' => ['goods' => $goods]]);
-			}
-		}
-		if (!empty($goods['price_ladder'])) {
-			$goodsLogic = new GoodsLogic();
-			$goods->shop_price = $goodsLogic->getGoodsPriceByLadder($goods_num, $goods['shop_price'], $goods['price_ladder']);
-		}
-		$this->ajaxReturn(['status' => 1, 'msg' => '该商品没有参与活动', 'result' => ['goods' => $goods]]);
+
 	}
 
 	/**
@@ -166,60 +140,24 @@ class Good extends Base {
 	 */
 	public function goodsList() {
 
-		$key = md5($_SERVER['REQUEST_URI'] . input('start_price') . '_' . input('end_price'));
-		if (!empty($html)) {
-			return $html;
-		}
 		/* 推荐热卖 */
 		$hotGoodList = Db::name('good')->order('sales_sum desc')->limit(5)->select();
 		$this->assign('hotGoodList', $hotGoodList);
-		$filter_param = array(); // 帅选数组
+		$filter_param = array(); // 筛选数组
 		$id = input('id'); // 当前分类id
-		$brand_id = input('get.brand_id', 0);
-		$spec = input('get.spec', 0); // 规格
-		$attr = input('get.attr', ''); // 属性
 		$sort = input('sort'); // 排序
 		$sort_asc = input('sort_asc'); // 排序
-		$price = input('get.price', ''); // 价钱
-		$start_price = trim(input('post.start_price', '0')); // 输入框价钱
-		$end_price = trim(input('post.end_price', '0')); // 输入框价钱
-		if ($start_price && $end_price) {
-			$price = $start_price . '-' . $end_price;
-		}
-		// 如果输入框有价钱 则使用输入框的价钱
-		$filter_param['id'] = $id; //加入帅选条件中
-		$brand_id && ($filter_param['brand_id'] = $brand_id); //加入帅选条件中
-		$spec && ($filter_param['spec'] = $spec); //加入帅选条件中
-		$attr && ($filter_param['attr'] = $attr); //加入帅选条件中
-		$price && ($filter_param['price'] = $price); //加入帅选条件中
+		$filter_param['id'] = $id; //加入筛选条件中
 		$goodsLogic = new GoodsLogic(); // 前台商品操作逻辑类
-		// 分类菜单显示
+		/*  获取显示的筛选菜单 */
 		$goodsCate = Db::name('good_type')->where("id", $id)->find(); // 当前分类
 		$goodsCate['level'] = count(explode('_', $goodsCate['parent_id_path'])) - 1;
 		$cateArr = $goodsLogic->get_goods_cate($goodsCate);
 		$cat_id_arr = self::getCatGrandson($id);
 		$goods_where = ['is_on_sale' => 1, 'type_id' => ['in', $cat_id_arr]];
 		$filter_goods_id = Db::name('good')->where($goods_where)->column("id");
-		// 过滤帅选的结果集里面找商品
-		if ($brand_id || $price) // 品牌或者价格
-		{
-			$goods_id_1 = $goodsLogic->getGoodsIdByBrandPrice($brand_id, $price); // 根据 品牌 或者 价格范围 查找所有商品id
-			$filter_goods_id = array_intersect($filter_goods_id, $goods_id_1); // 获取多个帅选条件的结果 的交集
-		}
-		if ($spec) // 规格
-		{
-			$goods_id_2 = $goodsLogic->getGoodsIdBySpec($spec); // 根据 规格 查找当所有商品id
-			$filter_goods_id = array_intersect($filter_goods_id, $goods_id_2); // 获取多个帅选条件的结果 的交集
-		}
-		if ($attr) // 属性
-		{
-			$goods_id_3 = $goodsLogic->getGoodsIdByAttr($attr); // 根据 规格 查找当所有商品id
-			$filter_goods_id = array_intersect($filter_goods_id, $goods_id_3); // 获取多个帅选条件的结果 的交集
-		}
-		$filter_menu = $goodsLogic->get_filter_menu($filter_param, 'goodsList'); // 获取显示的帅选菜单
-		$filter_price = $goodsLogic->get_filter_price($filter_goods_id, $filter_param, 'goodsList'); // 帅选的价格期间
-		$filter_brand = $goodsLogic->get_filter_brand($filter_goods_id, $filter_param, 'goodsList'); // 获取指定分类下的帅选品牌
-
+		/* 获取显示的筛选菜单 */
+		$filter_menu = $goodsLogic->get_filter_menu($filter_param, 'goodsList');
 		/* 获取排序条件 */
 		switch ($sort) {
 		case 'sales_sum':$where["$sort"] = 'DESC';
@@ -260,14 +198,10 @@ class Good extends Base {
 		$this->assign('goods_list', $goods_list);
 		$this->assign('navigate_cat', $navigate_cat);
 		$this->assign('goods_category', $goods_category);
-		$this->assign('goods_images', $goods_images); // 相册图片
-		$this->assign('filter_menu', $filter_menu); // 帅选菜单
-		// $this->assign('filter_spec', $filter_spec); // 帅选规格
-		$this->assign('filter_brand', $filter_brand); // 列表页帅选属性 - 商品品牌
-		$this->assign('filter_price', $filter_price); // 帅选的价格期间
+		$this->assign('filter_menu', $filter_menu); // 筛选菜单
 		$this->assign('goodsCate', $goodsCate);
 		$this->assign('cateArr', $cateArr);
-		$this->assign('filter_param', $filter_param); // 帅选条件
+		$this->assign('filter_param', $filter_param); // 筛选条件
 		$this->assign('cat_id', $id);
 		$this->assign('page', $page); // 赋值分页输出
 		$html = $this->fetch();
@@ -308,6 +242,11 @@ class Good extends Base {
 	 */
 	public function search() {
 		$keyWord = input('q');
+		if ($keyWord) {
+			$this->assign('keyword', $keyWord);
+		} else {
+			$this->assign('keyword', '');
+		}
 		$sort = input('sort');
 		$sort_asc = input('sort_asc');
 		/* 获取排序条件 */

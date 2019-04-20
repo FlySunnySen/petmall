@@ -17,6 +17,10 @@ class Good extends Common {
 	}
 
 	public function index() {
+		if (input('keywords')) {
+			$keyword = input('keywords');
+			$status['goods_name'] = ['like', "%$keyword%"];
+		}
 		$status['is_delete'] = 0;
 		$good_data = Db::view('good')
 			->view('good_type', 'type_name', 'good.type_id = good_type.id')
@@ -24,7 +28,6 @@ class Good extends Common {
 			->order('goods_time desc')
 			->where($status)
 			->paginate(10);
-
 		$this->assign('good_data', $good_data);
 
 		return $this->fetch();
@@ -329,7 +332,6 @@ class Good extends Common {
 			$specList[$k]['spec_item'] = model('SpecItem')->where("spec_id = " . $v['id'])->order('id')->column('id,item');
 		}
 		// 获取规格项
-
 		$items_id = model('SpecGoodsPrice')->where('goods_id = ' . $goods_id)->column("GROUP_CONCAT(`key` SEPARATOR '_') AS items_id");
 		$items_ids = explode('_', $items_id[0]);
 
@@ -374,6 +376,7 @@ class Good extends Common {
 			$goods = $Goods->where('id', $goods_id)->find();
 			$this->assign('goods', $goods);
 		}
+		// var_dump($goods);die;
 		$goodsType = Db::name("GoodsType")->select();
 		$this->assign('goodsType', $goodsType);
 		// var_dump($goodsType);die;

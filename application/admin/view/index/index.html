@@ -1,2 +1,198 @@
 
 {extend name="public::layout" /}
+
+{block name="main"}
+	<div class="page-content">
+		<div class="row">
+			<div class="col-xs-12">
+				<!-- PAGE CONTENT BEGINS -->
+				<div class="alert alert-block alert-success">
+					<button type="button" class="close" data-dismiss="alert">
+						<i class="icon-remove"></i>
+					</button>
+					<i class="icon-ok green"></i>
+					{$Think.session.admin.admin_name}，欢迎登录
+					<strong class="green">
+						petmall商城后台管理系统
+					</strong>
+					，请在左侧选择您的操作！
+				</div>
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="widget-box transparent" id="recent-box">
+							<div class="widget-header">
+								<h4 class="lighter smaller">
+									<i class="icon-rss orange"></i>
+									商城信息
+								</h4>
+
+								<div class="widget-toolbar no-border">
+									<ul class="nav nav-tabs" id="recent-tab">
+										<li class="active">
+											<a data-toggle="tab" href="#task-tab">系统信息</a>
+										</li>
+
+										<li>
+											<a data-toggle="tab" href="#member-tab">新加入会员</a>
+										</li>
+
+										<li>
+											<a data-toggle="tab" href="#comment-tab">最新评论</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+
+						<div class="widget-body">
+							<div class="widget-main padding-4">
+								<div class="tab-content padding-8 overflow-visible">
+									<!-- 系统信息 -->
+									<div id="task-tab" class="tab-pane active">
+										<ul id="tasks" class="item-list">
+											<li class="item-orange clearfix">
+												<b>订单信息：</b>&nbsp;&nbsp;<span class="text-danger">总订单：<b class="text-success">{$orderCount}</b>&nbsp;待发货订单：<b class="text-success">{$orderPay}</b></span>
+											</li>
+
+											<li class="item-red clearfix">
+												<b>商品信息：</b>&nbsp;&nbsp;<span class="text-danger">总商品数：<b class="text-success">{$goodsCount}</b>&nbsp;总销量：<b class="text-success">{$goodsVolume}</b>
+											</li>
+
+											<li class="item-default clearfix">
+												<b>访问统计：</b>&nbsp;&nbsp;<span class="text-danger">总点击数：<b class="text-success">{$clickCount}</b>&nbsp;评论数：<b class="text-success">{$commentCount}</b></span>
+											</li>
+
+											<li class="item-blue clearfix">
+												<b>服务器信息：</b>&nbsp;&nbsp;<span class="text-danger">操作系统：<b class="text-success">{$info.apache}</b>&nbsp;PHP运行方式：<b class="text-success">{$info.php}</b>&nbsp;MySql版本：<b class="text-success">5.7.23</b>&nbsp;ThinkPHP版本：<b class="text-success">{$info.tp}</b>&nbsp;服务器域名/IP：<b class="text-success">{$info.ip}</b>&nbsp;系统当前时间：<b class="text-success">{$info.time}</b></span>
+											</li>
+
+											<li class="item-grey clearfix">
+												<b>数据库信息：</b>&nbsp;&nbsp;<span class="text-danger">数据库名：<b class="text-success">{$dbname}</b>&nbsp;数据表前缀：<b class="text-success">{$prefix}</b>&nbsp;数据库编码方式：<b class="text-success">{$charset}</b></span>
+											</li>
+										</ul>
+									</div>
+									<!-- 最新会员信息 -->
+									<div id="member-tab" class="tab-pane">
+										<div class="clearfix">
+											{foreach name="user" item="vuser"}
+											<div class="itemdiv memberdiv">
+
+												<div class="body">
+													<div class="name">
+														<a href="#">{$vuser.user_email}</a>
+													</div>
+													<div class="time">
+														<i class="icon-time"></i>
+														<span class="green">{$vuser.reg_time}</span>
+													</div>
+
+
+												</div>
+											</div>
+											{/foreach}
+										</div>
+
+										<div class="center">
+											<i class="icon-group icon-2x green"></i>
+
+											&nbsp;
+											<a href="{:url('User/index')}">
+												查看所有会员 &nbsp;
+												<i class="icon-arrow-right"></i>
+											</a>
+										</div>
+
+										<div class="hr hr-double hr8"></div>
+									</div><!-- member-tab -->
+									<!-- 最新评论 -->
+									<div id="comment-tab" class="tab-pane">
+										<div class="comments">
+											{foreach name="com" item="vcom"}
+											<div class="itemdiv commentdiv">
+												<div class="user">
+
+												</div>
+
+												<div class="body">
+													<div class="name">
+														<a href="#">{$vcom.email}</a>
+													</div>
+
+													<div class="time">
+														<i class="icon-time"></i>
+														<span class="green">{$vcom.comment_time}</span>
+													</div>
+
+													<div class="text">
+														<i class="icon-quote-left"></i>
+														{$vcom.comment_content} &hellip;
+													</div>
+												</div>
+
+
+											</div>
+											{/foreach}
+										</div>
+
+										<div class="hr hr8"></div>
+
+										<div class="center">
+											<i class="icon-comments-alt icon-2x green"></i>
+
+											&nbsp;
+											<a href="{:url('order/Comment')}">
+												查看全部评论 &nbsp;
+												<i class="icon-arrow-right"></i>
+											</a>
+										</div>
+
+										<div class="hr hr-double hr8"></div>
+									</div>
+								</div>
+							</div><!-- /widget-main -->
+						</div><!-- /widget-body -->
+						</div><!-- /widget-box -->
+					</div><!-- /span -->
+
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		$(function(){
+			//删除
+			$('.dialogs').delegate('a[del]','click',function(){
+				$this = $(this);
+				var id = $this.attr('del');
+				$.get('__CONTROLLER__/del','id='+id,function(data){
+					if(data == 1){
+						$this.parent().parent().parent().fadeOut();
+					}else{
+						alert('删除错误！');
+					}
+				})
+			})
+
+			//让会话框的滚动条始终保持在底部
+			// $('.dialogs').scrollTop($('.dialogs')[0].scrollHeight);
+			$('#sub').click(function(){
+				if(!$('#content').val()){
+					return false;
+				}
+				var id = $('.user:last').attr('rel');
+
+				var data = 'content='+$('#content').val();
+				$.post('__CONTROLLER__/insert/pid/'+id,data,function(data){
+					if(data == 0){
+						alert('发送失败！');
+					}else{
+						$('#content').val('');
+						$('.dialogs').append(data);
+						$('.dialogs').scrollTop($('.dialogs')[0].scrollHeight);
+					}
+				})
+			})
+		})
+	</script>
+{/block}

@@ -18,6 +18,10 @@ class Order extends Common {
 	public function index() {
 		$where = [];
 		// $where['is_delete'] = 0;
+		if (input('keywords')) {
+			$keyword = input('keywords');
+			$where['acti'] = ['like', "%$keyword%"];
+		}
 		if (input('type') == 'noPay') {
 			$where['pay_status'] = 0;
 			$where['is_delete'] = 0;
@@ -96,6 +100,10 @@ class Order extends Common {
 	 */
 	public function comment() {
 		$where = null;
+		if (input('keywords')) {
+			$keyword = input('keywords');
+			$where['acti'] = ['like', "%$keyword%"];
+		}
 		if (input('type') == 'noReply') {
 			$where['is_reply'] = 0;
 		}
@@ -152,6 +160,9 @@ class Order extends Common {
 	 */
 	public function delOrder() {
 		$id = input('id');
+		$rst = Db::name('order')->where('id', '=', $id)->find();
+		/* 返还用户金额 */
+		Db::name('user_details')->where('user_Uid', '=', $rst['user_Uid'])->setInc('user_money', $rst['order_count']);
 		$data['comeback_reason'] = input('num');
 		$data['is_delete'] = 1;
 		$rst = Db::name('order')->where('id', '=', $id)->update($data);

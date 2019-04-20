@@ -14,7 +14,7 @@
 		<form action="">
 			<div class="col-xs-4 col-sm-5 text-right" style="margin-bottom:10px">
 				<div class="input-group">
-					<input type="text" class="form-control search-query" placeholder="输入商品名关键字" name="keywords">
+					<input type="text" class="form-control search-query" placeholder="输入商品名关键字" value="{$Request.param.keywords}" name="keywords">
 					<span class="input-group-btn">
 						<button type="submit" class="btn btn-purple btn-sm">
 							搜索 <i class="icon-search icon-on-right bigger-110"></i>
@@ -70,13 +70,15 @@
 													<span class="lbl">{$vo.type_name}</span>
 												</td>
 												<td>
+													<a href="{:url('index/good/goodsinfo',array('id'=>$vo.id))}">
 													<span class="lbl">{$vo.goods_name}</span>
+													</a>
 												</td>
 												<td class="hidden-480">{$vo.sn}</td>
 												<td class="hidden-480">
 													<span>{$vo.goods_price}</span>
 												</td>
-												
+
 
 												<td>
 													<a href="{:url('admin/good/addEditGood',array('id'=>$vo.id))}">修改</a>
@@ -84,7 +86,7 @@
 													<a href="{:url('admin/good/goodModel',array('id'=>$vo.id))}">商品模型</a>
 													|
 													<a href="{:url('admin/goodImages/index',array('id'=>$vo.id))}">查看相册</a>
-													
+
 													|
 													<a href="{:url('admin/good/softDelGood',array('id'=>$vo.id))}">删除</a>
 												</td>
@@ -115,11 +117,11 @@
 
 	<script>
 		$(function() {
-			//全选		
-			var bool = true;	
-			$('#setall').bind('click',function() {				
+			//全选
+			var bool = true;
+			$('#setall').bind('click',function() {
 				$('input[name="id[]"]').each(function() {
-					$(this).prop('checked',bool);					
+					$(this).prop('checked',bool);
 				})
 				bool = !bool;
 			})
@@ -127,28 +129,28 @@
 			//反选
 			$('#against').bind('click',function() {
 				$('input[name="id[]"]').each(function() {
-					$(this).prop('checked',!$(this).prop('checked'));					
+					$(this).prop('checked',!$(this).prop('checked'));
 				})
 			})
 
 			//批量删除
 			$('#delall').bind('click',function() {
 				var data = $('#allform').serialize();
-				
-				$.post("{:url('admin/good/softDelMore')}",data,function(data) {			
+
+				$.post("{:url('admin/good/softDelMore')}",data,function(data) {
 
 					if(data){
 					        alert(data);
 							location.reload();
-						
+
 					}else{
 						 alert(data);
-					}				
+					}
 				})
 			})
-			
-			
-			
+
+
+
 		})
 		</script>
 {/block}

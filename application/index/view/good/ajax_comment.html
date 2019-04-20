@@ -5,10 +5,10 @@
     <div class="deta-descri p">
         <div class="person-ph-name">
             <div class="per-img-n p">
-                
+
                     <div class="img-aroun"><img src="__STATIC__/images/headPic.jpg"/></div>
                     <div class="menb-name"> 匿名用户</div>
-                
+
             </div>
             <!--<p class="member">金牌会员</p>-->
         </div>
@@ -29,15 +29,28 @@
             <!--评论时间-->
             <div class="lifr4 bolist p">
                 <span>{$v['comment_time']|date="Y-m-d H:i:s",###}</span>
-           
+
             </div>
+            {notempty name="$v.reply_content"}
+            <div class="lifr4 comfis p">
+                <span class="faisf">管理员回复：{$v['reply_content']|htmlspecialchars_decode}</span>
+            </div>
+
+            <!--评论时间-->
+            <div class="lifr4 bolist p">
+                <span>{$v['reply_time']|date="Y-m-d H:i:s",###}</span>
+
+            </div>
+            {/notempty}
         </div>
         <!--评论-e-->
 
+        <!--商家回复-e-->
+
     <!--点赞，回复-->
-        
+
     </div>
-    
+
 
 </div>
 {/volist}
@@ -111,6 +124,6 @@
         });
     })
 
- 
+
 
 </script>

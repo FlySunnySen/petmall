@@ -41,11 +41,31 @@
                     账户状态：<em>已激活</em>
                   </span>
                 </div>
+                <div class="cuschan jhove">
+                  <span class="kycha">
+                    <a class="addMoney" href="javascript:void(0)">测试充值1万块</a>
+                  </span>
+                </div>
                 <div class="cuschan tc-uic">
                 </div>
               </div>
 
-
+<script type="text/javascript">
+  $(function(){
+    $('.addMoney').click(function(){
+        $.ajax({
+          type:'post',
+          data:'',
+          dataType:'json',
+          url:"{:url('user/addMoney')}",
+          success:function(data){
+                layer.alert(data.msg, {icon: 1});
+                setTimeout(location.reload());
+          }
+        })
+    });
+  })
+</script>
 <script>
 //Demo
 layui.use('form', function(){

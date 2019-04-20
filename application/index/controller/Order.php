@@ -74,6 +74,10 @@ class Order extends Base {
 		$this->assign('id', $id);
 		return $this->fetch();
 	}
+	/**
+	 * [wuliuInfo 访问阿里云物流接口]
+	 * @return [type] [description]
+	 */
 	public function wuliuInfo() {
 		$id = input('id');
 		$host = "https://wuliu.market.alicloudapi.com"; //api访问链接

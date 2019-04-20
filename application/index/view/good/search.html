@@ -67,22 +67,22 @@
                             <a href="<?php echo urldecode(url("/index/Good/search",$filter_param,''));?>">综合</a>
                         </li>
 						<li class="{if condition="$Request.param.sort eq 'sales_sum'"}red{/if}">
-                            <a href="<?php echo urldecode(url("/index/good/search",array_merge($filter_param,array('sort'=>'sales_sum')),''));?>">销量</a>
+                            <a href="<?php echo urldecode(url("/index/good/search",array_merge($filter_param,array('sort'=>'sales_sum','q'=>$keyword)),''));?>">销量</a>
                         </li>
 						{if condition="$Request.param.sort_asc eq 'desc'"}
                             <li class="{if condition="$Request.param.sort eq 'shop_price'"}red{/if}">
-                                <a href="<?php echo urldecode(url("/index/good/search",array_merge($filter_param,array('sort'=>'shop_price','sort_asc'=>'asc')),''));?>">价格<i class="litt-zzx1"></i></a>
+                                <a href="<?php echo urldecode(url("/index/good/search",array_merge($filter_param,array('sort'=>'shop_price','sort_asc'=>'asc','q'=>$keyword)),''));?>">价格<i class="litt-zzx1"></i></a>
                             </li>
                         {else /}
                             <li class="{if condition="$Request.param.sort eq 'shop_price'"}red{/if}">
-                                <a href="<?php echo urldecode(url("/index/good/search",array_merge($filter_param,array('sort'=>'shop_price','sort_asc'=>'desc')),''));?>">价格<i class="litt-zzx1"></i></a>
+                                <a href="<?php echo urldecode(url("/index/good/search",array_merge($filter_param,array('sort'=>'shop_price','sort_asc'=>'desc','q'=>$keyword)),''));?>">价格<i class="litt-zzx1"></i></a>
                             </li>
                         {/if}
 						<li class="{if condition="$Request.param.sort eq 'comment_count'"}red{/if}">
-                            <a href="<?php echo urldecode(url("/index/good/search",array_merge($filter_param,array('sort'=>'comment_count')),''));?>">评论</a>
+                            <a href="<?php echo urldecode(url("/index/good/search",array_merge($filter_param,array('sort'=>'comment_count','q'=>$keyword)),''));?>">评论</a>
                         </li>
 						<li class="{if condition="$Request.param.sort eq 'is_new'"}red{/if}">
-                            <a href="<?php echo urldecode(url("/index/good/search",array_merge($filter_param,array('sort'=>'is_new')),''));?>">新品</a>
+                            <a href="<?php echo urldecode(url("/index/good/search",array_merge($filter_param,array('sort'=>'is_new','q'=>$keyword)),''));?>">新品</a>
                         </li>
 					</ul>
 				</div>

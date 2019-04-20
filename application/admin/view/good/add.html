@@ -106,7 +106,7 @@
 					</div>
 				</div>
 
-				
+
 
 
 				<div class="form-group">
@@ -117,7 +117,7 @@
 					</div>
 				</div>
 
-			
+
 
 				<div class="space-4"></div>
 
@@ -148,9 +148,9 @@
 
 					<div class="col-sm-9">
 						<!-- uploadify上传插件 -->
-						
+
 						  <div id="imgs"></div>
-						
+
 						<div id="file_upload"></div>
 						<!-- uploadify上传插件 -->
 						<input type="hidden" value="" id="uplogo" name="goods_img">
@@ -160,7 +160,7 @@
 
 				<div class="form-group">
 					<label class="col-sm-2 control-label no-padding-left">商品详细描述</label>
-					
+
 					<div class="col-sm-9 col-xs-6">
 						<!-- <textarea name="goods_desc" id="" cols="30" rows="5" class="col-xs-6" style="resize:none;"></textarea> -->
 					</div>
@@ -171,7 +171,7 @@
 					<div class="col-md-offset-3 col-md-9">
 						<button class="btn btn-info" type="button">
 							<i class="icon-ok bigger-110"></i>
-							提　交 
+							提　交
 						</button>
 						&nbsp; &nbsp; &nbsp;
 						<button class="btn" type="reset">
@@ -210,7 +210,7 @@
 			        	img = "<img width='200px' src="+data.replace(/\\/g,'')+">";
 			        	$('#imgs').html(img);
 			        	$('#uplogo').val(data.replace(/\\/g,''));
-		            },	    	    
+		            },
 				 	onCancel:function(file){
 						console.log(file.name+'删除成功');
 					},
@@ -235,19 +235,19 @@
 
 	    	$('#typeul>li[num="2"]').bind('click',function() {
 	    		$(this).parent().prev().children('span').html($(this).html());
-	    		$(this).parent().prev().children('input[sel]').val($(this).val());	    		
+	    		$(this).parent().prev().children('input[sel]').val($(this).val());
 	    	})
 
 	    	$('#brandul>li').bind('click',function() {
 	    		$(this).parent().prev().children('span').html($(this).html());
-	    		$(this).parent().prev().children('input[sel]').val($(this).val());	    		
+	    		$(this).parent().prev().children('input[sel]').val($(this).val());
 	    	})
 
 
         var ue = UE.getEditor('container',{
         	autoHeightEnabled: false,
     		autoFloatEnabled: false,
-    		initialFrameHeight: 200,
+    		initialFrameHeight: 700,
     		initialFrameWidth: 700
         });
 
@@ -276,7 +276,7 @@
         			brand = false;
         		}else{
         			$('#brandid').html('');
-        			brand = true; 
+        			brand = true;
         		}
         	})
         	//商品名称
@@ -333,7 +333,7 @@
         		}
         	})
 
-        	
+
         })
     </script>
 {/block}

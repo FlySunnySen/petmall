@@ -14,12 +14,19 @@ class User extends Common {
 	}
 
 	public function index() {
+		$map = '';
+		if (input('keywords')) {
+			$keyword = input('keywords');
+			$where['user_email'] = ['like', "%$keyword%"];
+			$map['user_alias'] = ['like', "%$keyword%"];
+		}
+		$where['is_delete'] = 0;
 		$user_data = Db::name('user')
 			->alias('a')
 			->join('user_details b', 'a.Uid = b.user_Uid')
-			->where('is_delete', '=', '0')
+			->where($where)
+			->whereOr($map)
 			->paginate(10);
-
 		$this->assign('user_data', $user_data);
 
 		return $this->fetch();
@@ -27,11 +34,18 @@ class User extends Common {
 
 	//黑名单
 	public function blackList() {
-
+		$map = '';
+		if (input('keywords')) {
+			$keyword = input('keywords');
+			$where['user_email'] = ['like', "%$keyword%"];
+			$map['user_alias'] = ['like', "%$keyword%"];
+		}
+		$where['is_delete'] = 1;
 		$user_data = Db::name('user')
 			->alias('a')
 			->join('user_details b', 'a.Uid = b.user_Uid')
-			->where('is_delete', '=', '1')
+			->where($where)
+			->whereOr($map)
 			->paginate(10);
 
 		$this->assign('user_data', $user_data);

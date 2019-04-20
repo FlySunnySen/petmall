@@ -104,7 +104,6 @@
 						<!-- 登录后的用户信息 -->
 						<li class="light-blue">
 							<a data-toggle="dropdown" href="#" class="dropdown-toggle">
-								<img class="nav-user-photo" src="/static/{$Think.session.admin.img}" alt="{$Think.session.admin.admin_name}" />
 								<span class="user-info">
 									<small>欢迎登录</small>
 									{$Think.session.admin.admin_name}
@@ -114,28 +113,6 @@
 							</a>
 
 							<ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
-								<li>
-									<a href="/{:request()->module()}/ShopConfig/index">
-										<i class="icon-cog"></i>
-										设置
-									</a>
-								</li>
-
-								<li>
-									<a href="__ROOT__/home/" target="_blank">
-										<i class="icon-home"></i>
-										网站首页
-									</a>
-								</li>
-
-								<li class="divider"></li>
-								<li>
-									<a href="/{:request()->module()}/AdminUser/changepwd">
-										<i class="icon-cog"></i>
-										修改密码
-									</a>
-								</li>
-
 								<li>
 									<a href="/{:request()->module()}/Login/logout">
 										<i class="icon-off"></i>
